@@ -152,7 +152,19 @@ About **5 seconds**. It ends on `VERDICT: FAIL`, and that is correct.
   2. Do not `assert` on the first bad vector. Collect the bad ones in a list, run all 512, and
      assert at the end with `len(bad)` in the message.
 
-  The reason for the second change is the whole of Step 4, so do it before you run.
+  The reason for the second change is the whole of Step 4, so do it before you run — and
+  `make check` will not give you a PASS without it. Doing only change 1 turns `broken/` red,
+  which looks like success and is not: the run stops at the first wrong vector, so the failure
+  is an anecdote instead of a count. `check.py` measures how many vectors each run actually
+  drove and names whichever half is missing:
+
+  ```
+   VERDICT: FAIL -- the second half of the TODO is not done.
+     You swept cin: on the good adder you drove all 512 vectors.
+     On the broken adder you drove 263 and then stopped, because you are
+     still asserting on the first vector that is wrong instead of collecting
+     them.
+  ```
 
 - **What you should see:** `make sim` now reports `512.00` ns and
   `checked 512 of the 512 possible input vectors`, and `make check` says:
@@ -194,6 +206,25 @@ About **5 seconds**. It ends on `VERDICT: FAIL`, and that is correct.
   This is also why the second TODO change matters. `assert` on the first bad vector stops the
   run at vector 256 and reports one wrong answer. Collecting reports `256 of 512`, and only one
   of those two is a diagnosis.
+
+> **`NameError` is not a caught bug.** There is one more verdict `check.py` can print, and it
+> is worth knowing before you meet it:
+>
+> ```
+>   BROKEN  broken/  carry-in dropped      2 tests, 1 BLEW UP           1.3s
+>         t02_every_a_and_every_b   <- this test BLEW UP; it checked nothing
+>             NameError: name 'summary' is not defined
+> ------------------------------------------------------------------------
+>  VERDICT: FAIL -- 1 of your tests did not run to the end.
+> ```
+>
+> A misspelled variable in the code that builds your failure message does not show up until
+> something is actually wrong — so the test passes the good adder, crashes on the broken one,
+> and *looks exactly like a catch*. It is not one: Python stopped before the comparison
+> happened, so the run says nothing about either adder. cocotb records both outcomes in
+> `results.xml` as `<failure>`, which is precisely why the distinction has to be made
+> deliberately. [`labs/common/verdict.py`](https://github.com/uoftasic/dd104/blob/main/labs/common/verdict.py)
+> is the one place in DD104 that makes it.
 
 ### Step 5 — Ask the same question a different way
 

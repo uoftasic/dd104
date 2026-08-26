@@ -23,6 +23,7 @@ sys.path.insert(0, COMMON)
 sys.path.insert(0, HERE)
 
 import inject                                   # noqa: E402
+import verdict as V                             # noqa: E402
 from hunt import run_sim, row, RULE, THIN       # noqa: E402
 
 POOL = ["B08", "B13"]
@@ -32,16 +33,45 @@ TB = "test_architecture"
 def main():
     good = run_sim(TB, os.path.join(COMMON, "rtl"),
                    os.path.join(HERE, "build", "blind-golden"))
-    print(row("ok" if good.all_passed else "FAIL", "the golden core", good))
+    print(row(good.mark("pass"), "the golden core", good))
     if not good.launched:
         for l in good.log.strip().splitlines()[-20:]:
             print("   " + l)
         return 1
 
+    # This demonstration only means anything if the testbench actually runs.
+    # A test that blew up would print three identical rows too, and they would
+    # be three crashes rather than three green passes -- the opposite lesson,
+    # told in the same shape.
+    if not good.all_passed:
+        print(THIN)
+        V.report_problems(good)
+        if good.broken:
+            V.broken_testbench_verdict(good, "the golden core")
+        elif good.ran == 0:
+            V.no_tests_ran_verdict(good)
+        else:
+            print(" Stopping: test_architecture.py does not pass the golden core,")
+            print(" so 'it passes on the broken ones too' is not a thing this run")
+            print(" can show you.")
+        print(RULE)
+        return 1
+
+    blew_up = []
     for b in POOL:
         rtl = inject.build(b, os.path.join(HERE, "build", "blind", b))
         r = run_sim(TB, rtl, os.path.join(HERE, "build", "blind", b, "run"))
-        print(row("MISSED" if r.all_passed else "caught", b, r))
+        if r.broken:
+            blew_up.append((b, r))
+        print(row(r.mark("fail"), b, r))
+
+    if blew_up:
+        print(THIN)
+        for b, r in blew_up:
+            V.report_problems(r)
+        V.broken_testbench_verdict(blew_up[0][1], blew_up[0][0])
+        print(RULE)
+        return 1
 
     print(THIN)
     print(" Three identical green rows. Every architectural result on all three")
