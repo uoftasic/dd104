@@ -234,7 +234,8 @@ rewriting.)
 different views of one bug. Undo the edit; `make sim` is green again.
 
 **Why an engineer cares:** you have now watched your own testbench catch a bug you planted, in
-a design you understand, in eight seconds. Everything in Lab 1 onward is that, on a processor,
+a design you understand, in eight seconds. Everything in
+[Lab 02](labs/lab-02-the-only-test-this-chip-has-overview.md) onward is that, on a processor,
 with bugs somebody else planted.
 
 Next: [Waveforms when the assertion is not enough](guide/waveforms.md).
