@@ -453,12 +453,23 @@ class SimProc:
         await self.uart_cmd(CMD_SET_PC, addr=addr)
 
     async def run_cycles(self, n):
-        """Run the loaded program for `n` clock cycles of EXECUTION, then halt.
+        """Run the loaded program, counting `n` clock cycles of EXECUTION.
 
         The count starts at the first instruction fetch, not at the moment the
         RUN command was sent — see `_go`.  Use this when the question is about
         time rather than about the answer: 'after 40 clocks, how far has it
-        got?'"""
+        got?'
+
+        ⚠ This COUNTS n cycles.  It does not FREEZE the machine after them.
+        When the count is reached the harness sends HALT, and HALT is a UART
+        command in flight — the core keeps executing until it arrives.
+        MEASURED, on 40 unimplemented opcodes (3 cycles each, no parking loop):
+        at the moment the count reached 10 the PC was 3, which is right; by the
+        time the core came to rest the PC was 20.  So read the state you want
+        INSIDE a watcher of your own if you need it at cycle n exactly, or give
+        the program a parking loop and use `run()`.  `test_api_tour.py`'s a04
+        measures both.
+        """
         async def watcher():
             was = self.fsm()
             started = False

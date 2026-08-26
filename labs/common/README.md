@@ -167,6 +167,11 @@ verdict it must provoke written in its own docstring. See [`selftest/README.md`]
 | `test_example.py` | **six worked tests.** Copy this file and change it — that is the intended workflow. |
 | `test_reference.py` | **eleven tests that catch all thirteen bugs.** Read it *after* you have written your own. |
 | `test_shuttle.py` | the test the chip actually shipped with, untouched. |
+| `test_api_tour.py` | **every entry point in this directory, once, with its answer printed.** Nine tests, 535,650 ns, ~5 s. The source for [the harness reference](https://uoftasic.com/dd104/#/reference/the-harness-api). |
+| `test_values_only.py` | a thorough testbench that never reads a flag — and therefore **cannot** catch `B03`. `make check TB=test_values_only BUG=B03` says `MISSED`. |
+| `test_handshake_timing.py` | how long the chip's receiver is busy, measured: `START=16 RECEIVE=288 DONE=32`, and what a BFM that ignores the last one does to the next byte. |
+| `test_two_simulators.py` | one test, two simulators, two different answers about the same read — and identical simulated time. |
+| `test_b01_repro.py` | a minimal reproducer as a bug report should ship one. Three tests: one fails on `B01`, two pass on purpose. |
 | `check.py` | the verdict: your testbench against the good core and a broken one. |
 | `verdict.py` | **how a results file is read.** The one place that tells *the assertion fired* apart from *the test blew up*. Every checker in the course imports it. |
 | `selftest/` | **does the grader actually grade?** Deliberately broken testbenches, and the verdict each one must provoke. `make selftest`. |
@@ -284,16 +289,20 @@ and `t05_a_loop_and_its_cycle_count` gets the same 109 out of the actual silicon
 is the check worth internalising: `30 + (4+4+3)×5 + 24 = 109`, and if the hardware says 114
 then something takes one extra cycle five times, which is once per loop iteration.
 
-**Icarus vs Verilator**, same six tests, same result:
+**Icarus vs Verilator**, same six tests, same result, same simulated time:
 
 | | wall clock | of which simulating |
 |---|---|---|
-| Icarus | 7.2 s | 4.4 s |
-| Verilator | 17.3 s | 2.0 s |
+| Icarus | 5.8–6.8 s | 4.4–4.7 s |
+| Verilator | 16.0–16.4 s (first build in a container) | 1.9–2.0 s |
+| Verilator, once `ccache` is warm | 3.2–3.6 s | 1.9–2.0 s |
 
-Verilator simulates more than twice as fast and takes fifteen seconds to build first. For a
-test you are running every ninety seconds while you debug, Icarus wins on the number that
-matters. Icarus is the default here for that reason, not because it is better.
+Verilator simulates **2.3×** faster and spends about fifteen seconds in `g++` before the first
+run — measured: six cache misses, 16.04 s; six hits, 3.60 s. For a test you are running every
+ninety seconds while you debug, Icarus wins on the number that matters, which is why it is the
+default. On a long run it flips: `test_values_only` is 22.5 s under Icarus and 8.5 s under a
+warmed-up Verilator. Full measurement:
+[Two simulators, two jobs](https://uoftasic.com/dd104/#/guide/two-simulators-two-jobs).
 
 ---
 
