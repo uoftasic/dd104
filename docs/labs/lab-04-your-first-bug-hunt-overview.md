@@ -15,7 +15,7 @@ specifically, and it is worth understanding why before you start.
   [The golden model](guide/the-golden-model.md) and
   [Directed, random, and the gap](guide/directed-random-and-the-gap.md)
 - [The SimProc instruction set](reference/simproc-instruction-set.md) and
-  [The SimProc harness](reference/the-harness-api.md) *(not yet written)* open in other tabs
+  [The SimProc harness](reference/the-harness-api.md) open in other tabs
 
 ## Objectives
 

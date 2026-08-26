@@ -372,10 +372,78 @@ def part3():
     return bad == 0
 
 
+# ─────────────────────────────────────────────────────────────────────────────
+# PART 4 — the answer key agrees with the catalogue
+# ─────────────────────────────────────────────────────────────────────────────
+#
+# `bugs.py` is what the tooling prints: `make bugs` groups by tier, and every
+# `check-all` row is labelled `tier N`.  `labs/simproc/solutions/bug-NN.md` is
+# what a student reads when they give up.  When those two disagree the course
+# is telling one story to the grader and another to the reader.
+#
+# They did disagree: six of the thirteen answer files carried a tier that
+# `bugs.py` does not, left over from a five-lab plan the course no longer has.
+# Nothing executed those numbers, so nothing caught them. This part does.
+
+SOLUTIONS = os.path.join(LABS, "simproc", "solutions")
+
+HEADER = re.compile(r"Catalogue \*\*(B\d\d)\*\*\.\s*Tier (\d)", re.M)
+
+# Which shipped lab each tier is met in. Derived from the tooling, not from
+# prose: lab-03/check.py sweeps ALU_BUGS (tier 1), and selftest's own HUNT_LABS
+# deals B04 (tier 2) into lab-04, B08 (tier 4) into lab-05, B11 (tier 5) into
+# lab-06. Tier 3 is hunted in lab-04 alongside tier 2.
+TIER_LAB = {1: "Lab 03", 2: "Lab 04", 3: "Lab 04", 4: "Lab 05", 5: "Lab 06"}
+
+
+def part4():
+    print(RULE)
+    print(" PART 4   the answer key agrees with bugs.py")
+    print(RULE)
+    sys.path.insert(0, COMMON)
+    from bugs import BUGS                        # noqa: E402
+
+    by_num = {name[:3]: name for name in BUGS}
+    bad = 0
+    for i in range(1, len(BUGS) + 1):
+        b = f"B{i:02d}"
+        f = os.path.join(SOLUTIONS, f"bug-{i:02d}.md")
+        if not os.path.exists(f):
+            print(f"  {'WRONG':>6}  bug-{i:02d}.md is missing")
+            bad += 1
+            continue
+        m = HEADER.search(open(f).read())
+        if not m:
+            print(f"  {'WRONG':>6}  bug-{i:02d}.md has no 'Catalogue **BNN**. Tier N' header")
+            bad += 1
+            continue
+        got_bug, got_tier = m.group(1), int(m.group(2))
+        want_tier = BUGS[by_num[b]]["tier"]
+        hits = []
+        if got_bug != b:
+            hits.append(f"header says {got_bug}, file is bug-{i:02d}")
+        if got_tier != want_tier:
+            hits.append(f"says tier {got_tier}, bugs.py says tier {want_tier}")
+        # the lab named on the header line must be the one that tier is met in
+        line = m.string[m.start():m.string.find("\n", m.start())]
+        want_lab = TIER_LAB[want_tier]
+        if want_lab not in line:
+            hits.append(f"does not name {want_lab}, where tier {want_tier} is met")
+        bad += bool(hits)
+        print(f"  {'ok' if not hits else 'WRONG':>6}  bug-{i:02d}.md")
+        for h in hits:
+            print(f"          {h}")
+    print(THIN)
+    print(f" {len(BUGS) - bad} of {len(BUGS)} answer files match the catalogue.")
+    print(RULE)
+    return bad == 0
+
+
 def main():
     full = os.environ.get("FULL", "").strip().lower() not in ("", "0", "no", "false")
     ok = part1()
     ok = part3() and ok
+    ok = part4() and ok
     ok = part2(full) and ok
     print("")
     print(" SELFTEST: PASS" if ok else " SELFTEST: FAIL")

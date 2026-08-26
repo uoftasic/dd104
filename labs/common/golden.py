@@ -17,7 +17,7 @@ Why bother, when you could just write `assert sp.reg(1) == 5`?
   * It fails with a location.  "instruction 6 disagreed" beats "the final
     answer was wrong" by about half an hour.
 
-And the honest limitation, which DD104 makes you meet in Lab 1: **a model only
+And the honest limitation, which DD104 makes you meet in Lab 05: **a model only
 checks what it models.**  This one has no concept of `done`, `halt`, cycle
 counts or the UART.  A bug in any of those is invisible to it — not because the
 model is bad, but because those are not the same kind of property.  You need a

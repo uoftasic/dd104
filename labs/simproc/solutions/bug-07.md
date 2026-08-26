@@ -1,6 +1,6 @@
 # bug-07 — `LOAD` addresses memory with `rA`
 
-Catalogue **B07**. Tier 2, Lab 2. **The set piece of the whole catalogue.**
+Catalogue **B07**. Tier 2, Lab 04. **The set piece of the whole catalogue.**
 
 ```diff
 --- a/src/simproc_system.sv     line 589, CYCLE_3, the LOAD clause
@@ -42,7 +42,7 @@ blind spot, wrote a test that shared it, and only found out because someone
 deliberately broke the thing the test was supposed to be watching. T08's 600
 random instructions also miss it.
 
-Tell students that story before Lab 2 and again after. It is the argument for
+Tell students that story before Lab 04 and again after. It is the argument for
 fault injection, made from inside the course's own history rather than from a
 textbook.
 

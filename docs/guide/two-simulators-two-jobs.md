@@ -236,7 +236,7 @@ this design at all:
 Those are the same twelve warnings the lint run prints. Verilator treats warnings as fatal by
 default, which is a reasonable policy for code you own and an impossible one for code you have
 been handed to test. **Do not read `-Wno-fatal` as "the warnings do not matter."** Read it as
-"this design does not lint clean, that is a finding, and the finding is Lab 2's."
+"this design does not lint clean, that is a finding, and the finding is Lab 02's."
 
 ## Try this
 

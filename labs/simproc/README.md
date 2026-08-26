@@ -44,17 +44,17 @@ catalogue letters `B01` … `B13` used in the planning notes — `bug-07` is `B0
 
 | | Variant | Caught by | Hidden because |
 |---|---|---|---|
-| **Lab 1** — unit-test the ALU | `bug-01` | ALU sweep, T01, T08 | `A-B == B-A` on 512 of 65,536 vectors, and `SUB rX,rX` is one of them |
+| **Tier 1** — the ALU, on its own (Lab 03) | `bug-01` | ALU sweep, T01, T08 | `A-B == B-A` on 512 of 65,536 vectors, and `SUB rX,rX` is one of them |
 | | `bug-02` | ALU sweep, T01, T08 | `NAND rX,rX` is how you write NOT, and NOR agrees with NAND on exactly those 256 vectors |
 | | `bug-03` | ALU sweep (flags only), T03, T06, T10 | every value is right; only N and Z are wrong, and 600 random instructions miss it |
-| **Lab 2** — decode and the register file | `bug-04` | 7 of 10 | invisible whenever rA == rB |
+| **Tier 2** — decode and the register file (Lab 04) | `bug-04` | 7 of 10 | invisible whenever rA == rB |
 | | `bug-06` | T03, T08 — **not** the ALU sweep | shift by 0 and 1 are correct, and 1 is what everyone writes |
 | | `bug-07` | T10 only | `LOAD r1,r1` is a real idiom and is correct under the bug |
-| **Lab 3** — control flow | `bug-05` | T04, T07, T08 | every forward branch is exactly right |
+| **Tier 3** — control flow (Lab 04) | `bug-05` | T04, T07, T08 | every forward branch is exactly right |
 | | `bug-09` | T05, T08 | one branch after a compare works perfectly; two do not |
-| **Lab 4** — the protocol, not the data | `bug-08` | T09 only | every architectural result is correct |
+| **Tier 4** — protocol, not data (Lab 05) | `bug-08` | T09 only | every architectural result is correct |
 | | `bug-13` | T07 only | functionally identical output, one wasted cycle |
-| **Lab 5** — capstone | `bug-10` | T02, T03, T08 | `0 \| imm == 0 + imm`, so the first ORI after reset is always right |
+| **Tier 5** — the hard end (Lab 06) | `bug-10` | T02, T03, T08 | `0 \| imm == 0 + imm`, so the first ORI after reset is always right |
 | | `bug-11` | 7 of 10 | after reset both registers hold 0, so the first ORI looks correct |
 | | `bug-12` | the baud sweep only | invisible at the default baud; `PING` still answers `0xAA` over a link that cannot carry data |
 

@@ -235,7 +235,7 @@ About **5 seconds**. It ends on `VERDICT: FAIL`, and that is correct.
   make
   ```
 
-  About **13 seconds**, because it builds the design twice with Verilator — Icarus has no
+  About **11 seconds**, because it builds the design twice with Verilator — Icarus has no
   coverage instrumentation, so this is the one place in the early course where the strict
   simulator is the only one that can answer.
 

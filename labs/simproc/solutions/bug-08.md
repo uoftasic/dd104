@@ -1,6 +1,6 @@
 # bug-08 — `STORE` never pulses `done`
 
-Catalogue **B08**. Tier 3, Lab 4 (the protocol, not the data).
+Catalogue **B08**. Tier 4, Lab 05 (protocol, not data).
 
 ```diff
 --- a/src/simproc_system.sv     line 602, CYCLE_3, the STORE clause

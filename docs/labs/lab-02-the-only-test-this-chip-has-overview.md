@@ -14,7 +14,7 @@ against thirteen deliberately broken versions of the chip, and all thirteen are 
 - [Lab 01](labs/lab-01-the-adder-you-already-trust-overview.md) complete — `make check` said `VERDICT: PASS`
 - Read [SimProc in one page](guide/simproc-in-one-page.md) and
   [Driving and checking a design](guide/driving-and-checking.md)
-- Skim [Two simulators, two jobs](guide/two-simulators-two-jobs.md) *(not yet written)* — you will meet Verilator properly in Lab 03
+- Skim [Two simulators, two jobs](guide/two-simulators-two-jobs.md) — this lab is where Verilator's twelve lint warnings on SimProc become a finding
 - `cocotb-config --version` says **`2.0.1`**
 
 > **This lab includes `../common/lab.mk`.** You need the whole repository checked out, not just

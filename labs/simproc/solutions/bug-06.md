@@ -1,6 +1,6 @@
 # bug-06 — the shift amount loses a bit
 
-Catalogue **B06**. Tier 2, Lab 2.
+Catalogue **B06**. Tier 2, Lab 04.
 
 ```diff
 --- a/src/simproc_system.sv     line 579, CYCLE_3, the SHIFT operand

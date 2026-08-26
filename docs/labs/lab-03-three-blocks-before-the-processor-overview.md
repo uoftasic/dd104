@@ -14,7 +14,7 @@ tractable ones.
 - [Lab 02](labs/lab-02-the-only-test-this-chip-has-overview.md) complete — you have produced `13 of 13`
 - Read [The lazy testbench](guide/the-lazy-testbench.md),
   [Coverage as a question](guide/coverage-is-a-question.md) and
-  [Flags are architectural state](guide/flags-are-state.md) *(not yet written)*
+  [Flags are architectural state](guide/flags-are-state.md)
 - [SimProc in one page](guide/simproc-in-one-page.md) open in another tab
 
 ## Objectives

@@ -14,8 +14,8 @@ This is the shortest lab in the course and the sharpest.
 ## Prerequisites
 
 - [Lab 04](labs/lab-04-your-first-bug-hunt-overview.md) complete — you have a suite you trust
-- Read [The handshake is part of the contract](guide/the-handshake-is-the-contract.md) *(not yet written)*
-- [The SimProc harness](reference/the-harness-api.md) *(not yet written)* open in another tab
+- Read [The handshake is part of the contract](guide/the-handshake-is-the-contract.md)
+- [The SimProc harness](reference/the-harness-api.md) open in another tab
 
 ## Objectives
 

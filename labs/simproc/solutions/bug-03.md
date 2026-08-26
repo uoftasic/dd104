@@ -1,6 +1,6 @@
 # bug-03 — the `Z` flag only sees the low nibble
 
-Catalogue **B03**. Tier 1, Lab 1.
+Catalogue **B03**. Tier 1, Lab 03.
 
 ```diff
 --- a/src/simproc_system.sv     line 822, the ALU's flag logic

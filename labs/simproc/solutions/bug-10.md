@@ -1,6 +1,6 @@
 # bug-10 — `ORI` adds instead of ORing
 
-Catalogue **B10**. Tier 4, Lab 5 (capstone).
+Catalogue **B10**. Tier 5, Lab 06 (the hard end).
 
 ```diff
 --- a/src/simproc_system.sv     line 678, CYCLE_4, the ORI clause

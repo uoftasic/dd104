@@ -1,7 +1,7 @@
 # `labs/common` — the harness, the assembler, and the verdict
 
 This is the shared infrastructure every DD104 lab imports. You do not have to read all of it
-before Lab 1, but everything here is written to be read: the harness is the worked example for
+before Lab 01, but everything here is written to be read: the harness is the worked example for
 the code the labs ask you to write.
 
 ```bash

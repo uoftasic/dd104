@@ -28,7 +28,8 @@ itself is 0.3 s of that. No environment variables, no `pip install`, no paths to
 | `tc` | `en & (q == 8'hFF)` — high on the cycle before the count wraps |
 
 It is small enough to hold in your head, and its pin conventions (active-low reset,
-synchronous reset) are SimProc's, so nothing you learn here has to be unlearned in Lab 1.
+synchronous reset) are SimProc's, so nothing you learn here has to be unlearned when
+you meet SimProc in Lab 02.
 
 `rtl/counter_broken.sv` is the same file with `en &` deleted from `tc`, and nothing else.
 **Every value of `q` is still correct on every cycle.** Only the flag is wrong, and only while
