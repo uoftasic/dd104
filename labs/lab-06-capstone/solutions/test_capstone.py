@@ -364,7 +364,7 @@ async def t09_branches_go_backwards_too(dut):
     for disp in range(-8, 8):
         await sp.reset()
         for a in range(64):
-            sp.poke(a, 0x0C)                  # an unimplemented opcode: 3 cycles,
+            sp.poke(a, 0x0C)                  # an unimplemented opcode: 4 cycles,
         sp.poke(base, JMP(disp))              # PC+1, no state change
         await sp.set_pc(base)
         await sp.step()

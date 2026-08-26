@@ -55,8 +55,9 @@ Every instruction is 8 bits.  Three field layouts share the byte:
   1011   (SHIFT again — the 3-LSB alias)                              4
   1111   (ORI again — the 3-LSB alias)                                5
   1100
-  1101   UNIMPLEMENTED: 3 cycles, PC+1, nothing else happens,
-  1110                  and `done` never pulses
+  1101   UNIMPLEMENTED: 4 cycles, PC+1, nothing else happens,
+  1110                  `done` never pulses, and `halt` blips high for
+                        one of those four cycles
 
 Four things about this ISA that will bite you if you skip them:
 
@@ -153,7 +154,11 @@ def BZ(disp):
 # ── not an instruction ───────────────────────────────────────────────────────
 
 def UNIMP():
-    """Opcode 0xC: three cycles, PC+1, no state change, and no `done` pulse.
+    """Opcode 0xC: four cycles, PC+1, no state change, and no `done` pulse.
+
+    Four, not three: it matches no clause in CYCLE_3, so the FSM falls to its
+    default exit — IDLE — and spends a cycle there before `run` sends it back
+    to CYCLE_1.  `halt` is high for that one cycle.  Measured.
 
     Useful as memory filler.  If the core runs off the end of your program it
     will walk through these harmlessly instead of executing whatever byte

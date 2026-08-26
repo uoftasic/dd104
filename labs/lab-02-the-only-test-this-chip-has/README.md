@@ -98,7 +98,7 @@ They are notes. Icarus is telling you it will make a process sensitive to a whol
 instead of a slice of it — more sensitivity, not less. Exit code 0, simulation correct. A real
 Icarus failure starts a line with `error:` and stops.
 
-**`make: *** [../common/lab.mk:64: check] Error 1`** under a `VERDICT: FAIL`. A failed verdict
+**`make: *** [../common/lab.mk:66: check] Error 1`** under a `VERDICT: FAIL`. A failed verdict
 exits non-zero on purpose. That line is the verdict talking, not a broken Makefile.
 
 ## Definition of done

@@ -130,8 +130,9 @@ STATE_NAMES = ["IDLE", "CYCLE_1", "CYCLE_2", "CYCLE_3", "CYCLE_4", "CYCLE_5", "?
 
 MEM_DEPTH = 64          # dp_ram is 64 bytes.  Addresses 64..255 read X.
 
-FILLER = UNIMP()        # 0x0C: an unimplemented opcode. Three cycles, PC+1,
-                        # nothing else, and no `done` pulse.
+FILLER = UNIMP()        # 0x0C: an unimplemented opcode. Four cycles, PC+1,
+                        # nothing else, and no `done` pulse — but `halt` does
+                        # blip high for one of the four. See simproc_asm.UNIMP.
 PARK = JMP(-1)          # 0xF1: a jump to itself. The idiom for "the program is
                         # over" on a machine with no HALT instruction.
 
@@ -185,7 +186,7 @@ class SimProc:
         """Start the clock, reset the chip, blank the RAM, and start listening.
 
         `fill` is what unwritten memory gets.  The default is 0x0C, an
-        unimplemented opcode: three cycles, PC+1, no state change.  So if your
+        unimplemented opcode: four cycles, PC+1, no state change.  So if your
         program runs off its own end, the core walks harmlessly through filler
         instead of executing whatever happened to be lying in memory.
 

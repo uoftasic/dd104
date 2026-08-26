@@ -11,10 +11,10 @@ specifically, and it is worth understanding why before you start.
 ## Prerequisites
 
 - [Lab 03](labs/lab-03-three-blocks-before-the-processor-overview.md) complete — `3 of 3 ALU bugs caught`
-- Read [Where bugs hide](guide/where-bugs-hide.md) *(not yet written)*,
-  [The golden model](guide/the-golden-model.md) *(not yet written)* and
-  [Directed, random, and the gap](guide/directed-random-and-the-gap.md) *(not yet written)*
-- [The SimProc instruction set](reference/simproc-instruction-set.md) *(not yet written)* and
+- Read [Where bugs hide](guide/where-bugs-hide.md),
+  [The golden model](guide/the-golden-model.md) and
+  [Directed, random, and the gap](guide/directed-random-and-the-gap.md)
+- [The SimProc instruction set](reference/simproc-instruction-set.md) and
   [The SimProc harness](reference/the-harness-api.md) *(not yet written)* open in other tabs
 
 ## Objectives

@@ -98,12 +98,62 @@ And the other outcome, which is the one worth reading carefully:
   The verdict above is FAIL, so this target exits non-zero and make
   prints an error line under this one. That is the verdict talking,
   not a broken Makefile.
-make: *** [lab.mk:64: check] Error 1
+make: *** [lab.mk:66: check] Error 1
 ```
 
 `make: *** Error 1` after a FAIL verdict is correct and expected. `make` reports a non-zero
 exit from anything it runs, and a failed verdict is a non-zero exit on purpose — so this is
 usable from a script or a CI job without anyone having to grep the text.
+
+---
+
+## "It FAILED" and "it blew up" are different sentences
+
+There is a third row this verdict can print, and it is the one that matters most:
+
+```
+      ok  the golden core                    6 tests, all passed          7.1s
+  BROKEN  B01_sub_operands_swapped           6 tests, 1 BLEW UP           7.4s
+        t03_arithmetic_on_different_values   <- this test BLEW UP; it checked nothing
+            NameError: name 'diagnosis' is not defined
+------------------------------------------------------------------------
+ VERDICT: FAIL -- 1 of your tests did not run to the end.
+   On B01_sub_operands_swapped, it raised NameError before any comparison
+   happened.
+```
+
+A test that raises `NameError` has not caught a bug. Python stopped *before* the comparison, so
+the run says nothing at all about that core — and it would say the same nothing about a
+perfectly correct one. cocotb writes both outcomes into `results.xml` as `<failure>`, which is
+why this needs saying: a checker that reads them the same way counts a testbench that crashed
+as a testbench that caught something, and prints `caught`.
+
+DD104 shipped exactly that bug. A student was told **`3 of 3 ALU bugs caught`** by a testbench
+whose exhaustive test raised `NameError` on every core it was pointed at. The three catches
+were three crashes.
+
+[`verdict.py`](verdict.py) is the one place the two are told apart, and every `check.py` and
+`hunt.py` in the course reads it from there rather than deciding for itself:
+
+| in `results.xml` | means | counts as |
+|---|---|---|
+| nothing inside `<testcase>` | passed | a pass |
+| `error_type="AssertionError"` | your `assert` fired | **caught** |
+| `error_type="TimeoutError"`, `"SimTimeoutError"`, `"ValueError"` | the harness proved the design misbehaved — a hang, a reply that never came, an X on a pin | **caught** |
+| `error_type="NameError"`, `"TypeError"`, `"AttributeError"`, … | the testbench blew up | **neither** — `BROKEN` |
+| `<failure>` with no `error_type` | cocotb could not even start the test | **neither** |
+| `<skipped/>` | never ran | not a pass |
+
+The list is a whitelist, not a blacklist, on purpose. Being wrong the other way round means
+printing PASS.
+
+```bash
+make selftest            # the classifier and a source audit. Under a second.
+make selftest FULL=1     # ... and every checker in the course, for real.
+```
+
+`selftest/` holds testbenches that are deliberately broken in specific ways, each with the
+verdict it must provoke written in its own docstring. See [`selftest/README.md`](selftest/README.md).
 
 ---
 
@@ -118,7 +168,10 @@ usable from a script or a CI job without anyone having to grep the text.
 | `test_reference.py` | **eleven tests that catch all thirteen bugs.** Read it *after* you have written your own. |
 | `test_shuttle.py` | the test the chip actually shipped with, untouched. |
 | `check.py` | the verdict: your testbench against the good core and a broken one. |
+| `verdict.py` | **how a results file is read.** The one place that tells *the assertion fired* apart from *the test blew up*. Every checker in the course imports it. |
+| `selftest/` | **does the grader actually grade?** Deliberately broken testbenches, and the verdict each one must provoke. `make selftest`. |
 | `bugs.py` | the bug catalogue — thirteen one-line edits, with what each one teaches. |
+| `gap.py` | **what the random generator covers, and what it cannot.** Nine bug-shaped windows, counted over the seeds `R10` runs and over a thousand more. No simulator. |
 | `inject.py` | builds a broken core from the catalogue. Refuses if the RTL has drifted. |
 | `rtl/` | the processor. Provenance and the four comment lines DD104 changed: [`rtl/README.md`](rtl/README.md). |
 | `Makefile`, `lab.mk`, `sim.mk` | the targets. `lab.mk` is what a lab includes; `sim.mk` is the only place a simulator is ever launched. |
@@ -136,6 +189,9 @@ usable from a script or a CI job without anyone having to grep the text.
 | `make check-all` | your testbench against all thirteen broken cores | 68.8 s |
 | `make bugs` | the catalogue: names, tiers, and what each one teaches | instant |
 | `make model` | run `golden.py` alone — no simulator involved | instant |
+| `make gap` | what the random generator covers, and what it cannot | 0.9 s |
+| `make selftest` | does the grader actually grade? classifier + source audit | 0.3 s |
+| `make selftest FULL=1` | ... and every checker in the course, end to end | minutes |
 | `make verify` | confirm every catalogue anchor still matches `rtl/` | instant |
 | `make shuttle` | the shipped test, against everything | 18.5 s |
 | `make clean` | remove `build/`, `waves.vcd`, `__pycache__` | |
@@ -214,7 +270,7 @@ Instruction timing, which you can add up by hand:
 | `ORI` | 5 |
 | `ADD` `SUB` `NAND` `SHL` `SHR` `LOAD` | 4 |
 | `STORE` `JMP` `BZ` `BNZ` `BPZ` | 3 |
-| an unimplemented opcode (`0xC`, `0xD`, `0xE`) | 3, and no `done` pulse |
+| an unimplemented opcode (`0xC`, `0xD`, `0xE`) | 4, no `done` pulse, and one cycle of `halt` |
 
 `make model` runs the sum-of-1-to-5 program through `golden.py`:
 

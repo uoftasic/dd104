@@ -24,7 +24,7 @@ def peek(dut, a):
     return int(dut.tt_um_ieeeuoftasic_simproc.U1.RAM1.mem[a].value)
 
 
-FILL = 0x0C          # an unimplemented opcode: 3 cycles, changes nothing
+FILL = 0x0C          # an unimplemented opcode: 4 cycles, changes nothing
 
 
 def rf(dut, i):
