@@ -28,6 +28,11 @@ that is not the ALU.  Verification is largely the business of shrinking the
 place a bug could be hiding.
 """
 
+# Every test here carries a wall-clock guard. cocotb's timeout_time raises
+# SimTimeoutError instead of spinning forever, which matters most in the bug-hunt
+# labs: a core with a seeded bug can simply never finish, and a bisecting loop that
+# waits for a signal that never arrives will otherwise run until you kill it.
+# 5 ms is ~150x the longest legitimate run in this course (33,290 ns).
 import cocotb
 from cocotb.triggers import Timer
 
@@ -82,7 +87,7 @@ async def alu(dut, op, a, b):
 # 1.  One vector per operation, chosen on purpose
 # ─────────────────────────────────────────────────────────────────────────────
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def t01_one_vector_per_operation(dut):
     """Six vectors.  Every one of them uses two different operand values.
 
@@ -111,7 +116,7 @@ async def t01_one_vector_per_operation(dut):
 # 2.  Exhaustive — on the values
 # ─────────────────────────────────────────────────────────────────────────────
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def t02_every_vector_the_alu_can_be_given(dut):
     """All 393,216 legal vectors, checking `ALUout` and nothing else.
 
@@ -173,7 +178,7 @@ async def t02_every_vector_the_alu_can_be_given(dut):
 # 3.  The two opcodes nobody specified
 # ─────────────────────────────────────────────────────────────────────────────
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def t03_the_undefined_opcodes(dut):
     """ALUop 6 and 7 are not in the enum.  They still do something.
 

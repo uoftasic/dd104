@@ -12,12 +12,17 @@ exactly which, and the guide page "cocotb 2.x vs every tutorial you will find"
 explains why.
 """
 
+# Every test here carries a wall-clock guard. cocotb's timeout_time raises
+# SimTimeoutError instead of spinning forever, which matters most in the bug-hunt
+# labs: a core with a seeded bug can simply never finish, and a bisecting loop that
+# waits for a signal that never arrives will otherwise run until you kill it.
+# 5 ms is ~150x the longest legitimate run in this course (33,290 ns).
 import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import RisingEdge, Timer
 
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def counts_up(dut):
     """Reset the counter, let it count once, and check that it did."""
 

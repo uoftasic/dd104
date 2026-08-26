@@ -13,12 +13,17 @@ PASSES.  Run it and read the warnings -- they are the whole point.
     make oldapi
 """
 
+# Every test here carries a wall-clock guard. cocotb's timeout_time raises
+# SimTimeoutError instead of spinning forever, which matters most in the bug-hunt
+# labs: a core with a seeded bug can simply never finish, and a bisecting loop that
+# waits for a signal that never arrives will otherwise run until you kill it.
+# 5 ms is ~150x the longest legitimate run in this course (33,290 ns).
 import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import Timer
 
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def the_old_spelling_still_runs(dut):
     # 1.x spelling. Works, warns.
     cocotb.start_soon(Clock(dut.clk, 10, units="ns").start())

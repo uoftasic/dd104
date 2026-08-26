@@ -40,6 +40,11 @@ nothing to say about a handshake -- it is the reason a suite needs more than
 one kind of test in it.
 """
 
+# Every test here carries a wall-clock guard. cocotb's timeout_time raises
+# SimTimeoutError instead of spinning forever, which matters most in the bug-hunt
+# labs: a core with a seeded bug can simply never finish, and a bisecting loop that
+# waits for a signal that never arrives will otherwise run until you kill it.
+# 5 ms is ~150x the longest legitimate run in this course (33,290 ns).
 import cocotb
 
 from simproc import SimProc
@@ -69,7 +74,7 @@ PROGRAM = """
 # 1.  The architecture is fine.  Watch.
 # ─────────────────────────────────────────────────────────────────────────────
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def t01_every_value_is_correct(dut):
     """Registers and memory, checked after the program runs.
 
@@ -94,7 +99,7 @@ async def t01_every_value_is_correct(dut):
 # 2.  A scoreboard triggered on `done`
 # ─────────────────────────────────────────────────────────────────────────────
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def t02_the_scoreboard_that_stopped_scoring(dut):
     """Count `done` pulses, which is the number of comparisons a done-triggered
     scoreboard would have made.

@@ -12,6 +12,11 @@ Read `test_example.py` for tests worth copying.  Read this one to find out
 what you are allowed to ask for.
 """
 
+# Every test here carries a wall-clock guard. cocotb's timeout_time raises
+# SimTimeoutError instead of spinning forever, which matters most in the bug-hunt
+# labs: a core with a seeded bug can simply never finish, and a bisecting loop that
+# waits for a signal that never arrives will otherwise run until you kill it.
+# 5 ms is ~150x the longest legitimate run in this course (33,290 ns).
 import cocotb
 from cocotb.triggers import RisingEdge
 
@@ -22,7 +27,7 @@ from simproc_asm import (ORI, ADD, SUB, NAND, SHL, SHR, LOAD, STORE,
 from golden import Golden, compare_memory
 
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def a01_construct_start_and_reset(dut):
     """SimProc(dut) -- start() -- reset()."""
     sp = SimProc(dut, clock_ns=10, uio=8)
@@ -41,7 +46,7 @@ async def a01_construct_start_and_reset(dut):
     assert sp.peek(0) == 0x5A
 
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def a02_the_backdoor(dut):
     """poke() -- peek() -- load() -- memory().
 
@@ -75,7 +80,7 @@ async def a02_the_backdoor(dut):
         dut._log.info(f"poke(64, 0) raises: {str(e).splitlines()[0]}")
 
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def a03_reading_the_machine(dut):
     """reg() regs() pc() flags() fsm() halt done snapshot() describe()."""
     sp = SimProc(dut)
@@ -94,7 +99,7 @@ async def a03_reading_the_machine(dut):
                   f"(the UART TX pin, idle high)")
 
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def a04_making_it_go(dut):
     """run() -- step() -- run_cycles() -- set_pc()."""
     sp = SimProc(dut)
@@ -129,7 +134,7 @@ async def a04_making_it_go(dut):
                   f"the core keeps going.")
 
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def a05_protocol_counters(dut):
     """count_done_pulses() -- count_halt_cycles()."""
     sp = SimProc(dut)
@@ -155,7 +160,7 @@ async def a05_protocol_counters(dut):
                   f"pulses: 0x{UNIMP():02X} retires nothing")
 
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def a06_the_wire(dut):
     """uart_ping() uart_write() uart_read() uart_get_pc() set_baud() send_byte()."""
     sp = SimProc(dut)
@@ -180,7 +185,7 @@ async def a06_the_wire(dut):
                   f"0x{await sp.recv_byte():02X}")
 
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def a07_the_assembler(dut):
     """instruction helpers -- set_reg() -- assemble() -- listing() -- disasm()."""
     sp = SimProc(dut)
@@ -211,7 +216,7 @@ async def a07_the_assembler(dut):
     dut._log.info(f"and the hardware agrees: r1 = 0x{sp.reg(1):02X}")
 
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def a08_the_golden_model(dut):
     """Golden -- step() -- run() -- snapshot() -- compare_memory()."""
     sp = SimProc(dut)
@@ -233,7 +238,7 @@ async def a08_the_golden_model(dut):
     assert diffs == [], f"memory disagrees at {diffs}"
 
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def a09_trace_against_the_model(dut):
     """trace(sp, n, model=g) -- the call that names the first disagreement."""
     sp = SimProc(dut)

@@ -9,6 +9,11 @@ page "Clocks, resets and triggers" quotes them.
     make triggers
 """
 
+# Every test here carries a wall-clock guard. cocotb's timeout_time raises
+# SimTimeoutError instead of spinning forever, which matters most in the bug-hunt
+# labs: a core with a seeded bug can simply never finish, and a bisecting loop that
+# waits for a signal that never arrives will otherwise run until you kill it.
+# 5 ms is ~150x the longest legitimate run in this course (33,290 ns).
 import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import (RisingEdge, FallingEdge, ClockCycles, Timer,
@@ -36,7 +41,7 @@ async def reset(dut, cycles=2):
 # 1.  A clock is a task you start, not a setting you configure
 # ─────────────────────────────────────────────────────────────────────────────
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def a_clock_is_a_background_task(dut):
     """Time does not pass until something drives the clock -- and the first
     edge is free.
@@ -78,7 +83,7 @@ async def a_clock_is_a_background_task(dut):
 # 2.  The read-after-the-edge race — the one that bites everybody
 # ─────────────────────────────────────────────────────────────────────────────
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def read_after_the_edge(dut):
     """`await RisingEdge(clk)` returns AT the edge, not after it.
 
@@ -119,7 +124,7 @@ async def read_after_the_edge(dut):
 # 3.  Timer: absolute time, no clock involved
 # ─────────────────────────────────────────────────────────────────────────────
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def timer_is_absolute_time(dut):
     """Timer waits wall-clock-in-the-simulation, whatever the clock is doing.
 
@@ -152,7 +157,7 @@ async def timer_is_absolute_time(dut):
 # 4.  ClockCycles counts edges, and it counts them from where you are
 # ─────────────────────────────────────────────────────────────────────────────
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def clockcycles_counts_edges(dut):
     """ClockCycles(clk, n) is n edges, which is n periods only if you are
     already sitting on an edge when you call it."""
@@ -187,7 +192,7 @@ async def clockcycles_counts_edges(dut):
 # 5.  Reset is a protocol, and this design's is synchronous
 # ─────────────────────────────────────────────────────────────────────────────
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def reset_needs_an_edge(dut):
     """Proving, rather than assuming, that rst_n does nothing without a clock.
 
@@ -228,7 +233,7 @@ async def reset_needs_an_edge(dut):
 # 6.  Waiting for something that might never happen
 # ─────────────────────────────────────────────────────────────────────────────
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def a_wait_that_cannot_hang(dut):
     """`await RisingEdge(dut.tc)` on a signal that never rises hangs forever.
 

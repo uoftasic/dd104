@@ -14,6 +14,11 @@ the design -- no re-running, no adding prints, no opening a waveform.
 
 import random
 
+# Every test here carries a wall-clock guard. cocotb's timeout_time raises
+# SimTimeoutError instead of spinning forever, which matters most in the bug-hunt
+# labs: a core with a seeded bug can simply never finish, and a bisecting loop that
+# waits for a signal that never arrives will otherwise run until you kill it.
+# 5 ms is ~150x the longest legitimate run in this course (33,290 ns).
 import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import RisingEdge, FallingEdge, ClockCycles, Timer
@@ -55,7 +60,7 @@ def state(dut):
 # 1.  Load, then count: the ordinary path
 # ─────────────────────────────────────────────────────────────────────────────
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def load_then_count(dut):
     """load puts a value in; en advances it by exactly one per clock."""
     await start(dut)
@@ -82,7 +87,7 @@ async def load_then_count(dut):
 # 2.  en low means en low
 # ─────────────────────────────────────────────────────────────────────────────
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def enable_holds_the_count(dut):
     """With en low, twenty clocks change nothing.
 
@@ -109,7 +114,7 @@ async def enable_holds_the_count(dut):
 # 3.  load beats en — the priority the RTL commits to
 # ─────────────────────────────────────────────────────────────────────────────
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def load_wins_over_enable(dut):
     """Both controls high at once. Somebody has to win; check it is load.
 
@@ -135,7 +140,7 @@ async def load_wins_over_enable(dut):
 # 4.  tc — the output a value-only test never looks at
 # ─────────────────────────────────────────────────────────────────────────────
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def terminal_count_needs_enable(dut):
     """tc is `en & (q == 255)`, and the `en &` is the half that gets lost.
 
@@ -179,7 +184,7 @@ async def terminal_count_needs_enable(dut):
 # 5.  The wrap, and the cycle it happens on
 # ─────────────────────────────────────────────────────────────────────────────
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def the_wrap_is_where_the_bugs_live(dut):
     """255 -> 0, checked on the exact cycle, with tc checked on both sides."""
     await start(dut)
@@ -212,7 +217,7 @@ async def the_wrap_is_where_the_bugs_live(dut):
 # 6.  A reference model, and 400 random clocks against it
 # ─────────────────────────────────────────────────────────────────────────────
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def against_a_reference_model(dut):
     """Six lines of Python that are the counter, checked every single clock.
 

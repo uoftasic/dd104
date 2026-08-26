@@ -15,6 +15,11 @@ SystemVerilog.  A student team designed it and taped it out.
 It shipped with one test.  You are about to read it.
 """
 
+# Every test here carries a wall-clock guard. cocotb's timeout_time raises
+# SimTimeoutError instead of spinning forever, which matters most in the bug-hunt
+# labs: a core with a seeded bug can simply never finish, and a bisecting loop that
+# waits for a signal that never arrives will otherwise run until you kill it.
+# 5 ms is ~150x the longest legitimate run in this course (33,290 ns).
 import cocotb
 from cocotb.triggers import ClockCycles
 
@@ -26,7 +31,7 @@ from simproc_asm import ORI, SUB, set_reg
 # 1.  The shipped test, reproduced here so you can read it in context
 # ─────────────────────────────────────────────────────────────────────────────
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def t01_the_test_this_chip_shipped_with(dut):
     """`test/test.py` from the SimProc repository, in three lines.
 
@@ -64,7 +69,7 @@ async def t01_the_test_this_chip_shipped_with(dut):
 # 2.  The same three pins, read as three pins
 # ─────────────────────────────────────────────────────────────────────────────
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def t02_what_that_number_meant(dut):
     """Same instant, same chip, the assertion written so a person can read it.
 
@@ -91,7 +96,7 @@ async def t02_what_that_number_meant(dut):
 # 3.  Make it do something
 # ─────────────────────────────────────────────────────────────────────────────
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def t03_one_instruction_that_actually_runs(dut):
     """Load a program, run it, and check a register.
 

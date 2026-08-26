@@ -22,6 +22,11 @@ Icarus never mentions it, and shows it to you at run time as an X on a pin --
 if your test happens to read one of those addresses.
 """
 
+# Every test here carries a wall-clock guard. cocotb's timeout_time raises
+# SimTimeoutError instead of spinning forever, which matters most in the bug-hunt
+# labs: a core with a seeded bug can simply never finish, and a bisecting loop that
+# waits for a signal that never arrives will otherwise run until you kill it.
+# 5 ms is ~150x the longest legitimate run in this course (33,290 ns).
 import cocotb
 from cocotb.triggers import RisingEdge
 
@@ -43,7 +48,7 @@ async def read_raw(sp, addr, timeout_cycles=20000):
     raise TimeoutError(f"no reply to READ {addr} in {timeout_cycles} clocks")
 
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def s01_the_same_read_off_the_end_of_the_ram(dut):
     """Read address 100. The RAM has 64 entries. Ask each simulator what happens."""
     sp = SimProc(dut)
@@ -83,7 +88,7 @@ async def s01_the_same_read_off_the_end_of_the_ram(dut):
             "you about this line at LINT time instead; Icarus never does.")
 
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def s02_simulated_time_is_identical(dut):
     """The thing the two simulators never disagree about.
 

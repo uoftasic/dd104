@@ -46,6 +46,11 @@ THE HARNESS, IN ONE SCREEN
 Full reference: ../common/README.md and the docstrings in ../common/simproc.py.
 """
 
+# Every test here carries a wall-clock guard. cocotb's timeout_time raises
+# SimTimeoutError instead of spinning forever, which matters most in the bug-hunt
+# labs: a core with a seeded bug can simply never finish, and a bisecting loop that
+# waits for a signal that never arrives will otherwise run until you kill it.
+# 5 ms is ~150x the longest legitimate run in this course (33,290 ns).
 import cocotb
 
 from simproc import SimProc, PARK, trace
@@ -58,7 +63,7 @@ from golden import Golden, compare_memory
 # 1.  Arithmetic
 # ─────────────────────────────────────────────────────────────────────────────
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def t01_arithmetic(dut):
     """ADD, SUB and NAND on operands that are not equal to each other.
 
@@ -81,7 +86,7 @@ async def t01_arithmetic(dut):
 # 2.  Shifts
 # ─────────────────────────────────────────────────────────────────────────────
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def t02_shifts(dut):
     """Shift left and shift right.
 
@@ -101,7 +106,7 @@ async def t02_shifts(dut):
 # 3.  Memory
 # ─────────────────────────────────────────────────────────────────────────────
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def t03_load_and_store(dut):
     """Put a byte in memory, read it back through a pointer.
 
@@ -124,7 +129,7 @@ async def t03_load_and_store(dut):
 # 4.  A loop
 # ─────────────────────────────────────────────────────────────────────────────
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def t04_a_loop(dut):
     """Sum 1..5 and store the answer, with an exact cycle count.
 

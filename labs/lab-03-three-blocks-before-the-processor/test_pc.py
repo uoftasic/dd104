@@ -29,6 +29,11 @@ This file ships complete.  Read it, run it, and use it as the model for the
 register-file tests you write in `test_rf.py`.
 """
 
+# Every test here carries a wall-clock guard. cocotb's timeout_time raises
+# SimTimeoutError instead of spinning forever, which matters most in the bug-hunt
+# labs: a core with a seeded bug can simply never finish, and a bisecting loop that
+# waits for a signal that never arrives will otherwise run until you kill it.
+# 5 ms is ~150x the longest legitimate run in this course (33,290 ns).
 import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import RisingEdge, Timer
@@ -60,7 +65,7 @@ async def cycle(dut, rst, pc_wr, pc_in):
     return int(dut.pc_out.value)
 
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def t01_reset_makes_it_zero(dut):
     """rst = 1 for one edge puts the counter at 0, from anywhere."""
     await setup(dut)
@@ -71,7 +76,7 @@ async def t01_reset_makes_it_zero(dut):
     assert pc == 0, f"after reset pc_out is 0x{pc:02X}, expected 0x00"
 
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def t02_load_when_pc_wr(dut):
     """pc_wr = 1 loads pc_in on the next rising edge.  All 256 values."""
     await setup(dut)
@@ -81,7 +86,7 @@ async def t02_load_when_pc_wr(dut):
     dut._log.info("all 256 values load correctly")
 
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def t03_hold_when_not_pc_wr(dut):
     """pc_wr = 0 holds, no matter what is on pc_in.
 
@@ -98,7 +103,7 @@ async def t03_hold_when_not_pc_wr(dut):
             f"0x{pc:02X}. It should still be 0x42.")
 
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def t04_reset_beats_load(dut):
     """rst and pc_wr both high: reset wins.
 

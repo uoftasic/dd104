@@ -13,6 +13,11 @@ Nothing in here needs the processor to execute anything.  The whole subject is
 the wire.
 """
 
+# Every test here carries a wall-clock guard. cocotb's timeout_time raises
+# SimTimeoutError instead of spinning forever, which matters most in the bug-hunt
+# labs: a core with a seeded bug can simply never finish, and a bisecting loop that
+# waits for a signal that never arrives will otherwise run until you kill it.
+# 5 ms is ~150x the longest legitimate run in this course (33,290 ns).
 import cocotb
 from cocotb.triggers import RisingEdge, ClockCycles
 from cocotb.utils import get_sim_time
@@ -76,7 +81,7 @@ async def send_frame_only(sp, value):
         await ClockCycles(sp.dut.clk, sp.clk_per_bit)
 
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def t01_where_the_receiver_spends_its_time(dut):
     """Send one byte. Measure every state the receiver sits in, in clocks."""
     sp = SimProc(dut)
@@ -125,7 +130,7 @@ async def t01_where_the_receiver_spends_its_time(dut):
         f"got {total} vs {frame}")
 
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def t02_the_gap_is_not_politeness(dut):
     """The same three bytes, sent back to back with no idle between frames.
 
@@ -181,7 +186,7 @@ async def t02_the_gap_is_not_politeness(dut):
             f"and PC = {late[1]}; got {[hex(b) for b in got]} and PC = {bad}")
 
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def t03_a_ping_still_works_without_the_gap(dut):
     """...and this is why nobody catches it.
 
@@ -198,7 +203,7 @@ async def t03_a_ping_still_works_without_the_gap(dut):
     assert reply == 0xAA, f"PING answered 0x{reply:02X}, expected 0xAA"
 
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def t04_what_a_command_costs_and_the_head_start(dut):
     """Two numbers every SimProc testbench depends on and nobody derives.
 

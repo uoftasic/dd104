@@ -81,6 +81,11 @@ file, or import them. `make check-all` scores whatever this module contains.
 ────────────────────────────────────────────────────────────────────────────
 """
 
+# Every test here carries a wall-clock guard. cocotb's timeout_time raises
+# SimTimeoutError instead of spinning forever, which matters most in the bug-hunt
+# labs: a core with a seeded bug can simply never finish, and a bisecting loop that
+# waits for a signal that never arrives will otherwise run until you kill it.
+# 5 ms is ~150x the longest legitimate run in this course (33,290 ns).
 import cocotb
 
 from simproc import SimProc, PARK, trace
@@ -89,7 +94,7 @@ from simproc_asm import (ORI, ADD, SUB, NAND, SHL, SHR, LOAD, STORE,
 from golden import Golden, compare_memory
 
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def t01_the_chip_answers(dut):
     """A PING, and a warning about what it proves.
 
