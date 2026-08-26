@@ -5,8 +5,14 @@
 #
 #   make new        deal a mystery core into core/   <- start here
 #   make hunt       your testbench against core/     <- the loop you live in
+#   make probe      the same run, showing everything the simulator prints
 #   make verdict    the grade: golden PASS, dealt core FAIL, core/ PASS
 #   make reveal     give up, and be told which bug it was
+#
+# hunt and verdict print a summary and swallow the simulator's output so the
+# verdict stays a readable table.  `make probe` swallows nothing: your
+# print() and dut._log lines, live, plus the command it ran.  Equivalently,
+# `make hunt VERBOSE=1` / `make verdict VERBOSE=1`.
 #
 #   make sim        your testbench against the golden core (from ../common/lab.mk)
 #   make check BUG=B04   the two-sided check against a NAMED bug, no mystery
@@ -23,7 +29,9 @@ SELF   := $(abspath .)
 
 include $(COMMON)/lab.mk
 
-.PHONY: new hunt verdict reveal
+VERBOSE ?=
+
+.PHONY: new hunt probe verdict reveal
 
 ## new — deal a mystery core into core/ (this deletes any core/ you have)
 new:
@@ -31,11 +39,15 @@ new:
 
 ## hunt — your testbench against core/, with no grade attached
 hunt:
-	@$(PYTHON) $(SELF)/hunt.py hunt TB=$(TB) SIM=$(SIM)
+	@$(PYTHON) $(SELF)/hunt.py hunt TB=$(TB) SIM=$(SIM) VERBOSE=$(VERBOSE)
+
+## probe — hunt, showing everything the simulator prints (print(), dut._log)
+probe:
+	@$(PYTHON) $(SELF)/hunt.py probe TB=$(TB) SIM=$(SIM)
 
 ## verdict — the grade
 verdict:
-	@$(PYTHON) $(SELF)/hunt.py verdict TB=$(TB) SIM=$(SIM) || { \
+	@$(PYTHON) $(SELF)/hunt.py verdict TB=$(TB) SIM=$(SIM) VERBOSE=$(VERBOSE) || { \
 	  echo ""; \
 	  echo "  The verdict above is FAIL, so this target exits non-zero and make"; \
 	  echo "  prints an error line under this one. That is the verdict talking,"; \

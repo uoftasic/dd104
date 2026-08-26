@@ -12,6 +12,7 @@ cd labs/lab-05-every-answer-is-right
 make blind       # start here: watch a complete architectural suite miss both
 make new
 make hunt
+make probe       # the same run, with the simulator's output shown
 make verdict
 ```
 
@@ -45,7 +46,8 @@ bugs is in architectural state.
 |---|---|
 | `make blind` | the demonstration above |
 | `make new` | deal a mystery core into `core/` |
-| `make hunt` | your testbench against `core/` |
+| `make hunt` | your testbench against `core/` — summary only |
+| `make probe` | the same run, showing the simulator's own output: every `print()`, every `dut._log` line, live. `make hunt VERBOSE=1` is the same thing, and `make verdict VERBOSE=1` does it for all three rows. See [Lab 04's README](../lab-04-your-first-bug-hunt/README.md#seeing-your-own-output--make-probe). |
 | `make verdict` | the three-row grade (see [Lab 04's README](../lab-04-your-first-bug-hunt/README.md)) |
 | `make reveal` | give up |
 | `make sim` | your testbench against the golden core |

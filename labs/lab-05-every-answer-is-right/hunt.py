@@ -3,6 +3,7 @@ DD104 — the bug hunt.
 
     make new        deal a mystery core.  You are not told which bug it is.
     make hunt       your testbench against that core -- the loop you live in
+    make probe      the same run, showing the simulator's own output
     make verdict    the grade
     make reveal     give up, and be told the name
 
@@ -28,6 +29,7 @@ cannot get a green row 2 by editing the file the test runs against.
 import base64
 import os
 import random
+import shlex
 import shutil
 import subprocess
 import textwrap
@@ -78,7 +80,13 @@ class Result:
         return f"{self.tests} tests, {len(self.failures)} FAILED"
 
 
-def run_sim(tb, rtl_dir, build_dir, sim="icarus"):
+def run_sim(tb, rtl_dir, build_dir, sim="icarus", stream=False):
+    """Run one simulation.  With stream=True the simulator's own output goes
+    to your terminal as it happens -- every print() and every dut._log line.
+
+    Quiet is the default because the verdict is a table and a table with 200
+    lines of Icarus in the middle of it is not a table.  Quiet is NOT the
+    default because you are not supposed to see this; see `make probe`."""
     results = os.path.join(build_dir, "results.xml")
     os.makedirs(build_dir, exist_ok=True)
     if os.path.exists(results):
@@ -91,9 +99,28 @@ def run_sim(tb, rtl_dir, build_dir, sim="icarus"):
         f"COCOTB_RESULTS_FILE={results}",
     ]
     t0 = time.time()
-    proc = subprocess.run(cmd, cwd=HERE, capture_output=True, text=True)
+    if stream:
+        # Line-buffered passthrough: you see it while it runs, AND we keep a
+        # copy, so the "simulator never launched" report below still works.
+        head, tail = cmd[:4], cmd[4:]
+        print(f"  $ cd {shlex.quote(HERE)} && \\")
+        print("    " + " ".join(shlex.quote(c) for c in head) + " \\")
+        for i, a in enumerate(tail):
+            print(f"      {shlex.quote(a)}" + (" \\" if i < len(tail) - 1 else ""))
+        print(THIN)
+        proc = subprocess.Popen(cmd, cwd=HERE, stdout=subprocess.PIPE,
+                                stderr=subprocess.STDOUT, text=True, bufsize=1)
+        chunks = []
+        for line in proc.stdout:
+            sys.stdout.write(line)
+            sys.stdout.flush()
+            chunks.append(line)
+        proc.wait()
+        log = "".join(chunks)
+    else:
+        proc = subprocess.run(cmd, cwd=HERE, capture_output=True, text=True)
+        log = proc.stdout + proc.stderr
     elapsed = time.time() - t0
-    log = proc.stdout + proc.stderr
 
     if not os.path.exists(results):
         return Result(0, [], elapsed, log, launched=False)
@@ -173,26 +200,45 @@ def row(mark, label, r):
     return f"  {mark:>6}  {label:<42} {r.summary():<24} {r.seconds:5.1f}s"
 
 
-def hunt(tb, sim="icarus"):
-    """Run the testbench against core/ and print what happened.  No grade."""
+def hunt(tb, sim="icarus", verbose=False):
+    """Run the testbench against core/ and print what happened.  No grade.
+
+    verbose=True (`make probe`, or `make hunt VERBOSE=1`) streams the
+    simulator's own stdout, which is where your print() and dut._log lines
+    are."""
     if not os.path.exists(CORE):
         print("There is no core/ yet. Run `make new` first.")
         return 1
     name = unseal()
     print(RULE)
-    print(f" HUNT   testbench: {tb}   target: core/")
+    print(f" {'PROBE' if verbose else 'HUNT '}  testbench: {tb}   target: core/")
     print(RULE)
-    r = run_sim(tb, CORE, os.path.join(HERE, "build", "hunt"), sim=sim)
-    print(row("caught" if r.failures else "quiet", "core/  the mystery", r))
+    if verbose:
+        print(" Showing everything the simulator says. Your print() and dut._log")
+        print(" lines are in here, in the order they happened.")
+        print(THIN)
+    r = run_sim(tb, CORE, os.path.join(HERE, "build", "hunt"),
+                sim=sim, stream=verbose)
+    if verbose:
+        print(THIN)
+    mark = "caught" if r.failures else ("!" if not r.launched else "quiet")
+    print(row(mark, "core/  the mystery", r))
     for tname, msg in r.failures[:6]:
         print(f"        {tname}")
         print(f"            {msg[:100]}")
     print(THIN)
     if not r.launched:
-        print(" The simulator never produced a results file. That is a setup problem,")
-        print(" not a test failure. The last 20 lines of its output:")
-        for l in r.log.strip().splitlines()[-20:]:
-            print("   " + l)
+        if verbose:
+            print(" The simulator never produced a results file. That is a setup problem,")
+            print(" not a test failure. Its output is above, in full.")
+        else:
+            print(" The simulator never produced a results file. That is a setup problem,")
+            print(" not a test failure. The last 20 lines of its output:")
+            for l in r.log.strip().splitlines()[-20:]:
+                print("   " + l)
+            print("")
+            print(" `make probe` re-runs this with the whole log, not the last 20 lines.")
+        print(RULE)
         return 1
     if r.failures:
         print(" Something in this core disagrees with your testbench. That is not")
@@ -202,11 +248,21 @@ def hunt(tb, sim="icarus"):
         print(" Nothing your testbench drives can tell this core from a correct")
         print(" one. The bug is real and it is in there; your stimulus has not")
         print(" reached it yet. Widen the stimulus, not the assertions.")
+    if not verbose:
+        arg = "" if tb == "test_lab05" else f" TB={tb}"
+        print("")
+        print(" To WATCH it instead of being told about it -- every print(), every")
+        print(" dut._log line, live, plus the command to run by hand:")
+        print("")
+        print(f"     make probe{arg}")
+        print("")
+        print(f" (`make hunt{arg} VERBOSE=1` is the same target. `make verdict")
+        print("  VERBOSE=1` does it for all three rows of the grade.)")
     print(RULE)
     return 0
 
 
-def verdict(tb, sim="icarus"):
+def verdict(tb, sim="icarus", verbose=False):
     name = unseal()
     if not os.path.exists(CORE) or name is None:
         print("There is no core/ yet. Run `make new` first.")
@@ -216,8 +272,18 @@ def verdict(tb, sim="icarus"):
     print(f" VERDICT   testbench: {tb}   simulator: {sim}")
     print(RULE)
 
+    def banner(n, what):
+        if verbose:
+            print(THIN)
+            print(f" row {n} -- {what}: the simulator's own output")
+            print(THIN)
+
+    banner(1, "the golden core")
     good = run_sim(tb, os.path.join(COMMON, "rtl"),
-                   os.path.join(HERE, "build", "golden"), sim=sim)
+                   os.path.join(HERE, "build", "golden"),
+                   sim=sim, stream=verbose)
+    if verbose:
+        print(THIN)
     print(row("ok" if good.all_passed else "FAIL",
               "1. the golden core          must PASS", good))
     if not good.launched:
@@ -233,14 +299,22 @@ def verdict(tb, sim="icarus"):
 
     # Row 2 is rebuilt from the catalogue, never read from core/.
     fresh = inject.build(name, os.path.join(HERE, "build", "original"))
-    orig = run_sim(tb, fresh, os.path.join(HERE, "build", "original", "run"), sim=sim)
+    banner(2, "the core you were dealt")
+    orig = run_sim(tb, fresh, os.path.join(HERE, "build", "original", "run"),
+                   sim=sim, stream=verbose)
+    if verbose:
+        print(THIN)
     caught = orig.launched and orig.tests > 0 and bool(orig.failures)
     print(row("caught" if caught else "MISSED",
               "2. the core you were dealt  must FAIL", orig))
     for tname, msg in orig.failures[:4]:
         print(f"        {tname}\n            {msg[:100]}")
 
-    fixed = run_sim(tb, CORE, os.path.join(HERE, "build", "fixed"), sim=sim)
+    banner(3, "core/ as it stands now")
+    fixed = run_sim(tb, CORE, os.path.join(HERE, "build", "fixed"),
+                    sim=sim, stream=verbose)
+    if verbose:
+        print(THIN)
     print(row("ok" if fixed.all_passed else "FAIL",
               "3. core/ as it stands now   must PASS", fixed))
     for tname, msg in fixed.failures[:4]:
@@ -300,11 +374,16 @@ if __name__ == "__main__":
     mode = sys.argv[1] if sys.argv[1:] and "=" not in sys.argv[1] else "hunt"
     tb = args.get("TB", "test_lab05")
     sim = args.get("SIM", "icarus")
+    # VERBOSE= is empty when the Makefile passes it through unset, so anything
+    # that is not empty and not a literal 0/no/false turns streaming on.
+    verbose = args.get("VERBOSE", "").strip().lower() not in ("", "0", "no", "false")
     if mode == "new":
         deal(args.get("BUG"))
         sys.exit(0)
     if mode == "reveal":
         sys.exit(reveal())
+    if mode == "probe":
+        sys.exit(hunt(tb, sim, verbose=True))
     if mode == "verdict":
-        sys.exit(verdict(tb, sim))
-    sys.exit(hunt(tb, sim))
+        sys.exit(verdict(tb, sim, verbose=verbose))
+    sys.exit(hunt(tb, sim, verbose=verbose))

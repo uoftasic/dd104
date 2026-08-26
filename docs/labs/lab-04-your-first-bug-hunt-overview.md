@@ -128,6 +128,9 @@ make new
   them. Both were written on purpose to have a blind spot, and both blind spots are ones you
   will produce by accident for the rest of your career.
 
+  `hunt` is deliberately quiet — it summarises so that the loop stays a loop. The moment you
+  want to *watch* a run instead of being told about it, that is **`make probe`** (Step 3).
+
 ### Step 3 — Bisect, do not stare
 
 - **Try this:** work down the question list. Each answer is one small program.
@@ -143,6 +146,41 @@ make new
   # Q4 -- which register ends up wrong?
   print(sp.regs())          # all four at once. A tuple, not a list.
   ```
+
+  Run those with **`make probe`**, not `make hunt`. `hunt` prints a one-line summary and
+  throws the simulator's output away, so a probe program run under it tells you nothing:
+
+  ```
+     quiet  core/  the mystery                         1 tests, all passed        2.4s
+  ```
+
+  `make probe` is the same run with nothing swallowed — your `print()`, your `dut._log.info`,
+  every Icarus line, live as it happens, plus the exact `make -f sim.mk …` command it used so
+  you can run it by hand:
+
+  ```
+  ========================================================================
+   PROBE  testbench: test_probe   target: core/
+  ========================================================================
+   Showing everything the simulator says. Your print() and dut._log
+   lines are in here, in the order they happened.
+  ------------------------------------------------------------------------
+    $ cd /work/labs/lab-04-your-first-bug-hunt && \
+      make -f /work/labs/common/sim.mk sim \
+        COMMON=/work/labs/common \
+        TB=test_probe \
+        ...
+  ------------------------------------------------------------------------
+  ...
+       0.00ns INFO     cocotb.regression   running test_probe.t_probe (1/1)
+  PROBE-PRINT regs = (60, 4, 60, 0)
+   33290.00ns INFO     cocotb.tb           PROBE-LOG regs = (60, 4, 60, 0)
+  ```
+
+  Put your probes in their own file and point `probe` at it — `make probe TB=test_probe` — so
+  the suite you are building in `test_lab04.py` stays a suite and does not fill up with
+  scaffolding you will delete. `make hunt VERBOSE=1` is the same target under another name, and
+  `make verdict VERBOSE=1` does it for all three rows of the grade.
 
 - **What you should see:** a shrinking list. If arithmetic with `rA == rB` is right and
   arithmetic with `rA != rB` is wrong, questions 1, 3 and 4 have all been answered at once and
@@ -268,6 +306,7 @@ make new
 | tests failing on `B09`, ten-test suite | **1** | **GOLDEN** |
 | tests failing on `B04` / `B06` / `B05` | 8 / 8 / 2 | **GOLDEN** |
 | `make hunt` wall clock | 3–10 s depending on suite size | BALLPARK |
+| `make probe TB=…`, testbench that `print()`s | the `print()` appears in the terminal | |
 
 > The `sorry:` notes and `make: *** [...] Error 1` under a FAIL verdict are both still normal.
 > [Output that is not an error](reference/output-that-is-not-an-error.md).

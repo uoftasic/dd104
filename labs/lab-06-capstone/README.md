@@ -10,6 +10,7 @@ test suite of your own that catches all thirteen.
 cd labs/lab-06-capstone
 make new           # one of the hard three
 make hunt
+make probe       # the same run, with the simulator's output shown
 make verdict
 make check-all     # the thing that graduates you
 ```
@@ -38,7 +39,8 @@ simulations. That is BALLPARK; the `13 of 13` is not.
 | | |
 |---|---|
 | `make new` | deal one of `B10`, `B11`, `B12` into `core/` |
-| `make hunt` | your suite against `core/`, no grade |
+| `make hunt` | your suite against `core/`, no grade — summary only |
+| `make probe` | the same run, showing the simulator's own output: every `print()`, every `dut._log` line, live. `make hunt VERBOSE=1` is the same thing, and `make verdict VERBOSE=1` does it for all three rows. See [Lab 04's README](../lab-04-your-first-bug-hunt/README.md#seeing-your-own-output--make-probe). |
 | `make verdict` | the three-row grade (see [Lab 04's README](../lab-04-your-first-bug-hunt/README.md)) |
 | `make reveal` | give up |
 | `make check-all` | **the capstone deliverable**: your suite against all thirteen |

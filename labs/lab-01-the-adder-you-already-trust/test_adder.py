@@ -16,10 +16,32 @@ written for 1.x, and two of the renames bite immediately:
     Timer(1, unit="ns")          2.x.   1.x said units=  (plural)
     COCOTB_TEST_MODULES=...      2.x.   1.x said MODULE=
 
-`units=` still runs in 2.0.1 and prints a DeprecationWarning.  `MODULE=` is
-worse: cocotb finds no tests, runs nothing, reports TESTS=0 and exits 0.  A
-green run that tested nothing is the exact failure this course is about, and
-you can cause it with an environment variable.
+MEASURED on the 2.0.1 in the workbench: BOTH of these still work through
+cocotb's own makefiles.  Each prints one deprecation line and then runs the
+test normally --
+
+    DeprecationWarning: The 'units' argument has been renamed to 'unit'.
+    Makefile.icarus:66: Using MODULE is deprecated, please use
+                        COCOTB_TEST_MODULES instead.
+
+-- so if your run is red, neither of these is why.  Write the new spellings
+anyway; a deprecation is a countdown.  (`MODULE=` is mapped by the makefiles,
+not by cocotb itself, so anything that bypasses them -- the Python runner,
+pytest, a hand-written vvp line -- reads only COCOTB_TEST_MODULES.)
+
+The three that DO stop you, none of which mentions a version:
+
+    cocotb.fork(...)     AttributeError: module 'cocotb' has no attribute 'fork'
+    @cocotb.coroutine    AttributeError: module 'cocotb' has no attribute 'coroutine'
+    dut.sig <= 1         TypeError: '<=' not supported between instances of
+                                    'LogicObject' and 'int'
+
+Use cocotb.start_soon(...), a plain `async def`, and dut.sig.value = 1.
+
+For a green run that really did test nothing -- which IS the failure this
+course is about -- run `python3 -m pytest test_adder.py` (collected 0 items,
+exit 5, nothing simulated), or put a typo in COCOTB_TESTCASE.  Both are
+written up in docs/guide/what-a-testbench-is.md.
 """
 
 import cocotb

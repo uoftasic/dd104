@@ -13,6 +13,7 @@ core and passes on the new one.
 cd labs/lab-04-your-first-bug-hunt
 make new         # deal a mystery core into core/
 make hunt        # your testbench against it -- the loop you live in
+make probe       # the same run, showing everything the simulator prints
 make verdict     # the grade
 ```
 
@@ -45,7 +46,8 @@ rewrite, done by somebody who has never heard of you.
 | | |
 |---|---|
 | `make new` | deal a mystery core into `core/` — **this deletes any `core/` you have** |
-| `make hunt` | your testbench against `core/`, with no grade attached |
+| `make hunt` | your testbench against `core/`, with no grade attached — **summary only** |
+| `make probe` | the same run, **showing the simulator's own output**: every `print()`, every `dut._log` line, live |
 | `make verdict` | the three rows above |
 | `make reveal` | give up. It tells you the name and what it hides behind, not the line. |
 | `make sim` | your testbench against the golden core |
@@ -57,6 +59,58 @@ rewrite, done by somebody who has never heard of you.
 
 `make new BUGPICK=B06` deals a specific one, for when you want to practise a shape rather than
 be surprised.
+
+## Seeing your own output — `make probe`
+
+`make hunt` and `make verdict` capture the simulator's stdout and print a summary of it, so the
+verdict stays a readable table. That is deliberate, and it is wrong for exactly one job: running
+a small probe program and reading what it prints. Under `hunt`, a testbench full of
+`print(sp.regs())` gives you this and nothing else:
+
+```
+   quiet  core/  the mystery                         1 tests, all passed        2.4s
+```
+
+**`make probe` is the escape hatch.** Same run, same core, nothing swallowed:
+
+```console
+$ make probe TB=test_probe
+========================================================================
+ PROBE  testbench: test_probe   target: core/
+========================================================================
+ Showing everything the simulator says. Your print() and dut._log
+ lines are in here, in the order they happened.
+------------------------------------------------------------------------
+  $ cd /work/labs/lab-04-your-first-bug-hunt && \
+    make -f /work/labs/common/sim.mk sim \
+      COMMON=/work/labs/common \
+      TB=test_probe \
+      SIM=icarus \
+      RTL_DIR=/work/labs/lab-04-your-first-bug-hunt/core \
+      SIM_BUILD=/work/labs/lab-04-your-first-bug-hunt/build/hunt/sim \
+      COCOTB_RESULTS_FILE=/work/labs/lab-04-your-first-bug-hunt/build/hunt/results.xml
+------------------------------------------------------------------------
+     0.00ns INFO     cocotb.regression   running test_probe.t_probe (1/1)
+PROBE-PRINT regs = (60, 4, 60, 0)
+ 33290.00ns INFO     cocotb.tb           PROBE-LOG regs = (60, 4, 60, 0)
+ 33290.00ns INFO     cocotb.regression   test_probe.t_probe passed
+------------------------------------------------------------------------
+   quiet  core/  the mystery                         1 tests, all passed        2.5s
+```
+
+It streams as the simulation runs, so a testbench that hangs shows you *where* it hung, and it
+prints the underlying `make -f sim.mk` command so you can run it by hand without reverse
+engineering `hunt.py`.
+
+| | |
+|---|---|
+| `make probe` | probe `test_lab04.py` |
+| `make probe TB=test_probe` | probe a scratch file — **do this**; `test_probe.py` ships as a starting point |
+| `make hunt VERBOSE=1` | identical to `make probe` |
+| `make verdict VERBOSE=1` | all three rows of the grade, with full output for each |
+
+Keep probes in `test_probe.py` and keep `test_lab04.py` a suite. The grade only ever runs
+`TB=test_lab04`, so scaffolding in the probe file costs you nothing.
 
 ## The pool
 
@@ -71,6 +125,7 @@ verification is.
 | | |
 |---|---|
 | `test_lab04.py` | **the file you edit.** Four tests, all passing, and a TODO list of shapes. |
+| `test_probe.py` | scratch space for probe programs. `make probe TB=test_probe`. Never graded. |
 | `hunt.py` | deals a core, seals which one it was, and runs the three-row grade. |
 | `core/` | created by `make new`. The RTL you edit. Gitignored. |
 | `solutions/` | a ten-test suite that catches all five. Not before your own verdict. |

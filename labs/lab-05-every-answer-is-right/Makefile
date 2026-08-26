@@ -7,6 +7,7 @@
 #                   against BOTH broken cores, watch it pass on both
 #   make new        deal a mystery core into core/
 #   make hunt       your testbench against core/
+#   make probe      the same run, showing everything the simulator prints
 #   make verdict    the grade: golden PASS, dealt core FAIL, core/ PASS
 #   make reveal     give up, and be told which bug it was
 #
@@ -22,7 +23,9 @@ SELF   := $(abspath .)
 
 include $(COMMON)/lab.mk
 
-.PHONY: new hunt verdict reveal blind
+VERBOSE ?=
+
+.PHONY: new hunt probe verdict reveal blind
 
 ## blind — an architecturally complete testbench against both bugs in this lab
 blind:
@@ -38,11 +41,15 @@ new:
 
 ## hunt — your testbench against core/, with no grade attached
 hunt:
-	@$(PYTHON) $(SELF)/hunt.py hunt TB=$(TB) SIM=$(SIM)
+	@$(PYTHON) $(SELF)/hunt.py hunt TB=$(TB) SIM=$(SIM) VERBOSE=$(VERBOSE)
+
+## probe — hunt, showing everything the simulator prints (print(), dut._log)
+probe:
+	@$(PYTHON) $(SELF)/hunt.py probe TB=$(TB) SIM=$(SIM)
 
 ## verdict — the grade
 verdict:
-	@$(PYTHON) $(SELF)/hunt.py verdict TB=$(TB) SIM=$(SIM) || { \
+	@$(PYTHON) $(SELF)/hunt.py verdict TB=$(TB) SIM=$(SIM) VERBOSE=$(VERBOSE) || { \
 	  echo ""; \
 	  echo "  The verdict above is FAIL, so this target exits non-zero and make"; \
 	  echo "  prints an error line under this one. That is the verdict talking,"; \

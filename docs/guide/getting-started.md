@@ -102,32 +102,39 @@ surfer 0.6.0 (git: v0.6.0)
 **`2.0.1` is the number that will save you the most time.** Read the next box before you
 search the internet for anything.
 
-> ### ⚠ cocotb 2.x breaks every cocotb tutorial you will find online
+> ### ⚠ cocotb 2.x breaks some of every cocotb tutorial you will find online
 >
-> cocotb 2.0 renamed things that appear in the first five lines of every 1.x example, and
-> most of what a search engine returns is 1.x. Two renames account for nearly all of it:
+> cocotb 2.0 renamed things that appear in the first five lines of every 1.x example, and most
+> of what a search engine returns is 1.x. The useful split is **what warns** and **what stops
+> you** — and it is a much shorter list of stoppers than you would guess.
 >
-> | 1.x — what you will find online | 2.x — what runs here |
+> **These still run. They print a deprecation warning and carry on.** Measured on the 2.0.1 in
+> your container:
+>
+> | 1.x — what you will find online | what actually happens here |
 > |---|---|
-> | `Timer(1, units="ns")` | `Timer(1, unit="ns")` |
-> | `MODULE = test_thing` in the Makefile | `COCOTB_TEST_MODULES = test_thing` |
+> | `Timer(1, units="ns")` | runs; `DeprecationWarning: The 'units' argument has been renamed to 'unit'.` |
+> | `MODULE = test_thing` in the Makefile | runs; `Makefile.icarus:66: Using MODULE is deprecated, please use COCOTB_TEST_MODULES instead.` |
+> | `sig.value.integer` | runs, with a warning |
 >
-> The first one does not stop you. It warns, and the warning is easy to scroll past:
+> Write the new spellings — `unit=`, `COCOTB_TEST_MODULES=`, `int(sig.value)` — because a
+> deprecation is a countdown. But **do not go looking for a failure that is not there.** If
+> your run is red, `MODULE=` is not why.
 >
-> ```
-> DeprecationWarning: The 'units' argument has been renamed to 'unit'.
-> ```
+> **These are the hard errors.** Three of them, and none mentions a version number:
 >
-> The second one *does* stop you, and the failure is silent in the worst way: cocotb runs, the
-> simulator runs, and no tests are found. And some 1.x code dies with an error that never
-> mentions cocotb versions at all:
+> | 1.x — what you will find online | what it dies with here |
+> |---|---|
+> | `cocotb.fork(coro)` | `AttributeError: module 'cocotb' has no attribute 'fork'` |
+> | `@cocotb.coroutine` | `AttributeError: module 'cocotb' has no attribute 'coroutine'` |
+> | `dut.sig <= 1` | `TypeError: '<=' not supported between instances of 'LogicObject' and 'int'` |
 >
-> ```
-> AttributeError: module 'cocotb' has no attribute 'fork'
-> ```
+> The replacements are `cocotb.start_soon(coro)`, a plain `async def`, and `dut.sig.value = 1`.
+> The third is the nastiest, because in 1.x `<=` was an *assignment* and in Python it has always
+> also been a comparison — so the line looks like Verilog and reads like a question.
 >
-> (`cocotb.fork` became `cocotb.start_soon`.) When a tutorial disagrees with this course, this
-> course is describing the cocotb actually sitting on your disk. The full list is in
+> When a tutorial disagrees with this course, this course is describing the cocotb actually
+> sitting on your disk. The full measured list is in
 > [cocotb 2.x vs every tutorial you will find](guide/cocotb-2x-vs-every-tutorial.md).
 
 `gtkwave --version` is the one version check that will fail on you for an uninteresting
