@@ -1,0 +1,11 @@
+--- a/src/simproc_system.sv
++++ b/src/simproc_system.sv
+@@ -819,7 +819,7 @@
+     end
+ 
+     assign N = ALUout[7];
+-    assign Z = ~(|ALUout);
++    assign Z = ~(|ALUout[3:0]);
+ endmodule
+ 
+ // Dual Port Ram Module

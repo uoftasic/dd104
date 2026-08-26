@@ -1,0 +1,17 @@
+# verify/Makefile.alu -- the ALU on its own, no processor around it.
+#
+#   make -f Makefile.alu CORE=/path/to/working/copy
+#
+# TOPLEVEL is the ALU module inside simproc_system.sv.  Icarus needs -g2012 to
+# compile the SystemVerilog when it is not being pulled in by the wrapper.
+SIM ?= icarus
+WAVES ?= 0
+TOPLEVEL_LANG ?= verilog
+CORE ?= ..
+VERILOG_SOURCES = $(CORE)/src/simproc_system.sv
+TOPLEVEL = ALU
+COCOTB_TEST_MODULES ?= test_alu
+COMPILE_ARGS += -g2012
+SIM_BUILD ?= sim_build/alu
+COCOTB_RESULTS_FILE ?= results_alu.xml
+include $(shell cocotb-config --makefiles)/Makefile.sim

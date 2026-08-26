@@ -1,0 +1,21 @@
+[*] DD104 — a GTKWave save file for labs/cocotb-intro.
+[*] Open it with:  gtkwave counter.fst counter.gtkw
+[*] A .gtkw is just a list of which signals to show. GTKWave opens with an
+[*] EMPTY wave pane by default; this file is how you stop re-adding them.
+[dumpfile] "counter.fst"
+[timestart] 0
+[size] 1360 700
+[signals_width] 200
+[sst_width] 200
+@28
+counter.clk
+counter.rst_n
+counter.en
+counter.load
+@22
+counter.d[7:0]
+counter.q[7:0]
+@28
+counter.tc
+[pattern_trace] 1
+[pattern_trace] 0

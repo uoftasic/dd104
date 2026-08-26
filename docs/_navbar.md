@@ -1,0 +1,4 @@
+- [Guide](guide/getting-started.md)
+- [Labs](labs/lab-01-the-adder-you-already-trust.md)
+- [Reference](reference/simproc-instruction-set.md)
+- [GitHub](https://github.com/uoftasic/dd104)

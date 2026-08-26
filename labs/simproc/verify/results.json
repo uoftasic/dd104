@@ -1,0 +1,464 @@
+[
+ {
+  "variant": "golden",
+  "cat": "-",
+  "boilerplate": "1/1",
+  "compiles": true,
+  "t_boiler": 4.4,
+  "suite32": "10/10",
+  "suite32_fail": [],
+  "suite8": "10/10",
+  "suite8_fail": [],
+  "alu": "1/1",
+  "alu_detail": [
+   "-g2012 -g2012 -f sim_build/alu/cmds.f  ../src/simproc_system.sv",
+   "ALU vectors=393216",
+   "ALU ADD  value_mismatch=     0 flag_mismatch=     0",
+   "ALU SUB  value_mismatch=     0 flag_mismatch=     0",
+   "ALU OR   value_mismatch=     0 flag_mismatch=     0",
+   "ALU NAND value_mismatch=     0 flag_mismatch=     0",
+   "ALU SHL  value_mismatch=     0 flag_mismatch=     0",
+   "ALU SHR  value_mismatch=     0 flag_mismatch=     0"
+  ],
+  "baud": "1/1",
+  "baud_detail": [],
+  "seconds": 70.5
+ },
+ {
+  "variant": "bug-01",
+  "cat": "B01",
+  "boilerplate": "1/1",
+  "compiles": true,
+  "t_boiler": 2.3,
+  "suite32": "8/10",
+  "suite32_fail": [
+   "T01",
+   "T08"
+  ],
+  "suite8": "8/10",
+  "suite8_fail": [
+   "T01",
+   "T08"
+  ],
+  "alu": "0/1",
+  "alu_detail": [
+   "-g2012 -g2012 -f sim_build/alu/cmds.f  ../src/simproc_system.sv",
+   "ALU vectors=393216",
+   "ALU ADD  value_mismatch=     0 flag_mismatch=     0",
+   "ALU SUB  value_mismatch= 65024 flag_mismatch= 65024",
+   "ALU OR   value_mismatch=     0 flag_mismatch=     0",
+   "ALU NAND value_mismatch=     0 flag_mismatch=     0",
+   "ALU SHL  value_mismatch=     0 flag_mismatch=     0",
+   "ALU SHR  value_mismatch=     0 flag_mismatch=     0",
+   "disagrees with the spec on 65024 values and 65024 flag pairs",
+   "disagrees with the spec on 65024 values and 65024 flag pairs"
+  ],
+  "baud": "1/1",
+  "baud_detail": [],
+  "seconds": 62.9
+ },
+ {
+  "variant": "bug-02",
+  "cat": "B02",
+  "boilerplate": "1/1",
+  "compiles": true,
+  "t_boiler": 1.8,
+  "suite32": "8/10",
+  "suite32_fail": [
+   "T01",
+   "T08"
+  ],
+  "suite8": "8/10",
+  "suite8_fail": [
+   "T01",
+   "T08"
+  ],
+  "alu": "0/1",
+  "alu_detail": [
+   "-g2012 -g2012 -f sim_build/alu/cmds.f  ../src/simproc_system.sv",
+   "ALU vectors=393216",
+   "ALU ADD  value_mismatch=     0 flag_mismatch=     0",
+   "ALU SUB  value_mismatch=     0 flag_mismatch=     0",
+   "ALU OR   value_mismatch=     0 flag_mismatch=     0",
+   "ALU NAND value_mismatch= 65280 flag_mismatch= 34954",
+   "ALU SHL  value_mismatch=     0 flag_mismatch=     0",
+   "ALU SHR  value_mismatch=     0 flag_mismatch=     0",
+   "disagrees with the spec on 65280 values and 34954 flag pairs",
+   "disagrees with the spec on 65280 values and 34954 flag pairs"
+  ],
+  "baud": "1/1",
+  "baud_detail": [],
+  "seconds": 63.9
+ },
+ {
+  "variant": "bug-03",
+  "cat": "B03",
+  "boilerplate": "1/1",
+  "compiles": true,
+  "t_boiler": 1.4,
+  "suite32": "7/10",
+  "suite32_fail": [
+   "T03",
+   "T06",
+   "T10"
+  ],
+  "suite8": "7/10",
+  "suite8_fail": [
+   "T03",
+   "T06",
+   "T10"
+  ],
+  "alu": "0/1",
+  "alu_detail": [
+   "-g2012 -g2012 -f sim_build/alu/cmds.f  ../src/simproc_system.sv",
+   "ALU vectors=393216",
+   "ALU ADD  value_mismatch=     0 flag_mismatch=  3840",
+   "ALU SUB  value_mismatch=     0 flag_mismatch=  3840",
+   "ALU OR   value_mismatch=     0 flag_mismatch=   255",
+   "ALU NAND value_mismatch=     0 flag_mismatch=   255",
+   "ALU SHL  value_mismatch=     0 flag_mismatch= 14400",
+   "ALU SHR  value_mismatch=     0 flag_mismatch=  3136",
+   "disagrees with the spec on 0 values and 25726 flag pairs",
+   "disagrees with the spec on 0 values and 25726 flag pairs"
+  ],
+  "baud": "1/1",
+  "baud_detail": [],
+  "seconds": 59.9
+ },
+ {
+  "variant": "bug-04",
+  "cat": "B04",
+  "boilerplate": "1/1",
+  "compiles": true,
+  "t_boiler": 1.3,
+  "suite32": "3/10",
+  "suite32_fail": [
+   "T01",
+   "T02",
+   "T03",
+   "T05",
+   "T06",
+   "T08",
+   "T10"
+  ],
+  "suite8": "3/10",
+  "suite8_fail": [
+   "T01",
+   "T02",
+   "T03",
+   "T05",
+   "T06",
+   "T08",
+   "T10"
+  ],
+  "alu": "1/1",
+  "alu_detail": [
+   "-g2012 -g2012 -f sim_build/alu/cmds.f  ../src/simproc_system.sv",
+   "ALU vectors=393216",
+   "ALU ADD  value_mismatch=     0 flag_mismatch=     0",
+   "ALU SUB  value_mismatch=     0 flag_mismatch=     0",
+   "ALU OR   value_mismatch=     0 flag_mismatch=     0",
+   "ALU NAND value_mismatch=     0 flag_mismatch=     0",
+   "ALU SHL  value_mismatch=     0 flag_mismatch=     0",
+   "ALU SHR  value_mismatch=     0 flag_mismatch=     0"
+  ],
+  "baud": "1/1",
+  "baud_detail": [],
+  "seconds": 49.5
+ },
+ {
+  "variant": "bug-05",
+  "cat": "B05",
+  "boilerplate": "1/1",
+  "compiles": true,
+  "t_boiler": 1.8,
+  "suite32": "7/10",
+  "suite32_fail": [
+   "T04",
+   "T07",
+   "T08"
+  ],
+  "suite8": "7/10",
+  "suite8_fail": [
+   "T04",
+   "T07",
+   "T08"
+  ],
+  "alu": "1/1",
+  "alu_detail": [
+   "-g2012 -g2012 -f sim_build/alu/cmds.f  ../src/simproc_system.sv",
+   "ALU vectors=393216",
+   "ALU ADD  value_mismatch=     0 flag_mismatch=     0",
+   "ALU SUB  value_mismatch=     0 flag_mismatch=     0",
+   "ALU OR   value_mismatch=     0 flag_mismatch=     0",
+   "ALU NAND value_mismatch=     0 flag_mismatch=     0",
+   "ALU SHL  value_mismatch=     0 flag_mismatch=     0",
+   "ALU SHR  value_mismatch=     0 flag_mismatch=     0"
+  ],
+  "baud": "1/1",
+  "baud_detail": [],
+  "seconds": 50.9
+ },
+ {
+  "variant": "bug-06",
+  "cat": "B06",
+  "boilerplate": "1/1",
+  "compiles": true,
+  "t_boiler": 1.3,
+  "suite32": "8/10",
+  "suite32_fail": [
+   "T03",
+   "T08"
+  ],
+  "suite8": "8/10",
+  "suite8_fail": [
+   "T03",
+   "T08"
+  ],
+  "alu": "1/1",
+  "alu_detail": [
+   "-g2012 -g2012 -f sim_build/alu/cmds.f  ../src/simproc_system.sv",
+   "ALU vectors=393216",
+   "ALU ADD  value_mismatch=     0 flag_mismatch=     0",
+   "ALU SUB  value_mismatch=     0 flag_mismatch=     0",
+   "ALU OR   value_mismatch=     0 flag_mismatch=     0",
+   "ALU NAND value_mismatch=     0 flag_mismatch=     0",
+   "ALU SHL  value_mismatch=     0 flag_mismatch=     0",
+   "ALU SHR  value_mismatch=     0 flag_mismatch=     0"
+  ],
+  "baud": "1/1",
+  "baud_detail": [],
+  "seconds": 47.7
+ },
+ {
+  "variant": "bug-07",
+  "cat": "B07",
+  "boilerplate": "1/1",
+  "compiles": true,
+  "t_boiler": 1.4,
+  "suite32": "9/10",
+  "suite32_fail": [
+   "T10"
+  ],
+  "suite8": "9/10",
+  "suite8_fail": [
+   "T10"
+  ],
+  "alu": "1/1",
+  "alu_detail": [
+   "-g2012 -g2012 -f sim_build/alu/cmds.f  ../src/simproc_system.sv",
+   "ALU vectors=393216",
+   "ALU ADD  value_mismatch=     0 flag_mismatch=     0",
+   "ALU SUB  value_mismatch=     0 flag_mismatch=     0",
+   "ALU OR   value_mismatch=     0 flag_mismatch=     0",
+   "ALU NAND value_mismatch=     0 flag_mismatch=     0",
+   "ALU SHL  value_mismatch=     0 flag_mismatch=     0",
+   "ALU SHR  value_mismatch=     0 flag_mismatch=     0"
+  ],
+  "baud": "1/1",
+  "baud_detail": [],
+  "seconds": 49.5
+ },
+ {
+  "variant": "bug-08",
+  "cat": "B08",
+  "boilerplate": "1/1",
+  "compiles": true,
+  "t_boiler": 1.4,
+  "suite32": "9/10",
+  "suite32_fail": [
+   "T09"
+  ],
+  "suite8": "9/10",
+  "suite8_fail": [
+   "T09"
+  ],
+  "alu": "1/1",
+  "alu_detail": [
+   "-g2012 -g2012 -f sim_build/alu/cmds.f  ../src/simproc_system.sv",
+   "ALU vectors=393216",
+   "ALU ADD  value_mismatch=     0 flag_mismatch=     0",
+   "ALU SUB  value_mismatch=     0 flag_mismatch=     0",
+   "ALU OR   value_mismatch=     0 flag_mismatch=     0",
+   "ALU NAND value_mismatch=     0 flag_mismatch=     0",
+   "ALU SHL  value_mismatch=     0 flag_mismatch=     0",
+   "ALU SHR  value_mismatch=     0 flag_mismatch=     0"
+  ],
+  "baud": "1/1",
+  "baud_detail": [],
+  "seconds": 48.6
+ },
+ {
+  "variant": "bug-09",
+  "cat": "B09",
+  "boilerplate": "1/1",
+  "compiles": true,
+  "t_boiler": 1.4,
+  "suite32": "8/10",
+  "suite32_fail": [
+   "T05",
+   "T08"
+  ],
+  "suite8": "8/10",
+  "suite8_fail": [
+   "T05",
+   "T08"
+  ],
+  "alu": "1/1",
+  "alu_detail": [
+   "-g2012 -g2012 -f sim_build/alu/cmds.f  ../src/simproc_system.sv",
+   "ALU vectors=393216",
+   "ALU ADD  value_mismatch=     0 flag_mismatch=     0",
+   "ALU SUB  value_mismatch=     0 flag_mismatch=     0",
+   "ALU OR   value_mismatch=     0 flag_mismatch=     0",
+   "ALU NAND value_mismatch=     0 flag_mismatch=     0",
+   "ALU SHL  value_mismatch=     0 flag_mismatch=     0",
+   "ALU SHR  value_mismatch=     0 flag_mismatch=     0"
+  ],
+  "baud": "1/1",
+  "baud_detail": [],
+  "seconds": 46.5
+ },
+ {
+  "variant": "bug-10",
+  "cat": "B10",
+  "boilerplate": "1/1",
+  "compiles": true,
+  "t_boiler": 1.6,
+  "suite32": "7/10",
+  "suite32_fail": [
+   "T02",
+   "T03",
+   "T08"
+  ],
+  "suite8": "7/10",
+  "suite8_fail": [
+   "T02",
+   "T03",
+   "T08"
+  ],
+  "alu": "1/1",
+  "alu_detail": [
+   "-g2012 -g2012 -f sim_build/alu/cmds.f  ../src/simproc_system.sv",
+   "ALU vectors=393216",
+   "ALU ADD  value_mismatch=     0 flag_mismatch=     0",
+   "ALU SUB  value_mismatch=     0 flag_mismatch=     0",
+   "ALU OR   value_mismatch=     0 flag_mismatch=     0",
+   "ALU NAND value_mismatch=     0 flag_mismatch=     0",
+   "ALU SHL  value_mismatch=     0 flag_mismatch=     0",
+   "ALU SHR  value_mismatch=     0 flag_mismatch=     0"
+  ],
+  "baud": "1/1",
+  "baud_detail": [],
+  "seconds": 49.0
+ },
+ {
+  "variant": "bug-11",
+  "cat": "B11",
+  "boilerplate": "1/1",
+  "compiles": true,
+  "t_boiler": 1.4,
+  "suite32": "3/10",
+  "suite32_fail": [
+   "T01",
+   "T02",
+   "T03",
+   "T05",
+   "T06",
+   "T08",
+   "T10"
+  ],
+  "suite8": "3/10",
+  "suite8_fail": [
+   "T01",
+   "T02",
+   "T03",
+   "T05",
+   "T06",
+   "T08",
+   "T10"
+  ],
+  "alu": "1/1",
+  "alu_detail": [
+   "-g2012 -g2012 -f sim_build/alu/cmds.f  ../src/simproc_system.sv",
+   "ALU vectors=393216",
+   "ALU ADD  value_mismatch=     0 flag_mismatch=     0",
+   "ALU SUB  value_mismatch=     0 flag_mismatch=     0",
+   "ALU OR   value_mismatch=     0 flag_mismatch=     0",
+   "ALU NAND value_mismatch=     0 flag_mismatch=     0",
+   "ALU SHL  value_mismatch=     0 flag_mismatch=     0",
+   "ALU SHR  value_mismatch=     0 flag_mismatch=     0"
+  ],
+  "baud": "1/1",
+  "baud_detail": [],
+  "seconds": 56.7
+ },
+ {
+  "variant": "bug-12",
+  "cat": "B12",
+  "boilerplate": "1/1",
+  "compiles": true,
+  "t_boiler": 2.6,
+  "suite32": "10/10",
+  "suite32_fail": [],
+  "suite8": "0/10",
+  "suite8_fail": [
+   "T01",
+   "T02",
+   "T03",
+   "T04",
+   "T05",
+   "T06",
+   "T07",
+   "T08",
+   "T09",
+   "T10"
+  ],
+  "alu": "1/1",
+  "alu_detail": [
+   "-g2012 -g2012 -f sim_build/alu/cmds.f  ../src/simproc_system.sv",
+   "ALU vectors=393216",
+   "ALU ADD  value_mismatch=     0 flag_mismatch=     0",
+   "ALU SUB  value_mismatch=     0 flag_mismatch=     0",
+   "ALU OR   value_mismatch=     0 flag_mismatch=     0",
+   "ALU NAND value_mismatch=     0 flag_mismatch=     0",
+   "ALU SHL  value_mismatch=     0 flag_mismatch=     0",
+   "ALU SHR  value_mismatch=     0 flag_mismatch=     0"
+  ],
+  "baud": "0/1",
+  "baud_detail": [
+   "2571550.00ns WARNING  cocotb.Test baud_sweep.baud_sweep  the link fails at clk_per_bit=4 (PING), clk_per_bit=4 (round-trip), clk_per_bit=8 (PING), clk_per_bit=8 (round-trip), clk_per_bit=16 (round-trip)",
+   "AssertionError: the link fails at clk_per_bit=4 (PING), clk_per_bit=4 (round-trip), clk_per_bit=8 (PING), clk_per_bit=8 (round-trip), clk_per_bit=16 (round-trip)"
+  ],
+  "seconds": 61.3
+ },
+ {
+  "variant": "bug-13",
+  "cat": "B13",
+  "boilerplate": "1/1",
+  "compiles": true,
+  "t_boiler": 1.5,
+  "suite32": "9/10",
+  "suite32_fail": [
+   "T07"
+  ],
+  "suite8": "9/10",
+  "suite8_fail": [
+   "T07"
+  ],
+  "alu": "1/1",
+  "alu_detail": [
+   "-g2012 -g2012 -f sim_build/alu/cmds.f  ../src/simproc_system.sv",
+   "ALU vectors=393216",
+   "ALU ADD  value_mismatch=     0 flag_mismatch=     0",
+   "ALU SUB  value_mismatch=     0 flag_mismatch=     0",
+   "ALU OR   value_mismatch=     0 flag_mismatch=     0",
+   "ALU NAND value_mismatch=     0 flag_mismatch=     0",
+   "ALU SHL  value_mismatch=     0 flag_mismatch=     0",
+   "ALU SHR  value_mismatch=     0 flag_mismatch=     0"
+  ],
+  "baud": "1/1",
+  "baud_detail": [],
+  "seconds": 51.3
+ }
+]

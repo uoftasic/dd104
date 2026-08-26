@@ -1,0 +1,11 @@
+--- a/src/simproc_system.sv
++++ b/src/simproc_system.sv
+@@ -599,7 +599,7 @@
+                     mem_we          = 1;
+ 
+                     // Check for run
+-                    done            = 1;
++                    done            = 0;
+                     if (run)
+                         next_state = CYCLE_1;
+                     else

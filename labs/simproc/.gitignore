@@ -1,0 +1,8 @@
+# Simulator droppings, if anyone runs a harness in place instead of in a
+# working copy built by apply.sh.
+sim_build/
+results*.xml
+r_*.xml
+*.vcd
+*.fst
+*.vvp

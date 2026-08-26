@@ -1,0 +1,97 @@
+SimProc — where this copy came from, and what we changed
+========================================================
+
+Upstream
+--------
+repo    git@github.com:uoftasic/simproc.git   (branch main)
+commit  1d97772cd933faeb5d330074d0dc58b07378f15c
+        "Merge pull request #1 from ieeeuoft-asic/vprajapati/mem-64"
+        Vraj Prajapati <48883986+vproHacks@users.noreply.github.com>
+        2025-11-10 12:06:29 -0600
+forked  2026-08-25, for DD104 — Pre-Silicon Verification
+licence Apache-2.0 (upstream's, kept verbatim as ../simproc/LICENSE.upstream)
+
+Files copied, and their upstream blob ids at that commit
+--------------------------------------------------------
+golden/src/simproc_system.sv           3c19a1b45c9b4e51f05f8ef73859ee13a4a3c329   (1178 lines)
+golden/src/tt_um_ieeeuoftasic_simproc.sv  ca9e29230eb01460287f47ec9bad6f714a715c77
+golden/test/tb.v                       db8491aca7eabba6471236ee27504c3d266ee7f1
+golden/test/test.py                    af6f8feb986f751955b09a48fc16eb05352c3d55
+golden/test/Makefile                   dea9f95c007d94e717d3c7d255e49f79873898d6
+golden/test/requirements.txt           c26902371f6ead26f3bd36574a51bb67e62693d2
+
+sha256, upstream vs this fork:
+
+  src/simproc_system.sv
+    upstream  5da82589f8b045a92f0390093118394f029df9723711aa957ecd2fcadfcf3dbe
+    fork      1618f7d73f74ca15178085fd0d6a3b6cc8bbba138f416aab704e71c9fde47314   (differs — see below)
+
+  every other file above is byte-identical to upstream.
+
+The only change: two comments
+-----------------------------
+`simproc_system.sv` carried the same to-do twice, on the two lines that decide
+which register ORI accumulates into:
+
+    line 635   rf_reg_a_in     = 2'b0; // change this to 1, to match SimProc
+    line 689   rf_reg_w_in     = 2'b0; // change this to 1, to match SimProc
+
+DD104's premise is "there are deliberately hidden bugs in this file". A comment
+that says *change this* is a planted-looking clue pointing at code that is not
+wrong, and it would send students down a two-hour dead end on their first read.
+Both comments are gone, replaced by a statement of what the instruction does.
+The full argument, the four variants that were simulated to settle it, and the
+open question for the RTL author are in ../../ORI-DECISION.md.
+
+    -                    // rA <- RF[0]
+    -                    rf_reg_a_in     = 2'b0; // change this to 1, to match SimProc
+    +                    // ORI's accumulator is R0 (DD104 spec; see ORI-DECISION.md)
+    +                    rf_reg_a_in     = 2'b0;
+
+    -                // RF[0] <- ALU out (change later to be SimProc accurate)
+    -                    rf_reg_w_in     = 2'b0; // change this to 1, to match SimProc
+    +                // RF[0] <- ALU out.  ORI's accumulator is R0 (DD104 spec).
+    +                    rf_reg_w_in     = 2'b0;
+
+No logic changed and no line moved: the fork is still 1178 lines, and every
+line number in the bug catalogue, the labs and the writeups means the same
+thing here as it does upstream. `diff` the two files and you get exactly the
+four lines above.
+
+The half-applied version of that same edit — write R1, keep reading R0 — is a
+real bug that hides behind a reset, and it ships as variant bug-11.
+
+Files deliberately NOT copied
+-----------------------------
+info.yaml, src/config.json, README.md, .github/, .devcontainer/, .vscode/,
+docs/info.md.
+
+All of it is TinyTapeout shuttle machinery: tile counts, the LibreLane
+hardening config, the "submit your design to the next shuttle" README, the
+GDS/FPGA/docs CI. Decision D5 puts the shuttle out of scope — SimProc is
+DD104's RTL vehicle, not a tapeout — so none of it ships and DD104 never
+teaches submission.
+
+What does stay is `src/tt_um_ieeeuoftasic_simproc.sv`, because DD104 drives the
+chip through its real pins, and that file is the pin map:
+
+    ui_in[0]  = uart_rx           uo_out[0] = uart_tx
+                                  uo_out[1] = halt
+    uio_in[7:0] -> clk_per_bit    uo_out[2] = done
+      = uio_in x 4                rst_n is active LOW
+
+And `test/` stays, verbatim, because it is the course's opening argument. The
+only test this chip has ever had asserts `uo_out == 3` after 100 clocks — UART
+idle high, halt high, done low. It asserts that the processor is *not running*.
+It sends no command, loads no program, and executes no instruction. It passes on
+all thirteen bugs in variants/.
+
+Keeping this fork current
+-------------------------
+Every bug patch is anchored to exact source text, not just a line number
+(verify/bugs.py). If upstream changes a line a bug sits on, re-running
+
+    python3 verify/make_patches.py
+
+fails loudly and names the line, instead of quietly producing a different bug.
+That is the intended way to find out that a merge broke the catalogue.

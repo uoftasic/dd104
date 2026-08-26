@@ -1,0 +1,9 @@
+build/
+sim_build/
+obj_dir/
+__pycache__/
+oldapi/__pycache__/
+.pytest_cache/
+results*.xml
+counter.vcd
+counter.fst
