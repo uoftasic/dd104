@@ -71,7 +71,7 @@ About **5 seconds**. It ends on `VERDICT: FAIL`, and that is correct.
 
 > **`broken/ripple4.sv` is not hidden, and it says so in its own header.** This lab is not a
 > bug hunt — you are allowed to open the file and read the one changed line. The hunt starts in
-> [Lab 04](labs/lab-04-your-first-bug-hunt.md). What matters here is the testbench that does or
+> [Lab 04](labs/lab-04-your-first-bug-hunt-overview.md). What matters here is the testbench that does or
 > does not notice, and reading the RTL first makes that easier to think about, not harder.
 
 ### Step 1 — Two green rows that mean nothing
@@ -188,7 +188,7 @@ About **5 seconds**. It ends on `VERDICT: FAIL`, and that is correct.
   | 65,024 of 65,536 | 512 survivors, and 512 has a description |
   | 0 values wrong, 25,726 flags wrong | the arithmetic is fine; look at the flag logic |
 
-  The last two are [Lab 03](labs/lab-03-three-blocks-before-the-processor.md), and you will
+  The last two are [Lab 03](labs/lab-03-three-blocks-before-the-processor-overview.md), and you will
   derive both by hand.
 
   This is also why the second TODO change matters. `assert` on the first bad vector stops the
@@ -271,4 +271,4 @@ which has one more decision in it worth disagreeing with.
 - [Lab package](https://github.com/uoftasic/dd104/tree/main/labs/lab-01-the-adder-you-already-trust)
 - [Coverage as a question, not a metric](guide/coverage-is-a-question.md) — the tool that found `cin` without knowing what an adder is
 - [cocotb 2.x vs every tutorial you will find](guide/cocotb-2x-vs-every-tutorial.md) — read before you search for anything
-- Next lab: [Lab 02 — The only test this chip has](labs/lab-02-the-only-test-this-chip-has.md), where the same argument is made about a real processor, and thirteen broken ones
+- Next lab: [Lab 02 — The only test this chip has](labs/lab-02-the-only-test-this-chip-has-overview.md), where the same argument is made about a real processor, and thirteen broken ones

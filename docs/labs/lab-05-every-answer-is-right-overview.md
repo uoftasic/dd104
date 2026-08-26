@@ -13,9 +13,9 @@ This is the shortest lab in the course and the sharpest.
 
 ## Prerequisites
 
-- [Lab 04](labs/lab-04-your-first-bug-hunt.md) complete — you have a suite you trust
-- Read [The handshake is part of the contract](guide/the-handshake-is-the-contract.md)
-- [The SimProc harness](reference/the-harness-api.md) open in another tab
+- [Lab 04](labs/lab-04-your-first-bug-hunt-overview.md) complete — you have a suite you trust
+- Read [The handshake is part of the contract](guide/the-handshake-is-the-contract.md) *(not yet written)*
+- [The SimProc harness](reference/the-harness-api.md) *(not yet written)* open in another tab
 
 ## Objectives
 
@@ -210,7 +210,7 @@ make blind
 - **Try this:** `make new`, `make hunt`, `make verdict`. There are only two bugs in the pool, so
   do both.
 - **Why an engineer cares:** the three-row grade is the same as
-  [Lab 04](labs/lab-04-your-first-bug-hunt.md)'s, and row 2 is still the deliverable. What has
+  [Lab 04](labs/lab-04-your-first-bug-hunt-overview.md)'s, and row 2 is still the deliverable. What has
   changed is that `make hunt` on an architectural suite will now say `quiet` no matter how much
   stimulus you add, and the way out is a different kind of check rather than a bigger one.
 
@@ -261,4 +261,4 @@ verification into an ordinary red row.
 - [Lab package](https://github.com/uoftasic/dd104/tree/main/labs/lab-05-every-answer-is-right)
 - [The handshake is part of the contract](guide/the-handshake-is-the-contract.md)
 - [The SimProc harness](reference/the-harness-api.md) — `count_done_pulses`, `count_halt_cycles`, and what `run()` actually returns
-- Next lab: [Lab 06 — Capstone: three that hide](labs/lab-06-capstone.md), where a reset hides one of them and the default baud rate hides another
+- Next lab: [Lab 06 — Capstone: three that hide](labs/lab-06-capstone-overview.md), where a reset hides one of them and the default baud rate hides another

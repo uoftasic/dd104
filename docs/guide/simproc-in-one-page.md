@@ -9,19 +9,7 @@
 >
 > Something you needed and could not find? Say so in the
 > [team Discord](https://discord.gg/hrJnP5UsGz).
-
-<!-- ===================================================================
-AUTHORING BRIEF — delete this comment when the page is written.
-
-FILENAME IS FIXED. It is linked from docs/_sidebar.md, docs/README.md and
-from other guide pages. Do not rename it; if the title needs to change, keep
-the filename and change the heading.
-
-Question this page answers (keep it, verbatim, as the first line):
-    What is this processor, exactly? I need to know what it should do before I can say it does not.
-
-What this page must contain:
-  - The module tree: tt_um_ieeeuoftasic_simproc (pin map) -> simproc_system
+ simproc_system
     (UART command FSM) -> simproc (CPU) -> ALU, register_file,
     program_counter; plus dp_ram (2-port, 64x8) and UART_wrapper.
   - The pin map, decoded: ui_in[0]=uart_rx; uo_out[0]=uart_tx,

@@ -1,9 +1,9 @@
 # Lab 03 — Three blocks before the processor
 
-Writeup: [`docs/labs/lab-03-three-blocks-before-the-processor.md`](../../docs/labs/lab-03-three-blocks-before-the-processor.md)
+Writeup: [`docs/labs/lab-03-three-blocks-before-the-processor-overview.md`](../../docs/labs/lab-03-three-blocks-before-the-processor-overview.md)
 · live: <https://uoftasic.com/dd104/#/labs/lab-03-three-blocks-before-the-processor>
 
-SimProc is 1,178 lines. Three of its modules are 15, 30 and 33 lines, and cocotb can elaborate
+SimProc is 1,178 lines. Three of its modules are 16, 31 and 34 lines, and cocotb can elaborate
 any one of them on its own as the top level. Two of the three can be *finished* — tested until
 there is no behaviour left in them that is untested — and the third can be driven
 exhaustively, all 393,216 vectors, in about twenty seconds.
@@ -22,9 +22,9 @@ need the repository, not just this directory.
 | | | wall clock |
 |---|---|---|
 | `make` | `pc`, `rf`, `alu`, then the verdict | ~60 s |
-| `make pc` | `test_pc.py` against `program_counter` (15 lines of RTL) | ~3 s |
-| `make rf` | `test_rf.py` against `register_file` (30 lines) | ~1.5 s |
-| `make alu` | `test_alu.py` against `ALU` (33 lines, 393,216 vectors) | ~23 s |
+| `make pc` | `test_pc.py` against `program_counter` (16 lines of RTL) | ~3 s |
+| `make rf` | `test_rf.py` against `register_file` (31 lines) | ~1.5 s |
+| `make alu` | `test_alu.py` against `ALU` (34 lines, 393,216 vectors) | ~23 s |
 | `make check` | the verdict: `test_alu` passes the golden ALU, FAILS on `BUG` (default `B01`) | ~45 s |
 | `make check BUG=B03` | pick a different broken ALU | |
 | `make check-alu-bugs` | all three ALU bugs at once | ~90 s |

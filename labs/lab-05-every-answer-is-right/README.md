@@ -1,6 +1,6 @@
 # Lab 05 — Every answer is right and it is still broken
 
-Writeup: [`docs/labs/lab-05-every-answer-is-right.md`](../../docs/labs/lab-05-every-answer-is-right.md)
+Writeup: [`docs/labs/lab-05-every-answer-is-right-overview.md`](../../docs/labs/lab-05-every-answer-is-right-overview.md)
 · live: <https://uoftasic.com/dd104/#/labs/lab-05-every-answer-is-right>
 
 Two broken processors. Every register, every flag, every PC value and every byte of memory

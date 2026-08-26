@@ -10,12 +10,12 @@ specifically, and it is worth understanding why before you start.
 
 ## Prerequisites
 
-- [Lab 03](labs/lab-03-three-blocks-before-the-processor.md) complete — `3 of 3 ALU bugs caught`
-- Read [Where bugs hide](guide/where-bugs-hide.md),
-  [The golden model](guide/the-golden-model.md) and
-  [Directed, random, and the gap](guide/directed-random-and-the-gap.md)
-- [The SimProc instruction set](reference/simproc-instruction-set.md) and
-  [The SimProc harness](reference/the-harness-api.md) open in other tabs
+- [Lab 03](labs/lab-03-three-blocks-before-the-processor-overview.md) complete — `3 of 3 ALU bugs caught`
+- Read [Where bugs hide](guide/where-bugs-hide.md) *(not yet written)*,
+  [The golden model](guide/the-golden-model.md) *(not yet written)* and
+  [Directed, random, and the gap](guide/directed-random-and-the-gap.md) *(not yet written)*
+- [The SimProc instruction set](reference/simproc-instruction-set.md) *(not yet written)* and
+  [The SimProc harness](reference/the-harness-api.md) *(not yet written)* open in other tabs
 
 ## Objectives
 
@@ -64,7 +64,7 @@ suspicion.
 | 6 | Are the **values** right and something else wrong? | flags, `done`, `halt`, the cycle count |
 | 7 | Does it change with a **field value** you have only ever driven at one setting? | a shift amount, a displacement, a baud divider |
 
-Question 3 is the one this lab is built around, and question 5 is [Lab 06](labs/lab-06-capstone.md).
+Question 3 is the one this lab is built around, and question 5 is [Lab 06](labs/lab-06-capstone-overview.md).
 
 > **Do not diff `core/` against `../common/rtl/`.** It works, it takes four seconds, and it
 > skips the entire lab. The skill being built here is finding a bug in a design you cannot diff
@@ -100,7 +100,7 @@ make new
 - **Why an engineer cares:** that last sentence is not flavour text. Lab 03 drove all 393,216
   ALU vectors and checked values and flags on every one. The ALU is a region of the design you
   can **stop suspecting**, and narrowing the search is most of what verification is. You start
-  this hunt with 33 lines already eliminated and a five-way multiple choice.
+  this hunt with 34 lines already eliminated and a five-way multiple choice.
 
   `core/.sealed` holds which one it was, base64'd. Decoding it costs you the lab. It is an
   honour system and the file says so.
@@ -181,7 +181,7 @@ make new
   Its limitation is worth writing down next to it rather than discovering: `golden.py` models
   architectural state and nothing else. It has no idea `done` or `halt` exist. A core that
   computes every answer correctly and gets its handshake wrong sails straight through. That is
-  [Lab 05](labs/lab-05-every-answer-is-right.md).
+  [Lab 05](labs/lab-05-every-answer-is-right-overview.md).
 
 ### Step 5 — The bug one test catches
 
@@ -315,4 +315,4 @@ fewer students. Take the hint, write the test, and move on.
 - [Where bugs hide](guide/where-bugs-hide.md) — the question list, with the reasoning behind each entry
 - [The golden model](guide/the-golden-model.md) — what `trace()` compares, and what it cannot see
 - [Directed, random, and the gap](guide/directed-random-and-the-gap.md)
-- Next lab: [Lab 05 — Every answer is right](labs/lab-05-every-answer-is-right.md), where the golden model agrees with a broken chip completely
+- Next lab: [Lab 05 — Every answer is right](labs/lab-05-every-answer-is-right-overview.md), where the golden model agrees with a broken chip completely

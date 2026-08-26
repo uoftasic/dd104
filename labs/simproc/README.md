@@ -15,10 +15,10 @@ the answer away.
 
 ## What is here
 
-| Path | What it is | Goes to students? |
+| Path | What it is | Copied into a package by `apply.sh`? |
 |---|---|---|
 | `golden/src/` | The correct RTL. 1178 lines, forked at `1d97772`. | **No** |
-| `golden/test/` | The testbench that shipped with the chip, verbatim. | Yes, inside a package |
+| `golden/test/` | The testbench that shipped with the chip, verbatim. | Yes |
 | `variants/bug-NN/bug.patch` | One bug, as a unified diff against `golden/`. | **No** |
 | `variants/bug-NN/README.md` | What the student is told: the symptom, and only the symptom. | Yes, as the package README |
 | `solutions/bug-NN.md` | What the bug actually is, why it hides, and what it teaches. | **No** |
@@ -29,6 +29,13 @@ the answer away.
 stamp. It never copies `golden/`, the patch, `solutions/`, or `verify/`. That is
 the mechanism, not a policy: a directory built by `apply.sh` can be handed to a
 student as-is.
+
+> **This is about what a *package* contains, not about what is on a student's disk.**
+> `uoftasic/dd104` is a public repository, so `golden/`, `variants/*/bug.patch`,
+> `solutions/` and `labs/common/bugs.py` are all in every clone. The course says so
+> out loud — see *One thing not to ask for* in
+> [Getting started](https://uoftasic.com/dd104/#/guide/getting-started) — and asks students
+> not to read them. Nothing here is a secret; it is an honour system with the files named.
 
 ## The bugs
 

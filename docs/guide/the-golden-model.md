@@ -9,29 +9,7 @@
 >
 > Something you needed and could not find? Say so in the
 > [team Discord](https://discord.gg/hrJnP5UsGz).
-
-<!-- ===================================================================
-AUTHORING BRIEF — delete this comment when the page is written.
-
-FILENAME IS FIXED. It is linked from docs/_sidebar.md, docs/README.md and
-from other guide pages. Do not rename it; if the title needs to change, keep
-the filename and change the heading.
-
-Question this page answers (keep it, verbatim, as the first line):
-    The input space is too big to walk. What do I compare against instead?
-
-What this page must contain:
-  - The idea: a second, independent implementation of the SPECIFICATION,
-    written in a language where it is easy to be obviously right. About 120
-    lines of Python is enough for this whole ISA - labs/common/golden.py.
-  - Independence is the whole value. Two implementations sharing a
-    misunderstanding agree perfectly and both are wrong. Say plainly what
-    the golden model does NOT protect you from.
-  - Run it with no simulator at all: `make model` (MEASURED, re-run):
-        16 instructions in memory, 28 executed, 109 clock cycles
-        registers: r0=32 r1=15 r2=1 r3=32
-        mem[0x20] = 15   (all 28 instructions executed)
-  - PREDICT -> BE WRONG -> WATCH THE ARITHMETIC CLOSE. Hand-count the
+ BE WRONG -> WATCH THE ARITHMETIC CLOSE. Hand-count the
     cycles of the sum-of-1-to-5 program and close it to the cycle:
     30 + (4+4+3)x5 + 24 = 109. If the hardware says 114 instead, something
     takes one extra cycle five times - once per loop iteration - and that

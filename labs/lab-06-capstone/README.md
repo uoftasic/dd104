@@ -1,6 +1,6 @@
 # Lab 06 — Capstone
 
-Writeup: [`docs/labs/lab-06-capstone.md`](../../docs/labs/lab-06-capstone.md)
+Writeup: [`docs/labs/lab-06-capstone-overview.md`](../../docs/labs/lab-06-capstone-overview.md)
 · live: <https://uoftasic.com/dd104/#/labs/lab-06-capstone>
 
 Three bugs that the reference suite needed a purpose-built test for, and one deliverable: a

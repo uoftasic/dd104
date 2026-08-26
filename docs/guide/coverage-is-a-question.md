@@ -215,5 +215,5 @@ You now have the four ideas the rest of DD104 runs on:
 4. Coverage asks where you have not been. It never tells you whether you were right.
 
 Next: [Your first cocotb test](guide/your-first-cocotb-test.md), where you stop borrowing a
-harness and start writing one — and then [Lab 01](labs/lab-01-the-adder-you-already-trust.md), which
+harness and start writing one — and then [Lab 01](labs/lab-01-the-adder-you-already-trust-overview.md), which
 is four lines of work and the first `VERDICT: PASS` in this course.

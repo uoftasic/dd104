@@ -67,6 +67,7 @@ broken:
 	@echo " practice: one test fails, five pass, and the message names the"
 	@echo " line of RTL to go and look at."
 	@echo "$(RULE)"
+	@mkdir -p $(HERE)/build
 	@if $(RUN) sim TB=test_03_checking RTL=$(HERE)/rtl/counter_broken.sv \
 	        SIM_BUILD=$(HERE)/build/broken \
 	        COCOTB_RESULTS_FILE=$(HERE)/build/broken.xml >$(HERE)/build/broken.log 2>&1; then \
@@ -104,6 +105,7 @@ oldapi:
 	@echo ""; echo "$(RULE)"
 	@echo " make oldapi   what cocotb 1.x code does under cocotb 2.0.1"
 	@echo "$(RULE)"
+	@mkdir -p $(HERE)/build
 	@for t in test_1x_units test_1x_fork test_1x_assign test_1x_imports; do \
 	  echo ""; \
 	  echo "  ─── oldapi/$$t.py ───────────────────────────────────────────"; \
@@ -129,6 +131,7 @@ nothing:
 	@echo ""; echo "$(RULE)"
 	@echo " make nothing   COCOTB_TESTCASE naming a test that does not exist"
 	@echo "$(RULE)"
+	@mkdir -p $(HERE)/build
 	@$(RUN) sim TB=test_03_checking COCOTB_TESTCASE=chekcing \
 	        SIM_BUILD=$(HERE)/build/nothing \
 	        COCOTB_RESULTS_FILE=$(HERE)/build/nothing.xml 2>&1 | tail -12

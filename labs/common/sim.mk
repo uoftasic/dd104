@@ -8,6 +8,11 @@
 #
 #   make -f sim.mk sim TB=test_mine RTL_DIR=../common/rtl SIM=verilator
 #
+# ⚠ When you change RTL_DIR=, change SIM_BUILD= with it.  cocotb's makefile only
+#   relinks when the sources are NEWER than sim_build/sim.vvp, so a second run
+#   against a different core silently re-runs the FIRST one.  lab.mk and
+#   check.py give every run its own SIM_BUILD for exactly that reason.
+#
 # ── the cocotb 2.x variable names ──────────────────────────────────────────
 # COCOTB_TEST_MODULES  is what 2.x calls the module holding your @cocotb.test()
 #                      functions.  In 1.x it was MODULE.  MEASURED on cocotb
@@ -28,7 +33,7 @@
 #                      names are used here because they are the ones that will
 #                      still be right next year.
 
-COMMON  ?= $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
+COMMON  ?= $(dir $(abspath $(firstword $(MAKEFILE_LIST))))
 RTL_DIR ?= $(COMMON)/rtl
 TB      ?= test_example
 SIM     ?= icarus

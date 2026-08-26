@@ -1,6 +1,6 @@
 # Lab 04 — Your first bug hunt
 
-Writeup: [`docs/labs/lab-04-your-first-bug-hunt.md`](../../docs/labs/lab-04-your-first-bug-hunt.md)
+Writeup: [`docs/labs/lab-04-your-first-bug-hunt-overview.md`](../../docs/labs/lab-04-your-first-bug-hunt-overview.md)
 · live: <https://uoftasic.com/dd104/#/labs/lab-04-your-first-bug-hunt>
 
 You get a processor with one line changed and you are not told which line. You write tests
