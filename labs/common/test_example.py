@@ -14,6 +14,11 @@ shape is the lesson.  A test that checks `2 + 2 == 4` is not wrong, it is just
 not load-bearing: it passes on almost every broken processor too.
 """
 
+# Every test here carries a wall-clock guard. cocotb's timeout_time raises
+# SimTimeoutError instead of spinning forever, which matters most in the bug-hunt
+# labs: a core with a seeded bug can simply never finish, and a bisecting loop that
+# waits for a signal that never arrives will otherwise run until you kill it.
+# 5 ms is ~150x the longest legitimate run in this course (33,290 ns).
 import cocotb
 
 from simproc import SimProc, PARK, trace
@@ -26,7 +31,7 @@ from golden import Golden, compare_memory
 # 1.  Is it alive?
 # ─────────────────────────────────────────────────────────────────────────────
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def t01_the_chip_answers(dut):
     """PING should come back 0xAA.
 
@@ -55,7 +60,7 @@ async def t01_the_chip_answers(dut):
 # 2.  One instruction, one step, one register
 # ─────────────────────────────────────────────────────────────────────────────
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def t02_one_instruction(dut):
     """The smallest useful test: load one instruction, step once, look."""
     sp = SimProc(dut)
@@ -75,7 +80,7 @@ async def t02_one_instruction(dut):
 # 3.  The test that would catch a swapped subtract
 # ─────────────────────────────────────────────────────────────────────────────
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def t03_arithmetic_on_different_values(dut):
     """ADD, SUB and NAND — on operands that are NOT equal to each other.
 
@@ -114,7 +119,7 @@ async def t03_arithmetic_on_different_values(dut):
 # 4.  Flags are results too
 # ─────────────────────────────────────────────────────────────────────────────
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def t04_flags_are_state(dut):
     """N and Z, checked on values chosen to make a lazy Z-detector wrong.
 
@@ -154,7 +159,7 @@ async def t04_flags_are_state(dut):
 # 5.  A loop, and a cycle count you can predict
 # ─────────────────────────────────────────────────────────────────────────────
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def t05_a_loop_and_its_cycle_count(dut):
     """Sum 1..5, store the answer, and check how long it took.
 
@@ -212,7 +217,7 @@ async def t05_a_loop_and_its_cycle_count(dut):
 # 6.  Against the model, instruction by instruction
 # ─────────────────────────────────────────────────────────────────────────────
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def t06_against_the_golden_model(dut):
     """Step a program and compare EVERY register, the PC and both flags after
     EVERY instruction against golden.py.

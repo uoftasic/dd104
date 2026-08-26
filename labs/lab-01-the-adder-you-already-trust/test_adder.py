@@ -44,6 +44,11 @@ exit 5, nothing simulated), or put a typo in COCOTB_TESTCASE.  Both are
 written up in docs/guide/what-a-testbench-is.md.
 """
 
+# Every test here carries a wall-clock guard. cocotb's timeout_time raises
+# SimTimeoutError instead of spinning forever, which matters most in the bug-hunt
+# labs: a core with a seeded bug can simply never finish, and a bisecting loop that
+# waits for a signal that never arrives will otherwise run until you kill it.
+# 5 ms is ~150x the longest legitimate run in this course (33,290 ns).
 import cocotb
 from cocotb.triggers import Timer
 
@@ -67,7 +72,7 @@ async def apply(dut, a, b, cin):
 # 1.  The six cases you would write by hand
 # ─────────────────────────────────────────────────────────────────────────────
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def t01_the_obvious_six(dut):
     """Six vectors, picked the way a person picks them.
 
@@ -99,7 +104,7 @@ async def t01_the_obvious_six(dut):
 # 2.  Exhaustive.  Nearly.
 # ─────────────────────────────────────────────────────────────────────────────
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def t02_every_a_and_every_b(dut):
     """Every value of a against every value of b.  256 vectors.
 

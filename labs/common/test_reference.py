@@ -26,6 +26,11 @@ taste about inputs.
 
 import random
 
+# Every test here carries a wall-clock guard. cocotb's timeout_time raises
+# SimTimeoutError instead of spinning forever, which matters most in the bug-hunt
+# labs: a core with a seeded bug can simply never finish, and a bisecting loop that
+# waits for a signal that never arrives will otherwise run until you kill it.
+# 5 ms is ~150x the longest legitimate run in this course (33,290 ns).
 import cocotb
 
 from simproc import SimProc, PARK
@@ -40,7 +45,7 @@ SAFE = 0x30         # a RAM address well clear of any program in this file
 # R01  ALU values, on operands chosen so a swap cannot hide
 # ─────────────────────────────────────────────────────────────────────────────
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def R01_alu_asymmetric_operands(dut):
     """ADD, SUB and NAND with rA != rB and two different values.
 
@@ -65,7 +70,7 @@ async def R01_alu_asymmetric_operands(dut):
 # R02  ORI, with immediates that overlap what is already there
 # ─────────────────────────────────────────────────────────────────────────────
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def R02_ori_overlapping_immediates(dut):
     """Three ORIs into a register that is not zero.
 
@@ -95,7 +100,7 @@ async def R02_ori_overlapping_immediates(dut):
 # R03  every shift amount the field can hold, both directions
 # ─────────────────────────────────────────────────────────────────────────────
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def R03_shift_amount_sweep(dut):
     """Shift by 0, 1, 2 and 3 — not just by 1.
 
@@ -122,7 +127,7 @@ async def R03_shift_amount_sweep(dut):
 # R04  every branch displacement, forwards AND backwards
 # ─────────────────────────────────────────────────────────────────────────────
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def R04_branch_displacement_sweep(dut):
     """All sixteen displacements a 4-bit signed field can hold.
 
@@ -153,7 +158,7 @@ async def R04_branch_displacement_sweep(dut):
 # R05  one compare, two branches
 # ─────────────────────────────────────────────────────────────────────────────
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def R05_flags_survive_a_branch(dut):
     """Compare once, branch on the result twice.
 
@@ -188,7 +193,7 @@ async def R05_flags_survive_a_branch(dut):
 # R06  LOAD and STORE with every operand distinct
 # ─────────────────────────────────────────────────────────────────────────────
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def R06_load_store_distinct_registers(dut):
     """The data register, the pointer register and the destination are three
     different registers, and the two pointers are different addresses.
@@ -226,7 +231,7 @@ async def R06_load_store_distinct_registers(dut):
 # R07  the flags themselves, on values chosen to break a lazy detector
 # ─────────────────────────────────────────────────────────────────────────────
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def R07_zero_and_negative_flags(dut):
     """Z and N, on bytes whose bottom nibble is zero and whose top is not.
 
@@ -266,7 +271,7 @@ async def R07_zero_and_negative_flags(dut):
 # R08  the handshake, counted
 # ─────────────────────────────────────────────────────────────────────────────
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def R08_done_pulses_once_per_instruction(dut):
     """`done` must pulse exactly once for every instruction that retires.
 
@@ -299,7 +304,7 @@ async def R08_done_pulses_once_per_instruction(dut):
 # R09  a property that must hold on every single cycle
 # ─────────────────────────────────────────────────────────────────────────────
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def R09_halt_stays_low_while_running(dut):
     """While RUN is asserted, `halt` must be low on every cycle.
 
@@ -358,7 +363,7 @@ def random_program(seed, n=20):
     return prog
 
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def R10_random_programs(dut):
     """Eight random programs, each compared against golden.py at the end.
 
@@ -396,7 +401,7 @@ async def R10_random_programs(dut):
 # R11  sweep the parameter
 # ─────────────────────────────────────────────────────────────────────────────
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def R11_baud_sweep(dut):
     """The UART, at five different bit periods, with a real byte in each.
 

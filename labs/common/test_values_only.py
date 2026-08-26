@@ -18,6 +18,11 @@ The rule it exists to demonstrate:
     strictly smaller machine than the one on the die.
 """
 
+# Every test here carries a wall-clock guard. cocotb's timeout_time raises
+# SimTimeoutError instead of spinning forever, which matters most in the bug-hunt
+# labs: a core with a seeded bug can simply never finish, and a bisecting loop that
+# waits for a signal that never arrives will otherwise run until you kill it.
+# 5 ms is ~150x the longest legitimate run in this course (33,290 ns).
 import cocotb
 
 from simproc import SimProc
@@ -30,7 +35,7 @@ PAIRS = [(0, 0), (0, 1), (1, 1), (5, 3), (16, 0), (15, 1),
          (127, 1), (128, 128), (200, 100), (255, 1), (170, 85), (240, 15)]
 
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def v01_arithmetic_over_a_spread_of_operands(dut):
     """ADD and SUB, twelve operand pairs each, every result checked."""
     sp = SimProc(dut)
@@ -51,7 +56,7 @@ async def v01_arithmetic_over_a_spread_of_operands(dut):
                   f"correct")
 
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def v02_logic_and_shifts(dut):
     """NAND, SHL and SHR — the rest of the ALU, still values only."""
     sp = SimProc(dut)
@@ -76,7 +81,7 @@ async def v02_logic_and_shifts(dut):
                   f"result correct")
 
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def v03_a_whole_program_and_its_cycle_count(dut):
     """Sum 1..5 and store it — the answer, the memory, and the timing."""
     sp = SimProc(dut)

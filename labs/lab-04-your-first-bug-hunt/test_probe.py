@@ -37,13 +37,18 @@ something is wrong.  `assert x == y, f"...{sp.describe()}"` is usually the
 right end state for anything you work out in here.
 """
 
+# Every test here carries a wall-clock guard. cocotb's timeout_time raises
+# SimTimeoutError instead of spinning forever, which matters most in the bug-hunt
+# labs: a core with a seeded bug can simply never finish, and a bisecting loop that
+# waits for a signal that never arrives will otherwise run until you kill it.
+# 5 ms is ~150x the longest legitimate run in this course (33,290 ns).
 import cocotb
 
 from simproc import SimProc
 from simproc_asm import ADD, SHL, LOAD, listing, set_reg
 
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def p01_what_do_the_registers_do(dut):
     """Question 4 — which register ends up wrong?
 
@@ -76,7 +81,7 @@ async def p01_what_do_the_registers_do(dut):
     print(listing(prog))
 
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def p02_step_one_instruction_at_a_time(dut):
     """The other shape of probe: stop after every instruction.
 

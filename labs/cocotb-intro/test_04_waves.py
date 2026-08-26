@@ -20,13 +20,18 @@ zoom to is the difference between reading a waveform and scrolling through
 one.
 """
 
+# Every test here carries a wall-clock guard. cocotb's timeout_time raises
+# SimTimeoutError instead of spinning forever, which matters most in the bug-hunt
+# labs: a core with a seeded bug can simply never finish, and a bisecting loop that
+# waits for a signal that never arrives will otherwise run until you kill it.
+# 5 ms is ~150x the longest legitimate run in this course (33,290 ns).
 import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import ClockCycles, Timer
 from cocotb.utils import get_sim_time
 
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def a_wrap_worth_looking_at(dut):
     cocotb.start_soon(Clock(dut.clk, 10, unit="ns").start())
 

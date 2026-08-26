@@ -34,6 +34,11 @@ This file ships with t01 and t02 written and t03, t04 and t05 as TODOs.
 in it means something.
 """
 
+# Every test here carries a wall-clock guard. cocotb's timeout_time raises
+# SimTimeoutError instead of spinning forever, which matters most in the bug-hunt
+# labs: a core with a seeded bug can simply never finish, and a bisecting loop that
+# waits for a signal that never arrives will otherwise run until you kill it.
+# 5 ms is ~150x the longest legitimate run in this course (33,290 ns).
 import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import RisingEdge, Timer
@@ -72,7 +77,7 @@ async def read(dut, a, b):
     return int(dut.dataA.value), int(dut.dataB.value)
 
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def t01_reset_clears_all_four(dut):
     """After reset every register reads 0 on both ports."""
     await setup(dut)
@@ -82,7 +87,7 @@ async def t01_reset_clears_all_four(dut):
     dut._log.info("all four registers are 0 after reset")
 
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def t02_write_then_read_back(dut):
     """Write a distinct value into each register and read all four back.
 
