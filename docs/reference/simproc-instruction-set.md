@@ -9,51 +9,7 @@
 >
 > Something you needed and could not find? Say so in the
 > [team Discord](https://discord.gg/hrJnP5UsGz).
-
-<!-- ===================================================================
-AUTHORING BRIEF — delete this comment when the page is written.
-
-FILENAME IS FIXED. It is linked from docs/_sidebar.md, docs/README.md and
-from other guide pages. Do not rename it; if the title needs to change, keep
-the filename and change the heading.
-
-Question this page answers (keep it, verbatim, as the first line):
-    What does every opcode do, how is it encoded, and how many cycles does it take?
-
-What this page must contain:
-  A card, not an essay. Everything here is measured, and the empirical
-  classification of all 256 instruction bytes is the proof there are no
-  encoding collisions.
-  - Encoding layouts: register form `AA BB oooo` (rA=instr[7:6],
-    rB=instr[5:4], opcode instr[3:0]); branch form `dddd oooo`; and the two
-    3-LSB forms, SHIFT `AA D SS 011` and ORI `iiiii 111`, where the opcode
-    is only instr[2:0] and the field grows upward.
-  - The full table: opcode, mnemonic, operation, cycles, flags written.
-      0000 LOAD  rA <- mem[rB]                              4   no flags
-      0001 JUMP  PC <- PC+1+SE(instr[7:4])                  3   no flags
-      0010 STORE mem[rB] <- rA                              3   no flags
-      0011 SHIFT rA <- rA << instr[4:3] if instr[5] else >> 4   flags
-      0100 ADD   rA <- rA + rB                              4   flags
-      0101 BPZ   if !N: PC <- PC+1+SE(instr[7:4])           3   no flags
-      0110 SUB   rA <- rA - rB                              4   flags
-      0111 ORI   R0 <- R0 | ZE(instr[7:3])                  5   flags
-      1000 NAND  rA <- ~(rA & rB)                           4   flags
-      1001 BNZ   if !Z: PC <- PC+1+SE(instr[7:4])           3   no flags
-      1010 BZ    if  Z: PC <- PC+1+SE(instr[7:4])           3   no flags
-      1011 = SHIFT (3-LSB alias)                            4   flags
-      1100/1101/1110 unimplemented: 3 cycles, PC+1, no state
-                     change, and NO `done` pulse
-      1111 = ORI (3-LSB alias)                              5   flags
-  - The 256-byte classification, which is the no-collision proof: 48
-    unimplemented (C,D,E), 64 branch (1,5,9,A), 16 STORE (2), 80 four-cycle
-    (0,3,4,6,B), 16 NAND (8), 32 ORI (7,F). 48+64+16+80+16+32 = 256.
-  - The ALU: ADD 000, SUB 001, OR 010, NAND 011, SHL 100, SHR 101; ops 6
-    and 7 return 8'h00 (so N=0, Z=1 - a DEFINED answer for an undefined
-    opcode). SHL/SHR shift by B[1:0]. N = result[7], Z = ~(|result). No
-    carry-out, no overflow, 8-bit wrap.
-  - Branch range -8..+7, target = PC_of_instruction + 1 + SE(disp).
-  - The UART command table (all three bytes, always): 0xA3 READ, 0x5C
-    WRITE, 0xF0 PING->0xAA, 0x3F RUN, 0xC7 HALT, 0x6D STEP, 0x99 SET_PC
+0xAA, 0x3F RUN, 0xC7 HALT, 0x6D STEP, 0x99 SET_PC
     (IDLE only), 0xB2 GET_PC.
   - Memory: 64 bytes, 8-bit address bus. Addresses >= 64 read as X and
     writes to them are silently DROPPED - they do not alias into low

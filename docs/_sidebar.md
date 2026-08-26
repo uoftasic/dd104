@@ -12,29 +12,29 @@
     - [cocotb 2.x vs every tutorial](guide/cocotb-2x-vs-every-tutorial.md)
     - [Driving and checking a design](guide/driving-and-checking.md)
     - [Waveforms when the assertion is not enough](guide/waveforms.md)
-    - [Two simulators, two jobs](guide/two-simulators-two-jobs.md)
+    - [Two simulators, two jobs](guide/two-simulators-two-jobs.md) *(not yet written)*
   - **III. The machine under test**
-    - [SimProc in one page](guide/simproc-in-one-page.md)
-    - [The golden model](guide/the-golden-model.md)
-    - [Flags are architectural state](guide/flags-are-state.md)
+    - [SimProc in one page](guide/simproc-in-one-page.md) *(not yet written)*
+    - [The golden model](guide/the-golden-model.md) *(not yet written)*
+    - [Flags are architectural state](guide/flags-are-state.md) *(not yet written)*
   - **IV. How bugs hide**
-    - [Where bugs hide](guide/where-bugs-hide.md)
-    - [Directed, random, and the gap](guide/directed-random-and-the-gap.md)
+    - [Where bugs hide](guide/where-bugs-hide.md) *(not yet written)*
+    - [Directed, random, and the gap](guide/directed-random-and-the-gap.md) *(not yet written)*
   - **V. Right answers, broken chip**
-    - [The handshake is part of the contract](guide/the-handshake-is-the-contract.md)
+    - [The handshake is part of the contract](guide/the-handshake-is-the-contract.md) *(not yet written)*
   - **Capstone**
-    - [Writing the bug report](guide/writing-the-bug-report.md)
+    - [Writing the bug report](guide/writing-the-bug-report.md) *(not yet written)*
 - **Labs**
-  - [Lab 01 — The adder you already trust](labs/lab-01-the-adder-you-already-trust.md)
-  - [Lab 02 — The only test this chip has](labs/lab-02-the-only-test-this-chip-has.md)
-  - [Lab 03 — Three blocks before the processor](labs/lab-03-three-blocks-before-the-processor.md)
-  - [Lab 04 — Your first bug hunt](labs/lab-04-your-first-bug-hunt.md)
-  - [Lab 05 — Every answer is right](labs/lab-05-every-answer-is-right.md)
-  - [Lab 06 — Capstone: three that hide](labs/lab-06-capstone.md)
+  - [Lab 01 — The adder you already trust](labs/lab-01-the-adder-you-already-trust-overview.md)
+  - [Lab 02 — The only test this chip has](labs/lab-02-the-only-test-this-chip-has-overview.md)
+  - [Lab 03 — Three blocks before the processor](labs/lab-03-three-blocks-before-the-processor-overview.md)
+  - [Lab 04 — Your first bug hunt](labs/lab-04-your-first-bug-hunt-overview.md)
+  - [Lab 05 — Every answer is right](labs/lab-05-every-answer-is-right-overview.md)
+  - [Lab 06 — Capstone: three that hide](labs/lab-06-capstone-overview.md)
 - **Reference**
-  - [The SimProc instruction set](reference/simproc-instruction-set.md)
-  - [The SimProc harness](reference/the-harness-api.md)
-  - [Output that is not an error](reference/output-that-is-not-an-error.md)
+  - [The SimProc instruction set](reference/simproc-instruction-set.md) *(not yet written)*
+  - [The SimProc harness](reference/the-harness-api.md) *(not yet written)*
+  - [Output that is not an error](reference/output-that-is-not-an-error.md) *(not yet written)*
 - **Repo**
   - [Lab packages](https://github.com/uoftasic/dd104/tree/main/labs)
   - [The harness](https://github.com/uoftasic/dd104/tree/main/labs/common)

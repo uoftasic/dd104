@@ -11,10 +11,10 @@ against thirteen deliberately broken versions of the chip, and all thirteen are 
 
 ## Prerequisites
 
-- [Lab 01](labs/lab-01-the-adder-you-already-trust.md) complete — `make check` said `VERDICT: PASS`
-- Read [SimProc in one page](guide/simproc-in-one-page.md) and
+- [Lab 01](labs/lab-01-the-adder-you-already-trust-overview.md) complete — `make check` said `VERDICT: PASS`
+- Read [SimProc in one page](guide/simproc-in-one-page.md) *(not yet written)* and
   [Driving and checking a design](guide/driving-and-checking.md)
-- Skim [Two simulators, two jobs](guide/two-simulators-two-jobs.md) — you will meet Verilator properly in Lab 03
+- Skim [Two simulators, two jobs](guide/two-simulators-two-jobs.md) *(not yet written)* — you will meet Verilator properly in Lab 03
 - `cocotb-config --version` says **`2.0.1`**
 
 > **This lab includes `../common/lab.mk`.** You need the whole repository checked out, not just
@@ -272,7 +272,7 @@ Wall-clock seconds are the only figures allowed to differ.
 `make check-all` runs your testbench against all thirteen broken cores — about **22 seconds** —
 and prints, for each one you missed, a single line about what it hides behind. Run it now and
 keep the output. It is the scoreboard for the rest of the course, and by
-[Lab 06](labs/lab-06-capstone.md) the goal is `13 of 13 caught`.
+[Lab 06](labs/lab-06-capstone-overview.md) the goal is `13 of 13 caught`.
 
 On the shipped file it says **`1 of 13 caught`**, and the one it catches is worth a moment:
 
@@ -287,7 +287,7 @@ program anybody writes.
 
 Which is a useful early lesson about tiers: **the tier is how hard a bug is to think of, not how
 hard it is to trip over.** You will meet `B11` again in
-[Lab 06](labs/lab-06-capstone.md), where its interest turns out to be its provenance rather than
+[Lab 06](labs/lab-06-capstone-overview.md), where its interest turns out to be its provenance rather than
 its difficulty.
 
 Expect the other twelve to stay missed. Three tests should not catch thirteen bugs, and if they
@@ -299,4 +299,4 @@ did, the bugs would not be worth having.
 - [The harness](https://github.com/uoftasic/dd104/tree/main/labs/common) — the shared infrastructure every lab from here imports
 - [SimProc in one page](guide/simproc-in-one-page.md) · [The SimProc instruction set](reference/simproc-instruction-set.md)
 - [Output that is not an error](reference/output-that-is-not-an-error.md) — the `sorry:` notes, and everything else that looks like a crash and is not
-- Next lab: [Lab 03 — Three blocks before the processor](labs/lab-03-three-blocks-before-the-processor.md), where 1,178 lines become 15, 30 and 33
+- Next lab: [Lab 03 — Three blocks before the processor](labs/lab-03-three-blocks-before-the-processor-overview.md), where 1,178 lines become 16, 31 and 34

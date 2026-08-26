@@ -1,6 +1,6 @@
 # Lab 02 — The only test this chip has
 
-Writeup: [`docs/labs/lab-02-the-only-test-this-chip-has.md`](../../docs/labs/lab-02-the-only-test-this-chip-has.md)
+Writeup: [`docs/labs/lab-02-the-only-test-this-chip-has-overview.md`](../../docs/labs/lab-02-the-only-test-this-chip-has-overview.md)
 · live: <https://uoftasic.com/dd104/#/labs/lab-02-the-only-test-this-chip-has>
 
 Meet SimProc — a real 8-bit processor a student team designed and taped out — and the single

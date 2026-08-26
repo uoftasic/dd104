@@ -2,7 +2,7 @@
 
 Full runnable package: [`labs/lab-03-three-blocks-before-the-processor/`](https://github.com/uoftasic/dd104/tree/main/labs/lab-03-three-blocks-before-the-processor).
 
-SimProc is 1,178 lines and you cannot test all of it. Three of its modules are 15, 30 and 33
+SimProc is 1,178 lines and you cannot test all of it. Three of its modules are 16, 31 and 34
 lines, and you can test all of those — completely, in the strong sense, until there is no
 behaviour left in them that is untested.
 
@@ -11,16 +11,16 @@ tractable ones.
 
 ## Prerequisites
 
-- [Lab 02](labs/lab-02-the-only-test-this-chip-has.md) complete — you have produced `13 of 13`
+- [Lab 02](labs/lab-02-the-only-test-this-chip-has-overview.md) complete — you have produced `13 of 13`
 - Read [The lazy testbench](guide/the-lazy-testbench.md),
   [Coverage as a question](guide/coverage-is-a-question.md) and
-  [Flags are architectural state](guide/flags-are-state.md)
-- [SimProc in one page](guide/simproc-in-one-page.md) open in another tab
+  [Flags are architectural state](guide/flags-are-state.md) *(not yet written)*
+- [SimProc in one page](guide/simproc-in-one-page.md) *(not yet written)* open in another tab
 
 ## Objectives
 
 - Elaborate a single submodule of a large design as the simulation top level
-- Test a 15-line module until it is *finished*, and be able to defend the word
+- Test a 16-line module until it is *finished*, and be able to defend the word
 - Drive all **393,216** legal vectors through an ALU and check every one
 - Derive three exact failure counts by hand, before or after measuring them
 - Discover a testbench that sweeps the entire input space and still misses a bug
@@ -49,7 +49,11 @@ A small block can be finished. A processor cannot. So you finish the small block
 every failure in the processor above them is a failure somewhere that is not those blocks.
 **Verification is largely the business of shrinking the place a bug could be hiding.**
 
-### The ALU, in full
+### The ALU's behaviour
+
+Excerpt from [`labs/common/rtl/simproc_system.sv`](https://github.com/uoftasic/dd104/blob/main/labs/common/rtl/simproc_system.sv),
+module `ALU`, lines 790–823. The port list and the `aluop_t` enum are omitted; this is the
+whole of the logic.
 
 ```systemverilog
 always @ (*) begin
@@ -135,7 +139,7 @@ you will actually use.
   then stuck would also pass.
 
   What you find changes how you read every `ORI` instruction in this course, and it is better
-  to find it now than at 1 a.m. in [Lab 06](labs/lab-06-capstone.md).
+  to find it now than at 1 a.m. in [Lab 06](labs/lab-06-capstone-overview.md).
 
   `t04` and `t05` are the two shapes that recur everywhere: *one write moves one register*, and
   *an enable that is not enabling anything*. Run `t05` for several cycles rather than one —
@@ -229,7 +233,7 @@ you will actually use.
   is not the missing ingredient. A different *kind* of check is.
 
   Flags are architectural state. Every branch you will write in
-  [Lab 04](labs/lab-04-your-first-bug-hunt.md) depends on them. See
+  [Lab 04](labs/lab-04-your-first-bug-hunt-overview.md) depends on them. See
   [Flags are architectural state](guide/flags-are-state.md).
 
 ### Step 6 — Add the flags, and read the shape
@@ -310,7 +314,7 @@ ALU structurally cannot see them. `make check-alu-bugs` says so in its own closi
 That is the honest limit of unit testing, and it is worth stating plainly rather than
 discovering: finishing a block proves the block is right. It says nothing about whether the
 right block is being used, with the right operands, at the right time. Which is
-[Lab 04](labs/lab-04-your-first-bug-hunt.md).
+[Lab 04](labs/lab-04-your-first-bug-hunt-overview.md).
 
 ## Links
 
@@ -318,4 +322,4 @@ right block is being used, with the right operands, at the right time. Which is
 - [Flags are architectural state](guide/flags-are-state.md) — why Step 5 is the moment this lab exists for
 - [Coverage as a question](guide/coverage-is-a-question.md) — a different way to ask what Step 5 asks
 - [The SimProc instruction set](reference/simproc-instruction-set.md) — the ISA the spec model comes from
-- Next lab: [Lab 04 — Your first bug hunt](labs/lab-04-your-first-bug-hunt.md), where nobody tells you which bug you have
+- Next lab: [Lab 04 — Your first bug hunt](labs/lab-04-your-first-bug-hunt-overview.md), where nobody tells you which bug you have

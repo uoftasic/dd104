@@ -11,8 +11,16 @@
 #   SIM                  icarus (default) or verilator
 #
 # Everything is overridable:  make -f sim.mk sim TB=test_03_checking RTL=rtl/counter_broken.sv
+#
+# ⚠ When you change RTL=, change SIM_BUILD= with it.  cocotb's makefile only
+#   relinks when the sources are NEWER than sim_build/sim.vvp, so a second run
+#   with a different RTL= silently re-runs the FIRST design.  The Makefile next
+#   to this one gives every target its own SIM_BUILD for exactly that reason:
+#
+#     make -f sim.mk sim TB=test_03_checking RTL=rtl/counter_broken.sv \
+#          SIM_BUILD=build/broken
 
-HERE ?= $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
+HERE ?= $(dir $(abspath $(firstword $(MAKEFILE_LIST))))
 
 TB   ?= test_01_hello
 RTL  ?= $(HERE)rtl/counter.sv

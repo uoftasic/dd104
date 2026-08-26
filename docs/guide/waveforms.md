@@ -47,6 +47,11 @@ The mechanism is a single make variable:
 make -f sim.mk sim TB=test_04_waves WAVES=1
 ```
 
+> When you drive `sim.mk` by hand and change `RTL=`, change `SIM_BUILD=` with it. cocotb's
+> makefile relinks only when the sources are *newer* than `sim_build/sim.vvp`, so a second run
+> against a different design silently re-runs the first one — green, and testing nothing you
+> meant to test. Every lab target passes its own `SIM_BUILD` for that reason.
+
 `WAVES=1` makes cocotb's Icarus makefile **generate a dump module for you** — you do not write
 `$dumpfile`/`$dumpvars` anywhere:
 

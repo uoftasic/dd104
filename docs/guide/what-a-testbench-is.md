@@ -189,7 +189,7 @@ underneath it, and in this course the only thing that starts one is `make`. All 
 these look right and are green:
 
 ```bash
-python3 -m pytest test_adder.py
+python3 -m pytest test_example.py
 ```
 
 ```
@@ -201,7 +201,7 @@ collected 0 items
 Exit **5**. No error, no traceback, nothing ran.
 
 ```bash
-python3 test_adder.py
+python3 test_example.py
 ```
 
 **Zero bytes of output, exit 0.** The module imported, the decorated function was defined,

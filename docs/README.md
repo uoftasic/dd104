@@ -66,19 +66,25 @@ this course follows from that sentence.
 | Part | Guide | Lab |
 |------|-------|-----|
 | 0 | [Getting started](guide/getting-started.md) | — |
-| I — Why "it works" is not a result | **["It works" is not a result](guide/it-works-is-not-a-result.md)** · [What a testbench actually is](guide/what-a-testbench-is.md) · [The lazy testbench](guide/the-lazy-testbench.md) · [Coverage as a question](guide/coverage-is-a-question.md) | [Lab 01](labs/lab-01-the-adder-you-already-trust.md) |
-| II — The tools that do the doubting | [Your first cocotb test](guide/your-first-cocotb-test.md) · [Clocks, resets and triggers](guide/clocks-resets-and-triggers.md) · **[cocotb 2.x vs every tutorial](guide/cocotb-2x-vs-every-tutorial.md)** · [Driving and checking](guide/driving-and-checking.md) · [Waveforms](guide/waveforms.md) · [Two simulators, two jobs](guide/two-simulators-two-jobs.md) | [Lab 02](labs/lab-02-the-only-test-this-chip-has.md) |
-| III — The machine under test | [SimProc in one page](guide/simproc-in-one-page.md) · [The golden model](guide/the-golden-model.md) · [Flags are architectural state](guide/flags-are-state.md) | [Lab 03](labs/lab-03-three-blocks-before-the-processor.md) |
-| IV — How bugs hide | [Where bugs hide](guide/where-bugs-hide.md) · [Directed, random, and the gap](guide/directed-random-and-the-gap.md) | [Lab 04](labs/lab-04-your-first-bug-hunt.md) |
-| V — Right answers, broken chip | [The handshake is part of the contract](guide/the-handshake-is-the-contract.md) | [Lab 05](labs/lab-05-every-answer-is-right.md) |
-| Capstone | [Writing the bug report](guide/writing-the-bug-report.md) | [Lab 06](labs/lab-06-capstone.md) |
+| I — Why "it works" is not a result | **["It works" is not a result](guide/it-works-is-not-a-result.md)** · [What a testbench actually is](guide/what-a-testbench-is.md) · [The lazy testbench](guide/the-lazy-testbench.md) · [Coverage as a question](guide/coverage-is-a-question.md) | [Lab 01](labs/lab-01-the-adder-you-already-trust-overview.md) |
+| II — The tools that do the doubting | [Your first cocotb test](guide/your-first-cocotb-test.md) · [Clocks, resets and triggers](guide/clocks-resets-and-triggers.md) · **[cocotb 2.x vs every tutorial](guide/cocotb-2x-vs-every-tutorial.md)** · [Driving and checking](guide/driving-and-checking.md) · [Waveforms](guide/waveforms.md) · [Two simulators, two jobs](guide/two-simulators-two-jobs.md) *(not yet written)* | [Lab 02](labs/lab-02-the-only-test-this-chip-has-overview.md) |
+| III — The machine under test | [SimProc in one page](guide/simproc-in-one-page.md) *(not yet written)* · [The golden model](guide/the-golden-model.md) *(not yet written)* · [Flags are architectural state](guide/flags-are-state.md) *(not yet written)* | [Lab 03](labs/lab-03-three-blocks-before-the-processor-overview.md) |
+| IV — How bugs hide | [Where bugs hide](guide/where-bugs-hide.md) *(not yet written)* · [Directed, random, and the gap](guide/directed-random-and-the-gap.md) *(not yet written)* | [Lab 04](labs/lab-04-your-first-bug-hunt-overview.md) |
+| V — Right answers, broken chip | [The handshake is part of the contract](guide/the-handshake-is-the-contract.md) *(not yet written)* | [Lab 05](labs/lab-05-every-answer-is-right-overview.md) |
+| Capstone | [Writing the bug report](guide/writing-the-bug-report.md) *(not yet written)* | [Lab 06](labs/lab-06-capstone-overview.md) |
+
+> **Eleven guide and reference pages are still stubs**, marked *(not yet written)* above and
+> on the page itself. All six lab packages are complete and run today; each lab writeup carries
+> the theory it needs, and the harness is documented in
+> [`labs/common/README.md`](https://github.com/uoftasic/dd104/blob/main/labs/common/README.md).
+> If a stub leaves you stuck, say so in Discord.
 
 **Stuck?** Ask in the [team Discord](https://discord.gg/hrJnP5UsGz). Nobody expects you to work
 this out alone at 2 a.m. — see [Getting help](guide/getting-started.md#getting-help).
 
-Reference: [The SimProc instruction set](reference/simproc-instruction-set.md) ·
-[The SimProc harness](reference/the-harness-api.md) ·
-[Output that is not an error](reference/output-that-is-not-an-error.md)
+Reference: [The SimProc instruction set](reference/simproc-instruction-set.md) *(not yet written)* ·
+[The SimProc harness](reference/the-harness-api.md) *(not yet written)* ·
+[Output that is not an error](reference/output-that-is-not-an-error.md) *(not yet written)*
 
 ## Quick start
 

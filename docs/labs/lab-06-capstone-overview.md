@@ -11,10 +11,10 @@ bug report for one of the three.
 
 ## Prerequisites
 
-- [Lab 05](labs/lab-05-every-answer-is-right.md) complete — you have protocol tests as well as architectural ones
+- [Lab 05](labs/lab-05-every-answer-is-right-overview.md) complete — you have protocol tests as well as architectural ones
 - Every guide page. Particularly
-  [Directed, random, and the gap](guide/directed-random-and-the-gap.md) and
-  [Writing the bug report](guide/writing-the-bug-report.md)
+  [Directed, random, and the gap](guide/directed-random-and-the-gap.md) *(not yet written)* and
+  [Writing the bug report](guide/writing-the-bug-report.md) *(not yet written)*
 - Your Lab 04 and Lab 05 test files, to bring forward
 
 ## Objectives
@@ -218,7 +218,7 @@ whatever that module contains, and there is no credit for retyping work you have
 ### Step 5 — Hunt one properly
 
 - **Try this:** `make new`, `make hunt`, `make verdict`. Same three-row grade as
-  [Lab 04](labs/lab-04-your-first-bug-hunt.md); row 2 is still the deliverable.
+  [Lab 04](labs/lab-04-your-first-bug-hunt-overview.md); row 2 is still the deliverable.
 - **Why an engineer cares:** knowing that three bugs exist and knowing which one you have are
   different states. The pool description in `test_capstone.py` describes all three without
   naming which line any of them touches, which is roughly the information a bug report gives you

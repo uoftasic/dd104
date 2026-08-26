@@ -9,23 +9,7 @@
 >
 > Something you needed and could not find? Say so in the
 > [team Discord](https://discord.gg/hrJnP5UsGz).
-
-<!-- ===================================================================
-AUTHORING BRIEF — delete this comment when the page is written.
-
-FILENAME IS FIXED. It is linked from docs/_sidebar.md, docs/README.md and
-from other guide pages. Do not rename it; if the title needs to change, keep
-the filename and change the heading.
-
-Question this page answers (keep it, verbatim, as the first line):
-    What can I ask the harness for, and what does it already do for me?
-
-What this page must contain:
-  Reference card for labs/common/simproc.py, simproc_asm.py and golden.py.
-  The package README is the tutorial; this is the lookup table. Keep them
-  consistent or delete one.
-  - SimProc(dut) / await sp.start() - clock, reset, RAM blanked to 0x0C.
-  - await sp.run(prog) -> exact cycle count; sp.step(n); sp.run_cycles(n).
+ exact cycle count; sp.step(n); sp.run_cycles(n).
   - sp.reg(i), sp.regs(), sp.pc(), sp.flags(), sp.fsm(), sp.describe().
   - sp.peek(a), sp.poke(a, v) - the memory backdoor, and WHY it exists
     (measured: 70,656 cycles over the UART vs 2 through the backdoor).

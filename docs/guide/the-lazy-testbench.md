@@ -184,7 +184,7 @@ Fix the space — add `cin` to the sweep — and the count arrives:
    a year, on a rewrite, done by somebody who has never met you.
 ```
 
-Doing that is [Lab 01](labs/lab-01-the-adder-you-already-trust.md), and it is four lines.
+Doing that is [Lab 01](labs/lab-01-the-adder-you-already-trust-overview.md), and it is four lines.
 
 ## The count is the diagnostic
 
@@ -234,13 +234,13 @@ of a second of real time. That is the happy case, and when you are in it you sho
 > choosing than a `for` loop is at not choosing.
 
 SimProc's ALU is still in that world: 6 operations × 256 × 256 = **393,216 vectors**, which
-is [Lab 03](labs/lab-03-three-blocks-before-the-processor.md), where three bugs fall out
+is [Lab 03](labs/lab-03-three-blocks-before-the-processor-overview.md), where three bugs fall out
 by brute force.
 
 The processor around it is not. Four registers, 64 bytes of memory, a program counter, two
 flags and a UART — the state space is astronomically beyond walking, and it has *sequences*,
 so enumerating states would not be enough either. From
-[Lab 04](labs/lab-04-your-first-bug-hunt.md) onward, exhaustive stops being an option and
+[Lab 04](labs/lab-04-your-first-bug-hunt-overview.md) onward, exhaustive stops being an option and
 you need the two things that replace it:
 
 - **a reference model** to compare against instruction by instruction — [The golden

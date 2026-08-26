@@ -1,6 +1,6 @@
 # Lab 01 — The adder you already trust
 
-Writeup: [`docs/labs/lab-01-the-adder-you-already-trust.md`](../../docs/labs/lab-01-the-adder-you-already-trust.md)
+Writeup: [`docs/labs/lab-01-the-adder-you-already-trust-overview.md`](../../docs/labs/lab-01-the-adder-you-already-trust-overview.md)
 · live: <https://uoftasic.com/dd104/#/labs/lab-01-the-adder-you-already-trust>
 
 The 4-bit ripple-carry adder you built in DD102, with a cocotb testbench around it, and a
@@ -36,7 +36,7 @@ and it ends on `VERDICT: FAIL`, which is correct.
 | `test_adder.py` | **the file you edit.** Two tests, both passing, one TODO. |
 | `src/ripple4.sv`, `src/fulladder.sv` | the adder, correct. Same source as DD103 Lab 01. |
 | `broken/ripple4.sv` | the same adder with the carry-in dropped. **Not hidden** — its own header says what is wrong with it. Lab 01 is not a bug hunt; the hunt starts in Lab 04. |
-| `check.py` | the verdict. About 130 lines, and worth reading — every later lab uses a bigger version of it. |
+| `check.py` | the verdict. About 150 lines, and worth reading — every later lab uses a bigger version of it. |
 | `coverage/` | an add-on that asks a different question about the same stimulus. Its own `README.md`, its own `make`. |
 | `solutions/` | a reference solution. Do not open it before your own verdict says PASS. |
 

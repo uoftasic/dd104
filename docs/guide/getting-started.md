@@ -237,11 +237,16 @@ work. Measured in the pinned container:
 
 | Job | Wall time |
 |---|---|
-| Lab 01 end to end — two tests, run against two adders | **4.6 s** |
-| The shipped example testbench against the SimProc core (Icarus) | **7.8 s** |
-| The same six tests under Verilator, including its build | **22.6 s** |
-| The shipped chip test against the good core and all 13 broken ones | **21.0 s** |
-| Verilator toggle coverage on the Lab 01 adder, both stimulus sets | **10.8 s** |
+| Lab 01 end to end — two tests, run against two adders | **~5 s** |
+| The shipped example testbench against the SimProc core (Icarus) | **~6 s** |
+| The same six tests under Verilator, including its build | **~17 s** (~3 s once built) |
+| The shipped chip test against the good core and all 13 broken ones | **~19 s** |
+| Verilator toggle coverage on the Lab 01 adder, both stimulus sets | **~12 s** |
+
+These are wall clock on a machine that was doing other things, and ±25 % run to run is normal.
+They are the only kind of figure in this course that is allowed to drift: every number a lab
+writeup marks **GOLDEN** is exact, and if one of those does not reproduce, that is a bug in the
+course.
 
 Nothing in this course ties up your laptop. The consequence is that **you can afford to run
 your tests every time you change one line**, which is the working rhythm the whole course
@@ -281,10 +286,12 @@ This course is self-paced, which is not the same as alone.
 
 ### One thing not to ask for
 
-`labs/common/bugs.py` contains all thirteen answers, in order, with line numbers. It is in
-your clone right now and nobody is going to stop you reading it. It is also the one file that
-can make this course worthless to you — the skill DD104 teaches is *finding* a bug you cannot
-see, and you only get to practise that on a bug you have not been told.
+`labs/common/bugs.py` contains all thirteen answers, in order, with line numbers — and so do
+`labs/simproc/solutions/bug-NN.md` and `labs/simproc/variants/bug-NN/bug.patch`, which is the
+one-line edit itself. They are in your clone right now and nobody is going to stop you reading
+them. They are also the files that can make this course worthless to you — the skill DD104
+teaches is *finding* a bug you cannot see, and you only get to practise that on a bug you have
+not been told.
 
 If you are stuck, ask in Discord for **a better question to ask the design**, not for the
 answer. That is the request the course is built to answer.
