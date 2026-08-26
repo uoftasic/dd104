@@ -207,10 +207,12 @@ python3 test_example.py
 **Zero bytes of output, exit 0.** The module imported, the decorated function was defined,
 and Python reached the end of the file with nothing to do.
 
-And the third: any **cocotb 1.x** tutorial. `Timer(1, units="ns")` warns and keeps going;
-`MODULE=` in a Makefile silently finds no tests; `cocotb.fork` dies with `AttributeError:
+And the third: any **cocotb 1.x** tutorial. Most of it warns and keeps going —
+`Timer(1, units="ns")` and `MODULE=` in a Makefile both still run on 2.0.1 and print a
+deprecation line. What actually stops you is `cocotb.fork`, which dies with `AttributeError:
 module 'cocotb' has no attribute 'fork'` and never mentions that the problem is a version.
-See [cocotb 2.x vs every tutorial you will find](guide/cocotb-2x-vs-every-tutorial.md).
+See [cocotb 2.x vs every tutorial you will find](guide/cocotb-2x-vs-every-tutorial.md) for
+the measured split between the two.
 
 ## The shortest complete DD104 test
 

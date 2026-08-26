@@ -214,6 +214,10 @@ make blind
   changed is that `make hunt` on an architectural suite will now say `quiet` no matter how much
   stimulus you add, and the way out is a different kind of check rather than a bigger one.
 
+  As in Lab 04, `make hunt` summarises and `make probe` shows you everything the
+  simulator printed — which is the only way to read a probe program's `print()` output.
+  `make hunt VERBOSE=1` and `make verdict VERBOSE=1` are the same escape hatch.
+
 ## Expected results
 
 The complete difference between a working processor and these two:

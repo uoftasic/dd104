@@ -224,6 +224,9 @@ whatever that module contains, and there is no credit for retyping work you have
   naming which line any of them touches, which is roughly the information a bug report gives you
   in real life.
 
+  `make probe` is here too: same run, nothing swallowed — every `print()` and `dut._log`
+  line, live. `make hunt VERBOSE=1` and `make verdict VERBOSE=1` do the same.
+
 ### Step 6 — The suite
 
 - **Try this:** `make check-all` until it says `13 of 13`.

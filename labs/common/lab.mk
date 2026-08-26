@@ -16,11 +16,13 @@
 #     make check-all  your testbench against all 13 broken cores at once
 #     make bugs       what is in the bug catalogue
 #     make model      run the golden model on its own — no simulator needed
+#     make gap        what the random generator covers, and what it cannot
 #     make shuttle    the test the chip actually shipped with (see below)
 #     make clean
 
 COMMON  := $(abspath $(dir $(abspath $(lastword $(MAKEFILE_LIST)))))
 SELF    := $(abspath $(dir $(firstword $(MAKEFILE_LIST))))
+LABMK   := $(abspath $(firstword $(MAKEFILE_LIST)))
 
 TB      ?= test_example
 SIM     ?= icarus
@@ -30,7 +32,7 @@ PYTHON  ?= python3
 SIMMK   := $(MAKE) -f $(COMMON)/sim.mk COMMON=$(COMMON) TB=$(TB) SIM=$(SIM)
 RULE    := ============================================================
 
-.PHONY: all sim waves check check-all bugs model shuttle verify clean help
+.PHONY: all sim waves check check-all bugs model gap shuttle verify clean help
 
 ## all — sim, then check (this is what plain `make` runs)
 all: sim check
@@ -83,6 +85,10 @@ bugs:
 model:
 	@$(PYTHON) $(COMMON)/golden.py
 
+## gap — what the random generator covers, and what it cannot
+gap:
+	@$(PYTHON) $(COMMON)/gap.py
+
 ## verify — every catalogue anchor still matches the shipped RTL
 verify:
 	@$(PYTHON) $(COMMON)/inject.py --verify
@@ -98,8 +104,14 @@ clean:
 	@echo "cleaned"
 
 ## help — this list
+#
+# Two sources, lab-specific first: the lab's own Makefile, then the shared
+# targets here.  A lab that adds a target documents it with a `## ` line in
+# its own Makefile and it shows up here -- `make help` is the list, not a
+# list, and a target you cannot find from `make help` may as well not exist.
 help:
 	@echo "DD104 — targets in this lab:"
+	@grep -hE '^## ' $(LABMK) 2>/dev/null | sed 's/^## /  make /'
 	@grep -hE '^## ' $(COMMON)/lab.mk | sed 's/^## /  make /'
 	@echo ""
 	@echo "  variables:  TB=$(TB)   SIM=$(SIM)   BUG=$(BUG)"
