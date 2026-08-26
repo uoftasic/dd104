@@ -58,7 +58,7 @@ ifeq ($(SIM),icarus)
 endif
 
 # Verilator: the design does not lint clean, and that is a lesson, not an
-# accident (Lab 2).  -Wno-fatal turns its 12 warnings into warnings instead of
+# accident (Lab 02).  -Wno-fatal turns its 12 warnings into warnings instead of
 # a refusal to build, so the simulation still runs.
 ifeq ($(SIM),verilator)
   EXTRA_ARGS += -Wno-fatal

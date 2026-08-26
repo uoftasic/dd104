@@ -1,6 +1,6 @@
 # bug-02 — `NAND` is wired as `NOR`
 
-Catalogue **B02**. Tier 1, Lab 1.
+Catalogue **B02**. Tier 1, Lab 03.
 
 ```diff
 --- a/src/simproc_system.sv     line 813, inside the ALU

@@ -10,7 +10,7 @@ cd labs/lab-01-the-adder-you-already-trust/coverage
 make
 ```
 
-About **12 seconds**, because it builds the design twice with Verilator. Icarus has no
+About **11 seconds**, because it builds the design twice with Verilator. Icarus has no
 coverage instrumentation, so this is the one place in the early course where the strict
 simulator is the only one that can answer.
 

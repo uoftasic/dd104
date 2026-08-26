@@ -161,7 +161,7 @@ Out of range:
 poke(64, 0) raises: address 64 (0x40) is outside SimProc's 64-byte RAM. The hardware
 addresses it with 8 bits but only has 64 entries, so on real silicon this read returns X
 and this write is dropped. Verilator's linter says so statically; Icarus only shows it at
-run time. See Lab 2.
+run time. See Lab 02.
 ```
 
 ### `await sp.load(program, at=0, park=True)`

@@ -1,6 +1,6 @@
 # bug-05 — branch displacement is zero-extended
 
-Catalogue **B05**. Tier 2, Lab 3 (control flow).
+Catalogue **B05**. Tier 3, Lab 04 (control flow).
 
 ```diff
 --- a/src/simproc_system.sv     line 621, the branch target calculation

@@ -41,19 +41,28 @@ one names, in its own docstring, the verdict it must provoke.
 | `tb_core_handshake_blows_up.py` | the same shape again, counting `done` pulses — the only kind that reaches Lab 05's pool | FAIL, row marked `BROKEN` |
 | `tb_core_empty.py` | `pass`, at processor level | FAIL — passes the broken core too |
 
-## The three parts
+## The four parts
+
+They run fast-first, so the numbers below are the labels the script prints, not
+the order it prints them in: 1, 3, 4, then 2.
 
 1. **The classifier**, against hand-written `results.xml` — one file per shape
    cocotb 2.0.1 can produce, including `<skipped/>` and a `<failure>` with no
    `error_type` (which is how cocotb records a test that could not start).
    No simulator, sub-second.
-2. **The source audit** — no checker may carry its own `class Result`, its own
-   `ET.parse`, or a `findall("error")`. cocotb 2.x never writes an `<error>`
-   element, so that last one is dead code that looks like a safety net.
-3. **End to end** (`FULL=1`) — every `check*.py` and `hunt.py` in the course,
+2. **End to end** (`FULL=1`) — every `check*.py` and `hunt.py` in the course,
    each fed a fixture, each required to print a specific verdict and exit
    non-zero.
+3. **The source audit** — no checker may carry its own `class Result`, its own
+   `ET.parse`, or a `findall("error")`. cocotb 2.x never writes an `<error>`
+   element, so that last one is dead code that looks like a safety net.
+4. **The answer key against the catalogue** — every
+   `../../simproc/solutions/bug-NN.md` must carry the tier `bugs.py` gives that
+   bug, and must name the lab that tier is met in. `bugs.py` is what the
+   tooling prints (`make bugs`, and the `tier N` on every `check-all` row); the
+   solution files are what a student reads when they give up. Six of the
+   thirteen once disagreed, because nothing executed those numbers.
 
-A lab with a `core/` directory in it has a hunt in progress. Part 3 **skips**
+A lab with a `core/` directory in it has a hunt in progress. Part 2 **skips**
 that lab rather than dealing over it — `make new` deletes `core/`, and a
 selftest is not allowed to cost you your lab.

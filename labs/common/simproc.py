@@ -238,7 +238,7 @@ class SimProc:
     #
     # Use the backdoor for setup — getting a program in, checking a result.
     # Use the UART when the UART is what you are testing.  Every lab in this
-    # course does the first; Lab 5 does the second, and finds a bug that the
+    # course does the first; Lab 05 does the second, and finds a bug that the
     # backdoor structurally cannot see.
 
     def poke(self, addr, value):
@@ -283,7 +283,7 @@ class SimProc:
                 f"RAM. The hardware addresses it with 8 bits but only has 64 entries, "
                 f"so on real silicon this read returns X and this write is dropped. "
                 f"Verilator's linter says so statically; Icarus only shows it at "
-                f"run time. See Lab 2.")
+                f"run time. See Lab 02.")
 
     # ── reading the machine ──────────────────────────────────────────────────
 
@@ -693,7 +693,7 @@ class SimProc:
 
         A PING that works does not mean the link works.  0xF0 already has its
         top bit set and 0xAA is a fixed pattern, so a receiver whose bit period
-        is slightly wrong still gets both of them right — see Lab 5."""
+        is slightly wrong still gets both of them right — see Lab 05."""
         await self.uart_cmd(CMD_PING)
         return await self.recv_byte()
 

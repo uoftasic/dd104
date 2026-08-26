@@ -1,7 +1,7 @@
 """All 6 ALU ops x 256 x 256 = 393,216 vectors against a spec model.
 
 No processor, no UART, no program.  Drive A, B and ALUop; read ALUout, N, Z.
-This is the whole of Lab 1's argument: three of the shipped bugs live entirely
+This is the whole of Lab 03's argument: three of the shipped bugs live entirely
 inside this module, and a unit test finds them in about twenty seconds without
 knowing that a processor exists.
 
