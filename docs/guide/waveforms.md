@@ -216,6 +216,7 @@ too wide, and it is completely invisible in the log — every logged value is th
 are shaped like a waveform. Knowing which ones is the skill, and it is why the viewer is a tool
 you learn *before* you need it rather than during the hour you need it.
 
-Next: [Two simulators, two jobs](guide/two-simulators-two-jobs.md) — and then Lab 1, where the design
+Next: [Two simulators, two jobs](guide/two-simulators-two-jobs.md) — and then
+[Lab 02](labs/lab-02-the-only-test-this-chip-has-overview.md), where the design
 is a processor, the bugs were planted by someone else, and nobody tells you which of the
 thirteen you are looking for.
