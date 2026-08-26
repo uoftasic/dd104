@@ -14,12 +14,12 @@
     - [Waveforms when the assertion is not enough](guide/waveforms.md)
     - [Two simulators, two jobs](guide/two-simulators-two-jobs.md) *(not yet written)*
   - **III. The machine under test**
-    - [SimProc in one page](guide/simproc-in-one-page.md) *(not yet written)*
-    - [The golden model](guide/the-golden-model.md) *(not yet written)*
+    - [SimProc in one page](guide/simproc-in-one-page.md)
+    - [The golden model](guide/the-golden-model.md)
     - [Flags are architectural state](guide/flags-are-state.md) *(not yet written)*
   - **IV. How bugs hide**
-    - [Where bugs hide](guide/where-bugs-hide.md) *(not yet written)*
-    - [Directed, random, and the gap](guide/directed-random-and-the-gap.md) *(not yet written)*
+    - [Where bugs hide](guide/where-bugs-hide.md)
+    - [Directed, random, and the gap](guide/directed-random-and-the-gap.md)
   - **V. Right answers, broken chip**
     - [The handshake is part of the contract](guide/the-handshake-is-the-contract.md) *(not yet written)*
   - **Capstone**
@@ -32,7 +32,7 @@
   - [Lab 05 — Every answer is right](labs/lab-05-every-answer-is-right-overview.md)
   - [Lab 06 — Capstone: three that hide](labs/lab-06-capstone-overview.md)
 - **Reference**
-  - [The SimProc instruction set](reference/simproc-instruction-set.md) *(not yet written)*
+  - [The SimProc instruction set](reference/simproc-instruction-set.md)
   - [The SimProc harness](reference/the-harness-api.md) *(not yet written)*
   - [Output that is not an error](reference/output-that-is-not-an-error.md) *(not yet written)*
 - **Repo**

@@ -149,10 +149,22 @@ class Golden:
             # compare once and branch on the result twice.
             return 3
 
-        # Opcodes 0xC, 0xD, 0xE are not implemented.  The hardware spends three
-        # cycles, moves the PC on, changes nothing else — and never pulses
-        # `done`, which the model has no way to represent.
-        return 3
+        # Opcodes 0xC, 0xD, 0xE are not implemented.  The hardware moves the PC
+        # on, changes nothing else, and never pulses `done` — which the model
+        # has no way to represent.
+        #
+        # FOUR cycles, not three, and the extra one is not decoration.  Every
+        # other instruction leaves CYCLE_3 or CYCLE_4 straight back to CYCLE_1;
+        # an unimplemented opcode matches no clause in CYCLE_3, so the FSM takes
+        # its default exit to IDLE and needs one more cycle to be sent out of it
+        # again.  `halt` is therefore HIGH for one cycle in the middle of a
+        # free-running program — measured: 4 filler bytes take 16 clocks, with
+        # `halt` high on 4 of them and 0 `done` pulses.
+        #
+        # This model said 3 until somebody measured it.  See
+        # docs/guide/the-golden-model.md — it is the course's own worked
+        # example of a model being the wrong one of the two.
+        return 4
 
     def run(self, n_instructions, stop_on_reason=True):
         """Step `n_instructions` times.  Returns (cycles, reason_or_None)."""

@@ -15,7 +15,7 @@ tractable ones.
 - Read [The lazy testbench](guide/the-lazy-testbench.md),
   [Coverage as a question](guide/coverage-is-a-question.md) and
   [Flags are architectural state](guide/flags-are-state.md) *(not yet written)*
-- [SimProc in one page](guide/simproc-in-one-page.md) *(not yet written)* open in another tab
+- [SimProc in one page](guide/simproc-in-one-page.md) open in another tab
 
 ## Objectives
 
@@ -248,6 +248,23 @@ you will actually use.
   ```
 
   **All eight of those numbers are GOLDEN.**
+
+> **`3 of 3` is only worth having if it counts checks and not crashes.** A student's `t02` once
+> reported exactly that from a testbench whose failure message referred to a variable that was
+> never assigned. `NameError` never fires while everything is correct, so the testbench passed
+> the golden ALU and crashed on all three broken ones — and the old `check.py`, which read
+> cocotb's `<failure>` elements without looking at `error_type`, called three crashes three
+> catches. The verdict now says
+>
+> ```
+>  NO COUNT. 3 of the 3 runs did not finish:
+>    B01_sub_operands_swapped: t02_every_vector_the_alu_can_be_given BLEW UP
+>       NameError: name 'value_per_op' is not defined
+> ```
+>
+> and prints no number at all, because there is no number to print. Watch for it when you write
+> the two-bucket report in this step: the report only executes when something is wrong, which
+> is the one condition under which you never test it.
 
 - **Why an engineer cares:** `0 value mismatches, 25,726 flag mismatches` is a diagnosis. It
   says the arithmetic is fine and the flag logic is not, before anybody opens a waveform. One

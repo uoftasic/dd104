@@ -13,7 +13,7 @@ bug report for one of the three.
 
 - [Lab 05](labs/lab-05-every-answer-is-right-overview.md) complete — you have protocol tests as well as architectural ones
 - Every guide page. Particularly
-  [Directed, random, and the gap](guide/directed-random-and-the-gap.md) *(not yet written)* and
+  [Directed, random, and the gap](guide/directed-random-and-the-gap.md) and
   [Writing the bug report](guide/writing-the-bug-report.md) *(not yet written)*
 - Your Lab 04 and Lab 05 test files, to bring forward
 

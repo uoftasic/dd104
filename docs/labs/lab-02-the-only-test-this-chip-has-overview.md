@@ -12,7 +12,7 @@ against thirteen deliberately broken versions of the chip, and all thirteen are 
 ## Prerequisites
 
 - [Lab 01](labs/lab-01-the-adder-you-already-trust-overview.md) complete — `make check` said `VERDICT: PASS`
-- Read [SimProc in one page](guide/simproc-in-one-page.md) *(not yet written)* and
+- Read [SimProc in one page](guide/simproc-in-one-page.md) and
   [Driving and checking a design](guide/driving-and-checking.md)
 - Skim [Two simulators, two jobs](guide/two-simulators-two-jobs.md) *(not yet written)* — you will meet Verilator properly in Lab 03
 - `cocotb-config --version` says **`2.0.1`**
@@ -219,7 +219,7 @@ at the top of `test_lab02.py`.
   That is $256 + 256 = 512$ of the 65,536 possible operand pairs — **0.78 % of the input
   space** — and the single most natural subtraction test you could write lands inside it.
 
-> **`make: *** [../common/lab.mk:64: check] Error 1`** appears under every failed verdict. It
+> **`make: *** [../common/lab.mk:66: check] Error 1`** appears under every failed verdict. It
 > is the verdict talking: a `FAIL` exits non-zero on purpose so that a script or a CI job can
 > read the result without grepping text. Not a broken Makefile.
 

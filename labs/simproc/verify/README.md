@@ -61,7 +61,7 @@ which is the cleanest demonstration in the course of where a unit test stops.
 The suite's `run_and_compare` used to end each program with a UART `HALT`. At
 `clk_per_bit = 8` that is harmless. At `clk_per_bit = 32` a three-byte command
 takes 1,056 clocks to shift in, and **the core keeps executing the whole time**.
-Past the end of a short program it runs unimplemented opcodes at 3 cycles each,
+Past the end of a short program it runs unimplemented opcodes at 4 cycles each,
 and the PC is 8 bits wide against a 64-byte RAM — so it wraps to 0 and runs the
 program a second time, over its own results.
 
