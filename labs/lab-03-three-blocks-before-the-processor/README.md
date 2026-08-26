@@ -78,6 +78,36 @@ factors into a sentence about the bug:
 | B02 | `{'NAND': 65280}` | 0 |
 | B03 | **0** | `{'ADD': 3840, 'SUB': 3840, 'OR': 255, 'NAND': 255, 'SHL': 14400, 'SHR': 3136}` — 25,726 total |
 
+## `NO COUNT` — and why it is not `2 of 3`
+
+There is one more thing `make check-alu-bugs` can print, and it is deliberately not a number:
+
+```
+  BROKEN  B01_sub_operands_swapped           3 tests, 1 BLEW UP, 1 FAILED
+  BROKEN  B02_nand_is_nor                    3 tests, 1 BLEW UP, 1 FAILED
+  BROKEN  B03_zero_flag_low_nibble           3 tests, 1 BLEW UP
+------------------------------------------------------------------------
+ NO COUNT. 3 of the 3 runs did not finish:
+   B01_sub_operands_swapped: t02_every_vector_the_alu_can_be_given BLEW UP
+      NameError: name 'value_per_op' is not defined
+```
+
+That is the shape of the worst bug this course has had. A misspelled variable in the code that
+builds the *failure message* never runs while everything is correct — so the testbench passes
+the golden ALU and raises `NameError` on all three broken ones. cocotb records `NameError` and
+`AssertionError` in `results.xml` the same way, as `<failure>`, so the old `check.py` counted
+the three crashes as three catches and printed:
+
+```
+ 3 of 3 ALU bugs caught.
+ Every bug the catalogue puts inside the ALU.
+```
+
+A crash is not a catch. It compared nothing, so it says nothing about the ALU — and it would
+crash identically on a perfectly correct one. [`../common/verdict.py`](../common/verdict.py) is
+the one place in DD104 that tells `the assertion fired` apart from `the test blew up`, and
+`cd ../common && make selftest` is what keeps it that way.
+
 ## Definition of done
 
 `make check-alu-bugs` says `3 of 3 ALU bugs caught`, and `make rf` runs five tests instead of

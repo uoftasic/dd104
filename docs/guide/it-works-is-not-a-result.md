@@ -182,6 +182,53 @@ good core **and** failed a broken one.
 
 Two-sided or nothing. That is what a result looks like.
 
+## And a red test is two different results
+
+Applying the same suspicion to the other colour, because it has already cost a DD104 student a
+false PASS: **a test that did not pass has not necessarily *checked* anything.** There are two
+ways to come back not-green and they are not related.
+
+| | what happened | what it tells you |
+|---|---|---|
+| **the check fired** | you drove the design, compared what came out against what should have, and they differed | a statement about the **design** |
+| **the test blew up** | `NameError`, `TypeError`, an import that failed, a variable you never spelled the same way twice | a statement about the **testbench** |
+
+Only the first one is a caught bug. The second compared nothing, so it says nothing about the
+design under test — and it would say the same nothing about a design that was perfectly
+correct.
+
+The reason this needs saying out loud is that the failure only shows up in the code you never
+execute while things are working:
+
+```python
+if bad:
+    raise AssertionError(f"{len(bad)} of {checked} wrong: {summary}")   # `summary` undefined
+```
+
+That line runs the first time something is wrong — which is the first time it is ever run at
+all. So the testbench passes the good design, crashes on the broken one, and *looks exactly
+like a catch.* cocotb records both outcomes in `results.xml` the same way, as a `<failure>`
+element, distinguished only by an `error_type` attribute:
+
+```xml
+<failure error_type="AssertionError" error_msg="256 of 512 vectors are wrong" />
+<failure error_type="NameError"      error_msg="name 'summary' is not defined" />
+```
+
+DD104's graders once read those two lines identically, and told a student **`3 of 3 ALU bugs
+caught`** about a testbench that crashed three times. Every checker in this course now reads
+[`labs/common/verdict.py`](https://github.com/uoftasic/dd104/blob/main/labs/common/verdict.py),
+which is the one place the distinction is made, and marks such a run `BROKEN` — never `caught`,
+never `ok`:
+
+```
+  BROKEN  B01_sub_operands_swapped           3 tests, 1 BLEW UP
+------------------------------------------------------------------------
+ VERDICT: FAIL -- 1 of your tests did not run to the end.
+```
+
+The reflex extends by one clause: **when a test fails, ask whether it failed or fell over.**
+
 ## Try this
 
 Before you go on, spend two minutes with the file itself:

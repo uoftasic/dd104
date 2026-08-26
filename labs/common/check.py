@@ -33,6 +33,16 @@ So "my tests pass" is not a result.  The result is two-sided:
     it must FAIL on the broken one         — or you are not testing anything
 
 `check.py` runs both and says which.  That is the verdict.
+
+────────────────────────────────────────────────────────────────────────────
+AND "FAILED" IS NOT THE SAME WORD AS "BLEW UP"
+────────────────────────────────────────────────────────────────────────────
+A test that raises `NameError` has not caught a bug.  It stopped before the
+comparison happened, so it says nothing at all about the core it was pointed
+at -- and it would say the same nothing about every other core in the
+catalogue.  Counting one of those as a catch is how a grader hands out a PASS
+for a testbench that does not run.  `verdict.py` is where the two are told
+apart, and every DD104 checker reads it from there.
 """
 
 import argparse
@@ -41,41 +51,16 @@ import shutil
 import subprocess
 import sys
 import time
-import xml.etree.ElementTree as ET
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 
 import inject                                   # noqa: E402
+import verdict as V                             # noqa: E402
 from bugs import BUGS, TEACHES, names, resolve  # noqa: E402
 
 RULE = "=" * 72
 THIN = "-" * 72
-
-
-class Result:
-    """What one simulation run did."""
-
-    def __init__(self, tests, passed, failures, seconds, log, launched):
-        self.tests = tests
-        self.passed = passed
-        self.failures = failures        # list of (test name, first message line)
-        self.seconds = seconds
-        self.log = log
-        self.launched = launched        # False if the simulator never ran
-
-    @property
-    def all_passed(self):
-        return self.launched and self.tests > 0 and not self.failures
-
-    def summary(self):
-        if not self.launched:
-            return "the simulator did not run"
-        if self.tests == 0:
-            return "0 tests ran"
-        if not self.failures:
-            return f"{self.tests} tests, all passed"
-        return f"{self.tests} tests, {len(self.failures)} FAILED"
 
 
 def run_sim(tb, rtl_dir, build_dir, sim="icarus", lab_dir=None, plusargs=None):
@@ -101,24 +86,8 @@ def run_sim(tb, rtl_dir, build_dir, sim="icarus", lab_dir=None, plusargs=None):
     log = proc.stdout + proc.stderr
 
     if not os.path.exists(results):
-        return Result(0, 0, [], elapsed, log, launched=False)
-
-    tests = passed = 0
-    failures = []
-    for case in ET.parse(results).getroot().iter("testcase"):
-        tests += 1
-        bad = list(case.findall("failure")) + list(case.findall("error"))
-        if bad:
-            # cocotb 2.x writes error_msg / error_type; older JUnit writers use
-            # `message` or the element body. Read whichever is there.
-            e = bad[0]
-            text = (e.get("error_msg") or e.get("message") or e.text or "").strip()
-            first = text.splitlines()[0] if text else "(no message)"
-            kind = e.get("error_type") or "failure"
-            failures.append((case.get("name"), f"{kind}: {first}"))
-        else:
-            passed += 1
-    return Result(tests, passed, failures, elapsed, log, launched=True)
+        return V.not_launched(elapsed, log)
+    return V.read_results(results, elapsed, log)
 
 
 def golden_rtl():
@@ -138,15 +107,15 @@ def line(label, result, expectation):
     """One row of the report.
 
     `expectation` is 'pass' (the golden core: your tests must all pass) or
-    'fail' (a broken core: at least one test must fail, or it went undetected).
+    'fail' (a broken core: a CHECK must fire, or the bug went undetected).
+
+    A run in which a test blew up is neither, and is marked BROKEN. It is
+    never `ok` and it is never `caught`: an exception that is not an
+    AssertionError compared nothing, so it is not evidence about this core.
     """
-    if expectation == "pass":
-        ok = result.all_passed
-        mark = "ok" if ok else "FAIL"
-    else:
-        ok = result.launched and result.tests > 0 and bool(result.failures)
-        mark = "caught" if ok else "MISSED"
-    return f"  {mark:>6}  {label:<34} {result.summary():<26} {result.seconds:5.1f}s", ok
+    ok = result.all_passed if expectation == "pass" else result.caught
+    mark = result.mark(expectation)
+    return f"  {mark:>6}  {label:<34} {result.summary():<30} {result.seconds:5.1f}s", ok
 
 
 def check_one(tb, bug, sim, lab_dir, verbose=False):
@@ -166,28 +135,45 @@ def check_one(tb, bug, sim, lab_dir, verbose=False):
         for l in good.log.strip().splitlines()[-20:]:
             print("   " + l)
         return False
-    for name, msg in good.failures:
-        print(f"        {name}: {msg[:60]}")
+    V.report_problems(good)
+    if good.broken:
+        print(THIN)
+        V.broken_testbench_verdict(good, "the golden core")
+        print(RULE)
+        return False
+    if good.ran == 0:
+        print(THIN)
+        V.no_tests_ran_verdict(good)
+        print(RULE)
+        return False
 
     name, rtl = broken_rtl(bug, lab_dir)
     bad = run_sim(tb, rtl, os.path.join(lab_dir, "build", "broken", name, "run"),
                   sim=sim, lab_dir=lab_dir)
     row, bad_ok = line(name, bad, "fail")
     print(row)
-    for tname, msg in bad.failures[:4]:
-        print(f"        {tname}")
-        print(f"            {msg[:90]}")
+    V.report_problems(bad, limit=4)
 
     print(THIN)
-    if good_ok and bad_ok:
+    if bad.broken:
+        V.broken_testbench_verdict(bad, name)
+        print("")
+        print("   These same tests passed on the golden core, so the crash is in")
+        print("   a path only a wrong answer reaches -- usually the message you")
+        print("   build when the comparison fails. That path has to work too.")
+    elif good_ok and bad_ok:
         print(f" VERDICT: PASS")
-        print(f"   Your testbench passes the good core and catches {name}.")
+        print(f"   Your testbench passes the good core, and on {name} a check FIRED:")
+        for tname, msg in bad.failures[:2]:
+            print(f"       {tname}: {msg[:76]}")
         print(f"   That bug teaches: {TEACHES[name]}")
     elif not good_ok:
         print(f" VERDICT: FAIL — your testbench does not pass the GOLDEN core.")
         print(f"   Fix that first. Either the test expects the wrong thing, or")
         print(f"   the harness is being used in a way the chip does not support.")
         print(f"   Run 'make sim' on its own to see the full failure.")
+    elif bad.ran == 0:
+        V.no_tests_ran_verdict(bad)
     else:
         print(f" VERDICT: FAIL — your testbench passes {name} too.")
         print(f"   A test that passes on a broken core is not testing that core.")
@@ -196,7 +182,7 @@ def check_one(tb, bug, sim, lab_dir, verbose=False):
     print(RULE)
     if verbose:
         print(bad.log)
-    return good_ok and bad_ok
+    return good_ok and bad_ok and not bad.broken
 
 
 def check_all(tb, sim, lab_dir):
@@ -208,8 +194,17 @@ def check_all(tb, sim, lab_dir):
                    sim=sim, lab_dir=lab_dir)
     row, good_ok = line("the golden core", good, "pass")
     print(row)
-    for name, msg in good.failures:
-        print(f"        {name}\n            {msg[:90]}")
+    V.report_problems(good)
+    if good.broken:
+        print(THIN)
+        V.broken_testbench_verdict(good, "the golden core")
+        print(RULE)
+        return False
+    if good.ran == 0:
+        print(THIN)
+        V.no_tests_ran_verdict(good)
+        print(RULE)
+        return False
     if not good_ok:
         print(THIN)
         print(" Stopping: the testbench must pass the golden core before")
@@ -218,19 +213,42 @@ def check_all(tb, sim, lab_dir):
         return False
     print(THIN)
 
-    caught = []
-    missed = []
+    caught, missed, blew_up = [], [], []
     for bug in names():
         name, rtl = broken_rtl(bug, lab_dir)
         r = run_sim(tb, rtl, os.path.join(lab_dir, "build", "broken", name, "run"),
                     sim=sim, lab_dir=lab_dir)
-        hit = r.launched and bool(r.failures)
-        (caught if hit else missed).append(name)
-        who = r.failures[0][0] if r.failures else ""
-        print(f"  {'caught' if hit else 'MISSED':>6}  tier {BUGS[name]['tier']}  "
+        if r.broken:
+            blew_up.append((name, r))
+            who = r.errors[0][0]
+        elif r.caught:
+            caught.append(name)
+            who = r.failures[0][0]
+        else:
+            missed.append(name)
+            who = ""
+        print(f"  {r.mark('fail'):>6}  tier {BUGS[name]['tier']}  "
               f"{name:<34} {who[:22]:<22} {r.seconds:5.1f}s")
 
     print(THIN)
+
+    # A run in which a test blew up is not a count of anything, so do not
+    # print a count. `12 of 13 caught` would be a claim about the design;
+    # a NameError is a claim about the testbench and nothing else.
+    if blew_up:
+        print(f" NO COUNT. {len(blew_up)} of the {len(BUGS)} runs did not finish:")
+        for name, r in blew_up:
+            for tname, msg in r.errors[:1]:
+                print(f"   {name}: {tname} BLEW UP")
+                print(f"      {msg[:80]}")
+        print("")
+        print(" Those tests raised before they compared anything, so they are not")
+        print(" catches -- on these cores or on any other. There is no score to")
+        print(" report until the testbench runs to the end. `make sim` on its own")
+        print(" prints the traceback.")
+        print(RULE)
+        return False
+
     print(f" {len(caught)} of {len(BUGS)} caught.")
     if missed:
         print(f" Still hiding from this testbench:")
@@ -238,8 +256,9 @@ def check_all(tb, sim, lab_dir):
             print(f"   {m}")
             print(f"      hides behind: {BUGS[m]['hides_behind']}")
     else:
-        print(" Every bug in the catalogue. Nothing in this course hides from")
-        print(" this testbench any more.")
+        print(" Every bug in the catalogue, every one of them caught by a check")
+        print(" that fired. Nothing in this course hides from this testbench any")
+        print(" more.")
     print(RULE)
     return not missed
 
@@ -258,7 +277,13 @@ def check_shuttle(sim, lab_dir):
 
     good = run_sim(tb, golden_rtl(), os.path.join(lab_dir, "build", "shuttle-golden"),
                    sim=sim, lab_dir=lab_dir)
-    print(f"  {'PASS' if good.all_passed else 'FAIL':>6}  "
+    def word(r):
+        # This demonstration prints PASS/FAIL rather than ok/FAIL because the
+        # point being made is "the shipped test passes on all of them". BROKEN
+        # would mean test_shuttle.py itself had stopped working.
+        return "BROKEN" if r.broken else ("PASS" if r.all_passed else "FAIL")
+
+    print(f"  {word(good):>6}  "
           f"{'the golden core':<42} {good.seconds:5.1f}s")
 
     survived = 0
@@ -268,7 +293,7 @@ def check_shuttle(sim, lab_dir):
                     sim=sim, lab_dir=lab_dir)
         ok = r.all_passed
         survived += ok
-        print(f"  {'PASS' if ok else 'FAIL':>6}  {name:<42} {r.seconds:5.1f}s")
+        print(f"  {word(r):>6}  {name:<42} {r.seconds:5.1f}s")
 
     print(THIN)
     print(f" {survived} of {len(BUGS)} deliberately broken processors pass the")

@@ -40,6 +40,27 @@ Only these three are fillable:
 
 Do not put grades, solution keys, or PII under `docs/`. Prefer `labs/**/solutions/` and gitignore them on student forks when needed.
 
+## Before you touch a checker
+
+Every verdict in DD104 — `labs/common/check.py`, `labs/*/check.py`, `labs/*/hunt.py` — reads
+`labs/common/verdict.py` for the one distinction the whole course rests on: *the assertion
+fired* (the design is at fault) versus *the test blew up* (the testbench is). Do not re-derive
+that in a checker. Import it.
+
+```bash
+cd labs/common
+make selftest            # the classifier and a source audit. Under a second.
+make selftest FULL=1     # ... and every checker in the course, end to end. Minutes.
+```
+
+`make selftest` fails if any checker grows its own `class Result`, its own `ET.parse`, or a
+`findall("error")` — cocotb 2.x never writes an `<error>` element, so that last one is dead
+code that looks like a safety net. `FULL=1` points every checker at a deliberately broken
+testbench and reads what it says. See [`labs/common/selftest/README.md`](labs/common/selftest/README.md).
+
+A grader that says PASS when it did nothing is worse than no grader at all, and DD104 has
+shipped two of those.
+
 ## Local docs preview
 
 ```bash

@@ -14,19 +14,26 @@ whole chip:
 The broken ALUs come from `../common/bugs.py`, which is the same catalogue the
 processor-level labs use.  `inject.py` refuses to patch a line whose text has
 drifted, so a "broken" core here is always actually broken.
+
+And a bug is only "caught" if a CHECK fired.  A test that raised `NameError`
+did not catch anything -- it stopped before the comparison happened, and it
+would have raised on the golden ALU too if the golden ALU had ever reached
+that line.  `../common/verdict.py` is where the two are told apart; this file
+used to count them the same and told a student `3 of 3 ALU bugs caught` about
+a testbench that crashed three times.
 """
 
 import os
 import subprocess
 import sys
 import time
-import xml.etree.ElementTree as ET
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 COMMON = os.path.abspath(os.path.join(HERE, "..", "common"))
 sys.path.insert(0, COMMON)
 
 import inject                                   # noqa: E402
+import verdict as V                             # noqa: E402
 from bugs import BUGS, TEACHES, resolve         # noqa: E402
 
 RULE = "=" * 72
@@ -37,25 +44,6 @@ THIN = "-" * 72
 # cannot see it — which is the honest limit of unit testing and is worth
 # saying out loud rather than discovering.
 ALU_BUGS = ["B01", "B02", "B03"]
-
-
-class Result:
-    def __init__(self, tests, failures, seconds, log, launched):
-        self.tests, self.failures = tests, failures
-        self.seconds, self.log, self.launched = seconds, log, launched
-
-    @property
-    def all_passed(self):
-        return self.launched and self.tests > 0 and not self.failures
-
-    def summary(self):
-        if not self.launched:
-            return "the simulator did not run"
-        if self.tests == 0:
-            return "0 tests ran"
-        if not self.failures:
-            return f"{self.tests} tests, all passed"
-        return f"{self.tests} tests, {len(self.failures)} FAILED"
 
 
 def run_sim(tb, toplevel, rtl_dir, build_dir):
@@ -77,32 +65,20 @@ def run_sim(tb, toplevel, rtl_dir, build_dir):
     log = proc.stdout + proc.stderr
 
     if not os.path.exists(results):
-        return Result(0, [], elapsed, log, launched=False)
-
-    tests, failures = 0, []
-    for case in ET.parse(results).getroot().iter("testcase"):
-        tests += 1
-        bad = list(case.findall("failure")) + list(case.findall("error"))
-        if bad:
-            e = bad[0]
-            text = (e.get("error_msg") or e.get("message") or e.text or "").strip()
-            failures.append((case.get("name"),
-                             text.splitlines()[0] if text else "(no message)"))
-    return Result(tests, failures, elapsed, log, launched=True)
+        return V.not_launched(elapsed, log)
+    return V.read_results(results, elapsed, log)
 
 
 def row(mark, label, r):
-    return f"  {mark:>6}  {label:<34} {r.summary():<26} {r.seconds:5.1f}s"
+    return f"  {mark:>6}  {label:<34} {r.summary():<30} {r.seconds:5.1f}s"
 
 
-def one(tb, toplevel, bug):
-    print(RULE)
-    print(f" CHECK   testbench: {tb}   module under test: {toplevel}")
-    print(RULE)
-
+def golden_run(tb, toplevel):
+    """The golden module, and the three ways it can stop the check dead."""
     good = run_sim(tb, toplevel, os.path.join(COMMON, "rtl"),
                    os.path.join(HERE, "build", "golden"))
-    print(row("ok" if good.all_passed else "FAIL", f"the golden {toplevel}", good))
+    print(row(good.mark("pass"), f"the golden {toplevel}", good))
+
     if not good.launched:
         print(THIN)
         print(" The simulator never produced a results file. That is a setup problem,")
@@ -110,43 +86,85 @@ def one(tb, toplevel, bug):
         print(THIN)
         for l in good.log.strip().splitlines()[-20:]:
             print("   " + l)
+        print(RULE)
+        return good, False
+
+    V.report_problems(good)
+
+    if good.broken:
+        print(THIN)
+        V.broken_testbench_verdict(good, f"the golden {toplevel}")
+        print(RULE)
+        return good, False
+    if good.ran == 0:
+        print(THIN)
+        V.no_tests_ran_verdict(good)
+        print(RULE)
+        return good, False
+    return good, True
+
+
+def one(tb, toplevel, bug):
+    print(RULE)
+    print(f" CHECK   testbench: {tb}   module under test: {toplevel}")
+    print(RULE)
+
+    good, usable = golden_run(tb, toplevel)
+    if not usable:
         return False
-    for name, msg in good.failures:
-        print(f"        {name}\n            {msg[:90]}")
 
     name = resolve(bug)
     rtl = inject.build(name, os.path.join(HERE, "build", "broken", name))
     bad = run_sim(tb, toplevel, rtl,
                   os.path.join(HERE, "build", "broken", name, "run"))
-    caught = bad.launched and bad.tests > 0 and bool(bad.failures)
-    print(row("caught" if caught else "MISSED", name, bad))
-    for tname, msg in bad.failures[:4]:
-        print(f"        {tname}\n            {msg[:90]}")
+    print(row(bad.mark("fail"), name, bad))
+    V.report_problems(bad, limit=4)
 
     print(THIN)
-    if good.all_passed and caught:
-        print(" VERDICT: PASS")
-        print(f"   {tb} passes the golden {toplevel} and catches {name}.")
-        print(f"   That bug teaches: {TEACHES[name]}")
-    elif not good.all_passed:
+    if bad.broken:
+        V.broken_testbench_verdict(bad, name)
+        print("")
+        print(f"   These same tests passed on the golden {toplevel}, so the crash is")
+        print("   in a path only a wrong answer reaches -- almost always the")
+        print("   message you build when the comparison fails. That path has to")
+        print("   work too; it is the half of the test anybody actually reads.")
+        print(RULE)
+        return False
+
+    if not good.all_passed:
         print(f" VERDICT: FAIL -- {tb} does not pass the GOLDEN {toplevel}.")
         print("   Fix that first. Either the test expects the wrong thing, or")
         print("   `spec()` and the RTL disagree and one of them is right.")
-    else:
-        print(f" VERDICT: FAIL -- {tb} passes {name} too.")
-        print(f"   That bug hides behind: {BUGS[name]['hides_behind']}")
-        print("   Write a test whose stimulus does not do that.")
+        print(RULE)
+        return False
+
+    if not bad.caught:
+        if bad.ran == 0:
+            V.no_tests_ran_verdict(bad)
+        else:
+            print(f" VERDICT: FAIL -- {tb} passes {name} too.")
+            print(f"   That bug hides behind: {BUGS[name]['hides_behind']}")
+            print("   Write a test whose stimulus does not do that.")
+        print(RULE)
+        return False
+
+    print(" VERDICT: PASS")
+    print(f"   {tb} passes the golden {toplevel}, and on {name} a check FIRED:")
+    for tname, msg in bad.failures[:2]:
+        print(f"       {tname}: {msg[:78]}")
+    print(f"   That bug teaches: {TEACHES[name]}")
     print(RULE)
-    return good.all_passed and caught
+    return True
 
 
 def alu_sweep(tb, toplevel):
     print(RULE)
     print(f" CHECK-ALU-BUGS   testbench: {tb}   module under test: {toplevel}")
     print(RULE)
-    good = run_sim(tb, toplevel, os.path.join(COMMON, "rtl"),
-                   os.path.join(HERE, "build", "golden"))
-    print(row("ok" if good.all_passed else "FAIL", f"the golden {toplevel}", good))
+
+    good, usable = golden_run(tb, toplevel)
+    if not usable:
+        return False
     if not good.all_passed:
         print(THIN)
         print(" Stopping: the testbench has to pass the golden module before")
@@ -155,27 +173,47 @@ def alu_sweep(tb, toplevel):
         return False
 
     print(THIN)
-    missed = []
+    missed, blew_up = [], []
     for b in ALU_BUGS:
         name = resolve(b)
         rtl = inject.build(name, os.path.join(HERE, "build", "broken", name))
         r = run_sim(tb, toplevel, rtl,
                     os.path.join(HERE, "build", "broken", name, "run"))
-        hit = r.launched and bool(r.failures)
-        if not hit:
+        if r.broken:
+            blew_up.append((name, r))
+        elif not r.caught:
             missed.append(name)
-        print(row("caught" if hit else "MISSED", name, r))
+        print(row(r.mark("fail"), name, r))
 
     print(THIN)
+
+    # A run in which a test blew up is not a count of anything. Say that
+    # instead of a number, because the number would be a lie: an exception
+    # that is not an AssertionError compared nothing.
+    if blew_up:
+        print(f" NO COUNT. {len(blew_up)} of the {len(ALU_BUGS)} runs did not finish:")
+        for name, r in blew_up:
+            for tname, msg in r.errors[:2]:
+                print(f"   {name}: {tname} BLEW UP")
+                print(f"      {msg[:80]}")
+        print("")
+        print(" A test that raises NameError, TypeError or AttributeError stopped")
+        print(" before it compared anything. It is not a caught bug -- it is not")
+        print(" even a test yet -- so this sweep has no score to report. Fix the")
+        print(" testbench, then run it again.")
+        print(RULE)
+        return False
+
     print(f" {len(ALU_BUGS) - len(missed)} of {len(ALU_BUGS)} ALU bugs caught.")
     if missed:
         for m in missed:
             print(f"   still hiding: {m}")
             print(f"      behind: {BUGS[m]['hides_behind']}")
     else:
-        print(" Every bug the catalogue puts inside the ALU. The other ten are")
-        print(" in the control path around it, where a unit test of the ALU")
-        print(" cannot reach them -- that is Lab 04.")
+        print(" Every bug the catalogue puts inside the ALU, and every one of them")
+        print(" caught by a check that fired, not by a testbench that crashed.")
+        print(" The other ten are in the control path around it, where a unit test")
+        print(" of the ALU cannot reach them -- that is Lab 04.")
     print(RULE)
     return not missed
 

@@ -30,6 +30,13 @@ PASS for it.
 
 Row 2 is always rebuilt fresh from the catalogue, not read from `core/`.  You
 cannot get a green row 2 by editing the file the test runs against.
+
+And row 2 is green only if a CHECK FIRED.  A test that raised `NameError`,
+`TypeError` or `AttributeError` stopped before it compared anything: it did
+not catch the bug, it crashed, and it would crash the same way on a perfectly
+correct processor.  Such a row is marked BROKEN, never `caught`, and the
+verdict says which exception and where.  `../common/verdict.py` is where the
+two are told apart.
 ────────────────────────────────────────────────────────────────────────────
 """
 
@@ -42,13 +49,13 @@ import subprocess
 import textwrap
 import sys
 import time
-import xml.etree.ElementTree as ET
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 COMMON = os.path.abspath(os.path.join(HERE, "..", "common"))
 sys.path.insert(0, COMMON)
 
 import inject                                   # noqa: E402
+import verdict as V                             # noqa: E402
 from bugs import BUGS, TEACHES, resolve         # noqa: E402
 
 RULE = "=" * 72
@@ -66,25 +73,6 @@ POOL_NOTE = ('Three are in the decode path or the register file, between the '
              'instruction word and the register it writes. Two are in the branch '
              'path. None of them is in the ALU -- Lab 03 finished the ALU, and '
              'every vector it can be given is already known to be right.')
-
-
-class Result:
-    def __init__(self, tests, failures, seconds, log, launched):
-        self.tests, self.failures = tests, failures
-        self.seconds, self.log, self.launched = seconds, log, launched
-
-    @property
-    def all_passed(self):
-        return self.launched and self.tests > 0 and not self.failures
-
-    def summary(self):
-        if not self.launched:
-            return "the simulator did not run"
-        if self.tests == 0:
-            return "0 tests ran"
-        if not self.failures:
-            return f"{self.tests} tests, all passed"
-        return f"{self.tests} tests, {len(self.failures)} FAILED"
 
 
 def run_sim(tb, rtl_dir, build_dir, sim="icarus", stream=False):
@@ -130,18 +118,8 @@ def run_sim(tb, rtl_dir, build_dir, sim="icarus", stream=False):
     elapsed = time.time() - t0
 
     if not os.path.exists(results):
-        return Result(0, [], elapsed, log, launched=False)
-
-    tests, failures = 0, []
-    for case in ET.parse(results).getroot().iter("testcase"):
-        tests += 1
-        bad = list(case.findall("failure")) + list(case.findall("error"))
-        if bad:
-            e = bad[0]
-            text = (e.get("error_msg") or e.get("message") or e.text or "").strip()
-            failures.append((case.get("name"),
-                             text.splitlines()[0] if text else "(no message)"))
-    return Result(tests, failures, elapsed, log, launched=True)
+        return V.not_launched(elapsed, log)
+    return V.read_results(results, elapsed, log)
 
 
 # ── the seal ────────────────────────────────────────────────────────────────
@@ -230,11 +208,9 @@ def hunt(tb, sim="icarus", verbose=False):
                 sim=sim, stream=verbose)
     if verbose:
         print(THIN)
-    mark = "caught" if r.failures else ("!" if not r.launched else "quiet")
-    print(row(mark, "core/  the mystery", r))
-    for tname, msg in r.failures[:6]:
-        print(f"        {tname}")
-        print(f"            {msg[:100]}")
+    mark = "!" if not r.launched else r.mark("fail")
+    print(row(mark if mark != "MISSED" else "quiet", "core/  the mystery", r))
+    V.report_problems(r)
     print(THIN)
     if not r.launched:
         if verbose:
@@ -249,10 +225,20 @@ def hunt(tb, sim="icarus", verbose=False):
             print(" `make probe` re-runs this with the whole log, not the last 20 lines.")
         print(RULE)
         return 1
-    if r.failures:
+    if r.broken:
+        print(" One of your tests BLEW UP -- it raised something that is not an")
+        print(" AssertionError, so it stopped before it compared anything. That")
+        print(" is not a bug you found in this core; it is a bug in the test, and")
+        print(" it would raise the same way on a perfectly correct processor.")
+        print(" Fix it first: `make probe` shows the whole traceback.")
+    elif r.failures:
         print(" Something in this core disagrees with your testbench. That is not")
         print(" yet a verdict -- your test could be wrong. `make verdict` runs it")
         print(" against the golden core too, which is what settles it.")
+    elif r.ran == 0:
+        print(" Nothing ran. Every test in the module was skipped or filtered out,")
+        print(" so this core has not been tested at all -- check TB= and")
+        print(" COCOTB_TESTCASE.")
     else:
         print(" Nothing your testbench drives can tell this core from a correct")
         print(" one. The bug is real and it is in there; your stimulus has not")
@@ -293,7 +279,7 @@ def verdict(tb, sim="icarus", verbose=False):
                    sim=sim, stream=verbose)
     if verbose:
         print(THIN)
-    print(row("ok" if good.all_passed else "FAIL",
+    print(row(good.mark("pass"),
               "1. the golden core          must PASS", good))
     if not good.launched:
         print(THIN)
@@ -303,8 +289,17 @@ def verdict(tb, sim="icarus", verbose=False):
             print("   " + l)
         print(RULE)
         return 1
-    for tname, msg in good.failures[:4]:
-        print(f"        {tname}\n            {msg[:100]}")
+    V.report_problems(good, limit=4)
+    if good.broken:
+        print(THIN)
+        V.broken_testbench_verdict(good, "the golden core")
+        print(RULE)
+        return 1
+    if good.ran == 0:
+        print(THIN)
+        V.no_tests_ran_verdict(good)
+        print(RULE)
+        return 1
 
     # Row 2 is rebuilt from the catalogue, never read from core/.
     fresh = inject.build(name, os.path.join(HERE, "build", "original"))
@@ -313,23 +308,38 @@ def verdict(tb, sim="icarus", verbose=False):
                    sim=sim, stream=verbose)
     if verbose:
         print(THIN)
-    caught = orig.launched and orig.tests > 0 and bool(orig.failures)
-    print(row("caught" if caught else "MISSED",
+    caught = orig.caught
+    print(row(orig.mark("fail"),
               "2. the core you were dealt  must FAIL", orig))
-    for tname, msg in orig.failures[:4]:
-        print(f"        {tname}\n            {msg[:100]}")
+    V.report_problems(orig, limit=4)
 
     banner(3, "core/ as it stands now")
     fixed = run_sim(tb, CORE, os.path.join(HERE, "build", "fixed"),
                     sim=sim, stream=verbose)
     if verbose:
         print(THIN)
-    print(row("ok" if fixed.all_passed else "FAIL",
+    print(row(fixed.mark("pass"),
               "3. core/ as it stands now   must PASS", fixed))
-    for tname, msg in fixed.failures[:4]:
-        print(f"        {tname}\n            {msg[:100]}")
+    V.report_problems(fixed, limit=4)
 
     print(THIN)
+
+    # A run in which a test blew up is not a row of this table at all. It is
+    # not a pass and it is not a catch: an exception that is not an
+    # AssertionError compared nothing, so it is not evidence about any core.
+    for r, where in ((orig, "the core you were dealt"),
+                     (fixed, "core/ as it stands now")):
+        if r.broken:
+            V.broken_testbench_verdict(r, where)
+            print("")
+            print("   These same tests ran to the end on the golden core, so the")
+            print("   crash is in a path only a wrong answer reaches -- usually")
+            print("   the message you build when a comparison fails. That path is")
+            print("   the half of the test a human actually reads. Fix it, then")
+            print("   ask for the grade again.")
+            print(RULE)
+            return 1
+
     if good.all_passed and caught and fixed.all_passed:
         print(" VERDICT: PASS")
         print(f"   The bug was {name}.")
@@ -344,6 +354,8 @@ def verdict(tb, sim="icarus", verbose=False):
         print(" VERDICT: FAIL -- row 1. Your testbench does not pass the GOLDEN core.")
         print("   Nothing else is meaningful until it does: a test that fails on a")
         print("   correct processor is telling you about itself, not about core/.")
+    elif orig.ran == 0 or fixed.ran == 0:
+        V.no_tests_ran_verdict(orig if orig.ran == 0 else fixed)
     elif not caught:
         print(" VERDICT: FAIL -- row 2. Your testbench cannot tell the dealt core")
         print("   from a correct one, so it is not testing whatever is wrong with it.")

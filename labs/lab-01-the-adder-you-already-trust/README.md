@@ -77,6 +77,40 @@ and, with the TODO done:
 the fault tracks a signal that is high in exactly half the vectors, and this module has one
 such signal.
 
+## Three things `make check` will not call a PASS
+
+**Half the TODO.** The TODO is two changes and doing only the first one — sweeping `cin`,
+keeping the `assert` inside the loop — turns `broken/` red for the wrong reason. The run stops
+at the first wrong vector, so the failure is an anecdote instead of the count Step 4 is entirely
+about. `check.py` measures how many vectors each run actually drove and says which half is
+missing:
+
+```
+ VERDICT: FAIL -- the second half of the TODO is not done.
+   You swept cin: on the good adder you drove all 512 vectors.
+   On the broken adder you drove 263 and then stopped, because you are
+   still asserting on the first vector that is wrong instead of collecting
+   them.
+```
+
+**A test that blew up.** `NameError` is not a caught bug — Python stopped before the comparison
+happened, so the run says nothing about either adder:
+
+```
+  BROKEN  broken/  carry-in dropped      2 tests, 1 BLEW UP           1.3s
+        t02_every_a_and_every_b   <- this test BLEW UP; it checked nothing
+            NameError: name 'summary' is not defined
+------------------------------------------------------------------------
+ VERDICT: FAIL -- 1 of your tests did not run to the end.
+```
+
+This is the one worth understanding, because a testbench that is correct right up until it
+finds something — and then crashes in the code that builds the failure message — passes the
+good adder and crashes on the broken one, which looks exactly like a catch. It is not one.
+[`../common/verdict.py`](../common/verdict.py) is where the two are told apart.
+
+**A test that never ran.** Every test skipped is not "all tests passed".
+
 ## `make: *** [Makefile:49: check] Error 1` is not a broken Makefile
 
 A failed verdict exits non-zero on purpose, so `make` prints an error line under it. That line
@@ -84,4 +118,5 @@ is the verdict talking. It disappears when the verdict passes.
 
 ## Definition of done
 
-`make check` says `VERDICT: PASS`.
+`make check` says `VERDICT: PASS` — which now requires all 512 vectors on both adders, and a
+failure on `broken/` that is a *count*, not the first bad vector.
