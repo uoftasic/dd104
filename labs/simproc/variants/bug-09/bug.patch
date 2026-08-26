@@ -1,0 +1,10 @@
+--- a/src/simproc_system.sv
++++ b/src/simproc_system.sv
+@@ -620,6 +620,7 @@
+                     alu_in_a        = pc_out;
+                     alu_in_b        = {{4{instr_reg_out[7]}}, instr_reg_out[7:4]};
+                     alu_op          = ALU_ADD;
++                    flag_wr         = 1;
+                     pc_in           = alu_out;
+ 
+                     // Check for run

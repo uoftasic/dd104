@@ -1,0 +1,11 @@
+--- a/src/simproc_system.sv
++++ b/src/simproc_system.sv
+@@ -1011,7 +1011,7 @@
+ 
+                 RECEIVE: begin
+ 
+-                    if (clkCount < clk_per_bit - 1) begin
++                    if (clkCount < clk_per_bit) begin
+                         clkCount <= clkCount + 1;
+                         state <= RECEIVE;
+                     end

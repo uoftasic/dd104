@@ -1,0 +1,41 @@
+- [Home](README.md)
+- **Guide**
+  - [Getting started](guide/getting-started.md)
+  - **I. Why "it works" is not a result**
+    - ["It works" is not a result](guide/it-works-is-not-a-result.md)
+    - [What a testbench actually is](guide/what-a-testbench-is.md)
+    - [The lazy testbench](guide/the-lazy-testbench.md)
+    - [Coverage as a question](guide/coverage-is-a-question.md)
+  - **II. The tools that do the doubting**
+    - [Your first cocotb test](guide/your-first-cocotb-test.md)
+    - [Clocks, resets and triggers](guide/clocks-resets-and-triggers.md)
+    - [cocotb 2.x vs every tutorial](guide/cocotb-2x-vs-every-tutorial.md)
+    - [Driving and checking a design](guide/driving-and-checking.md)
+    - [Waveforms when the assertion is not enough](guide/waveforms.md)
+    - [Two simulators, two jobs](guide/two-simulators-two-jobs.md)
+  - **III. The machine under test**
+    - [SimProc in one page](guide/simproc-in-one-page.md)
+    - [The golden model](guide/the-golden-model.md)
+    - [Flags are architectural state](guide/flags-are-state.md)
+  - **IV. How bugs hide**
+    - [Where bugs hide](guide/where-bugs-hide.md)
+    - [Directed, random, and the gap](guide/directed-random-and-the-gap.md)
+  - **V. Right answers, broken chip**
+    - [The handshake is part of the contract](guide/the-handshake-is-the-contract.md)
+  - **Capstone**
+    - [Writing the bug report](guide/writing-the-bug-report.md)
+- **Labs**
+  - [Lab 01 — The adder you already trust](labs/lab-01-the-adder-you-already-trust.md)
+  - [Lab 02 — The only test this chip has](labs/lab-02-the-only-test-this-chip-has.md)
+  - [Lab 03 — Three blocks before the processor](labs/lab-03-three-blocks-before-the-processor.md)
+  - [Lab 04 — Your first bug hunt](labs/lab-04-your-first-bug-hunt.md)
+  - [Lab 05 — Every answer is right](labs/lab-05-every-answer-is-right.md)
+  - [Lab 06 — Capstone: three that hide](labs/lab-06-capstone.md)
+- **Reference**
+  - [The SimProc instruction set](reference/simproc-instruction-set.md)
+  - [The SimProc harness](reference/the-harness-api.md)
+  - [Output that is not an error](reference/output-that-is-not-an-error.md)
+- **Repo**
+  - [Lab packages](https://github.com/uoftasic/dd104/tree/main/labs)
+  - [The harness](https://github.com/uoftasic/dd104/tree/main/labs/common)
+  - [Learning cocotb on something small](https://github.com/uoftasic/dd104/tree/main/labs/cocotb-intro)

@@ -1,0 +1,11 @@
+--- a/src/simproc_system.sv
++++ b/src/simproc_system.sv
+@@ -586,7 +586,7 @@
+ 
+                 else if (instr_reg_out[3:0] == OP_LOAD) begin
+                     // MDR <- mem[rB]
+-                    mem_addr        = reg_b_out;
++                    mem_addr        = reg_a_out;
+                     mdr_load        = 1;
+ 
+                     next_state      = CYCLE_4;

@@ -1,0 +1,11 @@
+--- a/src/simproc_system.sv
++++ b/src/simproc_system.sv
+@@ -675,7 +675,7 @@
+                     // A <- rA, B <- ZE(instr[7:3])
+                     alu_in_a        = reg_a_out;
+                     alu_in_b        = {3'b0, instr_reg_out[7:3]};
+-                    alu_op          = ALU_OR;
++                    alu_op          = ALU_ADD;
+                     alu_out_load    = 1;
+                     flag_wr         = 1;
+ 

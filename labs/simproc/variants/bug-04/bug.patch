@@ -1,0 +1,11 @@
+--- a/src/simproc_system.sv
++++ b/src/simproc_system.sv
+@@ -645,7 +645,7 @@
+                     instr_reg_out[3:0] == OP_NAND || instr_reg_out[2:0] == OP_SHIFT[2:0]) 
+                     begin
+                     // RF[instr[7:6]] <- ALU out
+-                    rf_reg_w_in     = instr_reg_out[7:6];
++                    rf_reg_w_in     = instr_reg_out[5:4];
+                     rf_data_w_in    = alu_reg_out;
+                     rf_write        = 1;
+ 

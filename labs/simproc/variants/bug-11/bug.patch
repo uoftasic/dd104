@@ -1,0 +1,11 @@
+--- a/src/simproc_system.sv
++++ b/src/simproc_system.sv
+@@ -686,7 +686,7 @@
+             CYCLE_5: begin
+                 // only for ORI
+                 // RF[0] <- ALU out.  ORI's accumulator is R0 (DD104 spec).
+-                    rf_reg_w_in     = 2'b0;
++                    rf_reg_w_in     = 2'b1;
+                     rf_data_w_in    = alu_reg_out;
+                     rf_write        = 1;
+ 

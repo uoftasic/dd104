@@ -1,0 +1,11 @@
+--- a/src/simproc_system.sv
++++ b/src/simproc_system.sv
+@@ -576,7 +576,7 @@
+                         alu_op = ALU_SHR;
+                     // select registers A and B
+                     alu_in_a        = reg_a_out;
+-                    alu_in_b        = {6'b0, instr_reg_out[4:3]};
++                    alu_in_b        = {7'b0, instr_reg_out[3]};
+                     // load result in register and set flags
+                     alu_out_load    = 1;
+                     flag_wr         = 1;

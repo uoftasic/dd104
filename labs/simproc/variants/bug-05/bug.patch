@@ -1,0 +1,11 @@
+--- a/src/simproc_system.sv
++++ b/src/simproc_system.sv
+@@ -618,7 +618,7 @@
+                     endcase
+                     // A <- PC, B <- SE(instr[7:4])
+                     alu_in_a        = pc_out;
+-                    alu_in_b        = {{4{instr_reg_out[7]}}, instr_reg_out[7:4]};
++                    alu_in_b        = {4'b0, instr_reg_out[7:4]};
+                     alu_op          = ALU_ADD;
+                     pc_in           = alu_out;
+ 

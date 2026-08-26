@@ -1,0 +1,10 @@
+runs/
+**/results/*
+!**/results/.gitkeep
+__pycache__/
+*.pyc
+*.vvp
+*.vcd
+*.fst
+sim_build/
+.pdks/

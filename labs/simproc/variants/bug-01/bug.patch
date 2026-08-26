@@ -1,0 +1,11 @@
+--- a/src/simproc_system.sv
++++ b/src/simproc_system.sv
+@@ -808,7 +808,7 @@
+     always @ (*) begin
+         case(ALUop) 
+             ADD:        ALUout = A + B;
+-            SUB:        ALUout = A - B;
++            SUB:        ALUout = B - A;
+             OR:         ALUout = A | B;
+             NAND:       ALUout = ~(A & B);
+             SHL:        ALUout = A << B[1:0];
