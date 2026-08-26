@@ -55,6 +55,7 @@ simulations. That is BALLPARK; the `13 of 13` is not.
 |---|---|
 | `test_capstone.py` | **the file you edit.** One test, a description of the three bugs that gives none of them away, and a coverage list. Start by bringing your Lab 04 and Lab 05 tests in here. |
 | `BUG-REPORT-template.md` | the five parts of a report a designer can act on. |
+| `BUG-REPORT-EXAMPLE.md` | **the template filled in end to end**, for `B01` — which is not in this pool, so it gives nothing away. Read the shape, then write yours. |
 | `hunt.py` | the dealer and grader, with a three-bug pool. |
 | `solutions/` | a sixteen-test suite that catches all thirteen. Not before your own `13 of 13`. |
 
