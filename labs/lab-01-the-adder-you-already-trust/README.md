@@ -12,7 +12,7 @@ cd labs/lab-01-the-adder-you-already-trust
 make
 ```
 
-Inside the workbench container (`hpretl/iic-osic-tools:2026.04` — cocotb 2.0.1, Icarus
+Inside the workbench container (`hpretl/iic-osic-tools:2026.08` — cocotb 2.0.1, Icarus
 Verilog 14.0). No environment setup, no `pip install`, no paths to retype. About **5 seconds**,
 and it ends on `VERDICT: FAIL`, which is correct.
 

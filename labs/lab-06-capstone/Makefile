@@ -1,6 +1,6 @@
 # DD104 — Lab 06: the capstone
 #
-# Runs inside hpretl/iic-osic-tools:2026.04 (cocotb 2.0.1, Icarus Verilog 14.0).
+# Runs inside hpretl/iic-osic-tools:2026.08 (cocotb 2.0.1, Icarus Verilog 14.0).
 # No environment setup, no arguments, no paths to retype.
 #
 #   make new         deal a mystery core into core/   <- one of the hard three

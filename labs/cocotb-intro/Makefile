@@ -10,10 +10,10 @@
 #   make nothing    a green run that tested nothing
 #   make clean
 #
-# Runs in hpretl/iic-osic-tools:2026.04 with no environment setup:
+# Runs in hpretl/iic-osic-tools:2026.08 with no environment setup:
 #
 #   docker run --rm --user "$(id -u):$(id -g)" -v "$PWD:/work" -w /work \
-#     hpretl/iic-osic-tools:2026.04 --skip bash -c 'cd /work/labs/cocotb-intro && make'
+#     hpretl/iic-osic-tools:2026.08 --skip bash -c 'cd /work/labs/cocotb-intro && make'
 
 HERE   := $(abspath $(dir $(abspath $(lastword $(MAKEFILE_LIST)))))
 SIM    ?= icarus

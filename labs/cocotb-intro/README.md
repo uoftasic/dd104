@@ -9,7 +9,7 @@ cd labs/cocotb-intro
 make
 ```
 
-That is the whole setup. In the workbench container (`hpretl/iic-osic-tools:2026.04` — cocotb
+That is the whole setup. In the workbench container (`hpretl/iic-osic-tools:2026.08` — cocotb
 2.0.1, Icarus Verilog 14.0), `make` alone runs four testbenches, nineteen tests, and prints a
 verdict. Measured wall clock: **8–14 s**, depending on how busy the machine is; the simulation
 itself is 0.3 s of that. No environment variables, no `pip install`, no paths to retype.

@@ -16,8 +16,8 @@ Labs run inside the shared **workspace** you set up in [IC101](https://uoftasic.
 | **Time** | 16–20 hours, self-paced |
 | **Machine** | The same workbench you already have. **No PDK, no LibreLane, no synthesis.** The longest thing you run is about a minute; most of it is under ten seconds. |
 
-> **This course is pinned to the workbench image `hpretl/iic-osic-tools:2026.04`**, which
-> ships **cocotb 2.0.1**, **Icarus Verilog 14.0** and **Verilator 5.046**.
+> **This course is pinned to the workbench image `hpretl/iic-osic-tools:2026.08`**, which
+> ships **cocotb 2.0.1**, **Icarus Verilog 14.0** and **Verilator 5.050**.
 >
 > Check yours: `cocotb-config --version` should say `2.0.1`.
 

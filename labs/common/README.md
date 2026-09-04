@@ -9,8 +9,8 @@ cd labs/common
 make            # the example testbench on the good core, then on a broken one
 ```
 
-Everything runs in the workbench container (`hpretl/iic-osic-tools:2026.04` — cocotb 2.0.1,
-Icarus Verilog 14.0, Verilator 5.046). **No environment setup, no arguments, no paths to
+Everything runs in the workbench container (`hpretl/iic-osic-tools:2026.08` — cocotb 2.0.1,
+Icarus Verilog 14.0, Verilator 5.050). **No environment setup, no arguments, no paths to
 retype.** If `make` works, you are ready.
 
 ---

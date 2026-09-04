@@ -1,6 +1,6 @@
 # DD104 — Lab 05: every answer is right and it is still broken
 #
-# Runs inside hpretl/iic-osic-tools:2026.04 (cocotb 2.0.1, Icarus Verilog 14.0).
+# Runs inside hpretl/iic-osic-tools:2026.08 (cocotb 2.0.1, Icarus Verilog 14.0).
 # No environment setup, no arguments, no paths to retype.
 #
 #   make blind      the first command of this lab: an architectural testbench

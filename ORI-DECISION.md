@@ -54,7 +54,7 @@ I built four variants of the core and ran them, rather than reading them:
 | `splitw` | `2'b0` | `2'b1` | the comment applied to one site — `RF[1] <- RF[0] \| imm5` |
 | `splitr` | `2'b1` | `2'b0` | the other single site — `RF[0] <- RF[1] \| imm5` |
 
-Everything below was measured on `hpretl/iic-osic-tools:2026.04`, Icarus 14.0, cocotb 2.0.1,
+Everything below was measured on `hpretl/iic-osic-tools:2026.08`, Icarus 14.0, cocotb 2.0.1,
 driving the real `tt_um_ieeeuoftasic_simproc` pins through a bit-banged UART bus-functional
 model at `clk_per_bit = 8`, with the register file and RAM read back through Icarus
 hierarchical probes.

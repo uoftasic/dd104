@@ -82,7 +82,7 @@ not delete your work.
 
 ## 4. Check your versions
 
-This course is pinned to `hpretl/iic-osic-tools:2026.04`. Four tools matter, and the two that
+This course is pinned to `hpretl/iic-osic-tools:2026.08`. Four tools matter, and the two that
 matter most are Icarus and cocotb:
 
 ```bash
@@ -93,8 +93,8 @@ surfer --version
 ```
 
 ```
-Icarus Verilog version 14.0 (devel) (s20251012-145-g9b0d46b4-dirty)
-Verilator 5.046 2026-02-28 rev v5.046
+Icarus Verilog version 14.0 (devel) (s20260301-391-g64f13540-dirty)
+Verilator 5.050 2026-07-01 rev v5.050
 2.0.1
 surfer 0.6.0 (git: v0.6.0)
 ```

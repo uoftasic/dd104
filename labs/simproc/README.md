@@ -77,13 +77,13 @@ no instruction.
 
 ## Verifying the whole set
 
-Runs in the workbench, `hpretl/iic-osic-tools:2026.04` (Icarus 14.0, cocotb 2.0.1):
+Runs in the workbench, `hpretl/iic-osic-tools:2026.08` (Icarus 14.0, cocotb 2.0.1):
 
 ```bash
 cd courses/dd104/labs/simproc
 docker run --rm --user "$(id -u):$(id -g)" \
   -v "$PWD:/work" -v /tmp/simproc-verify:/scratch -w /work \
-  hpretl/iic-osic-tools:2026.04 --skip bash -c \
+  hpretl/iic-osic-tools:2026.08 --skip bash -c \
   'python3 /work/verify/run_verification.py --work /scratch'
 ```
 

@@ -11,8 +11,8 @@ design works".
 
 ## Quick start
 
-Everything runs inside the team workbench image `hpretl/iic-osic-tools:2026.04`
-(cocotb 2.0.1, Icarus Verilog 14.0, Verilator 5.046). **Every lab package runs with `make`
+Everything runs inside the team workbench image `hpretl/iic-osic-tools:2026.08`
+(cocotb 2.0.1, Icarus Verilog 14.0, Verilator 5.050). **Every lab package runs with `make`
 alone, in a bare container, with no environment setup**, and every one prints a verdict.
 
 ```bash
@@ -25,7 +25,7 @@ Outside the noVNC desktop, the same thing directly:
 
 ```bash
 docker run --rm --user "$(id -u):$(id -g)" -v "$PWD:/work" -w /work \
-  hpretl/iic-osic-tools:2026.04 --skip bash -c \
+  hpretl/iic-osic-tools:2026.08 --skip bash -c \
   'cd /work/labs/lab-01-the-adder-you-already-trust && make'
 ```
 
