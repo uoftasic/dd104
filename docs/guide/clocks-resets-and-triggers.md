@@ -8,7 +8,7 @@ A cocotb test is a coroutine that alternates between two states: **running Pytho
 this page is a version of one mistake — being wrong about which of those two things you are
 doing.
 
-Everything here is measured on `hpretl/iic-osic-tools:2026.04` (cocotb 2.0.1, Icarus Verilog
+Everything here is measured on `hpretl/iic-osic-tools:2026.08` (cocotb 2.0.1, Icarus Verilog
 14.0) by [`labs/cocotb-intro/test_02_triggers.py`](https://github.com/uoftasic/dd104/blob/main/labs/cocotb-intro/test_02_triggers.py):
 
 ```bash

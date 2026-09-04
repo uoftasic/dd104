@@ -17,7 +17,7 @@ make probe       # the same run, showing everything the simulator prints
 make verdict     # the grade
 ```
 
-Inside the workbench container (`hpretl/iic-osic-tools:2026.04` — cocotb 2.0.1, Icarus
+Inside the workbench container (`hpretl/iic-osic-tools:2026.08` — cocotb 2.0.1, Icarus
 Verilog 14.0). No environment setup. Includes `../common/lab.mk`, so you need the repository,
 not just this directory.
 

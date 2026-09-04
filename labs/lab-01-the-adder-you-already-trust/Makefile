@@ -1,6 +1,6 @@
 # DD104 — Lab 01: the adder you already trust
 #
-# Runs inside hpretl/iic-osic-tools:2026.04 (cocotb 2.0.1, Icarus Verilog 14.0).
+# Runs inside hpretl/iic-osic-tools:2026.08 (cocotb 2.0.1, Icarus Verilog 14.0).
 # No environment setup, no arguments, no paths to retype.
 #
 #   make          sim, then check -- and a verdict

@@ -3,7 +3,7 @@
 One file per variant: what the bug is, why it hides, what catches it, and what it
 is for. Nothing here goes to a student, and nothing here goes under `docs/`.
 
-Every number in these files was measured on `hpretl/iic-osic-tools:2026.04`
+Every number in these files was measured on `hpretl/iic-osic-tools:2026.08`
 (Icarus 14.0, cocotb 2.0.1). The runs that produced them are `../verify/`; the
 per-variant table is `../verify/results.json`.
 

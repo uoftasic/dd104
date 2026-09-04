@@ -3,7 +3,7 @@ DD104 — clocks, resets and triggers.
 
 Six tests, each isolating one thing about how a cocotb test moves through
 simulated time.  Every number this file prints was measured on
-hpretl/iic-osic-tools:2026.04 (cocotb 2.0.1, Icarus Verilog 14.0); the guide
+hpretl/iic-osic-tools:2026.08 (cocotb 2.0.1, Icarus Verilog 14.0); the guide
 page "Clocks, resets and triggers" quotes them.
 
     make triggers

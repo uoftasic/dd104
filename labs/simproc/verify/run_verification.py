@@ -3,7 +3,7 @@
 
     docker run --rm --user "$(id -u):$(id -g)" \
       -v "$PWD:/work" -v /tmp/scratch:/scratch -w /work \
-      hpretl/iic-osic-tools:2026.04 --skip bash -c \
+      hpretl/iic-osic-tools:2026.08 --skip bash -c \
       'python3 /work/courses/dd104/labs/simproc/verify/run_verification.py --work /scratch/v'
 
 For each of golden + bug-01..bug-13 it builds a working copy with apply.sh and

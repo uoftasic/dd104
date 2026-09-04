@@ -4,7 +4,7 @@ Instructor-side. Nothing in here goes to a student.
 
 Every claim in `../README.md` and in `../solutions/*.md` — which tests catch a
 bug, which numbers a student will see, which bugs the shipped test still passes —
-came out of this directory on `hpretl/iic-osic-tools:2026.04` (Icarus 14.0,
+came out of this directory on `hpretl/iic-osic-tools:2026.08` (Icarus 14.0,
 cocotb 2.0.1). None of it came from reading the RTL.
 
 ## Files
@@ -38,7 +38,7 @@ For each variant `run_verification.py` asks:
 cd courses/dd104/labs/simproc
 docker run --rm --user "$(id -u):$(id -g)" \
   -v "$PWD:/work" -v /tmp/simproc-verify:/scratch -w /work \
-  hpretl/iic-osic-tools:2026.04 --skip bash -c \
+  hpretl/iic-osic-tools:2026.08 --skip bash -c \
   'python3 /work/verify/run_verification.py --work /scratch'
 ```
 

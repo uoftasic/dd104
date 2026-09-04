@@ -13,7 +13,7 @@ cd labs/lab-03-three-blocks-before-the-processor
 make
 ```
 
-Inside the workbench container (`hpretl/iic-osic-tools:2026.04` — cocotb 2.0.1, Icarus
+Inside the workbench container (`hpretl/iic-osic-tools:2026.08` — cocotb 2.0.1, Icarus
 Verilog 14.0). No environment setup. Includes `../common/lab.mk`'s sibling `sim.mk`, so you
 need the repository, not just this directory.
 

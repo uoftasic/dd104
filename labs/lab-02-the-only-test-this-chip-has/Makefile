@@ -1,6 +1,6 @@
 # DD104 — Lab 02: the only test this chip has
 #
-# Runs inside hpretl/iic-osic-tools:2026.04 (cocotb 2.0.1, Icarus Verilog 14.0).
+# Runs inside hpretl/iic-osic-tools:2026.08 (cocotb 2.0.1, Icarus Verilog 14.0).
 # No environment setup, no arguments, no paths to retype.
 #
 #   make shuttle    the test SimProc shipped with, against all 14 cores   <- start here

@@ -15,7 +15,7 @@ make verdict
 make check-all     # the thing that graduates you
 ```
 
-Inside the workbench container (`hpretl/iic-osic-tools:2026.04` — cocotb 2.0.1, Icarus
+Inside the workbench container (`hpretl/iic-osic-tools:2026.08` — cocotb 2.0.1, Icarus
 Verilog 14.0). No environment setup. Includes `../common/lab.mk`, so you need the repository.
 
 ## The deliverable

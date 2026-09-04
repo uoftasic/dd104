@@ -295,7 +295,7 @@ def no_tests_ran_verdict(result):
 
 
 # ────────────────────────────────────────────────────────────────────────────
-# MEASURED, cocotb 2.0.1, workbench hpretl/iic-osic-tools:2026.04
+# MEASURED, cocotb 2.0.1, workbench hpretl/iic-osic-tools:2026.08
 # ────────────────────────────────────────────────────────────────────────────
 # cocotb/regression.py writes results.xml through cocotb/_xunit_reporter.py.
 # The only three things it can put inside a <testcase> are:

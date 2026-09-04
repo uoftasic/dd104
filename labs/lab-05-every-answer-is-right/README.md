@@ -16,7 +16,7 @@ make probe       # the same run, with the simulator's output shown
 make verdict
 ```
 
-Inside the workbench container (`hpretl/iic-osic-tools:2026.04` — cocotb 2.0.1, Icarus
+Inside the workbench container (`hpretl/iic-osic-tools:2026.08` — cocotb 2.0.1, Icarus
 Verilog 14.0). No environment setup. Includes `../common/lab.mk`, so you need the repository.
 
 ## `make blind`, which is the whole argument
