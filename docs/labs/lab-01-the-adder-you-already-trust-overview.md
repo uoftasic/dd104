@@ -43,7 +43,7 @@ If you haven't set up the workbench yet, do
 
    You should see the `ASIC-EDU: PDK=sky130A ...` banner, then
    `OK  module ready: /foss/designs/modules/dd104`, then `cwd: /foss/designs/modules/dd104`.
-   DD104 uses no PDK; here `.designinit` does one thing for you, which is to define `mod`.
+   DD104 uses no PDK; in this course `.designinit` does one thing for you, which is to define `mod`.
 
 3. Check the versions that every exact number in this course depends on:
 
@@ -71,7 +71,7 @@ If you haven't set up the workbench yet, do
 
 | If you see | Do this |
 |---|---|
-| `bash: /foss/designs/common/.designinit: No such file or directory` | The workspace isn't mounted: relaunch `start_vnc` from your `workspace` clone. Every lab also runs from a plain clone of this repo inside the workbench image, because `make` needs none of this setup. |
+| `bash: /foss/designs/common/.designinit: No such file or directory` | The workspace isn't mounted: relaunch `start_vnc` from your `workspace` clone. Meanwhile every lab also runs from a plain `git clone` of `github.com/uoftasic/dd104` inside the workbench image, because `make` needs neither `.designinit` nor `mod`; the repository's README has the `docker run` line. |
 | `mod: no such module: dd104` | You ran `mod dd104` before `mod add dd104`. |
 | `fatal: could not read Username for 'https://github.com'` | git couldn't read the repo anonymously and is asking you to log in. Check that you typed `dd104`; if you did, ask in [Discord](https://discord.gg/hrJnP5UsGz). Don't type your password. |
 
@@ -205,8 +205,8 @@ With the loop order from step 2, the 263 is `t01`'s six vectors plus the 257 tha
 to and including the first one with `cin = 1`.
 
 There is one more verdict `check.py` can print. A misspelled variable in the code that builds
-your failure message only runs once something is wrong, so the test passes the good adder,
-crashes on the broken one, and looks like a catch:
+your failure message only runs once something is wrong, so the test passes the good adder and
+crashes on the broken one, which a checker that only counts failures would score as a catch:
 
 ```
   BROKEN  broken/  carry-in dropped      2 tests, 1 BLEW UP           1.3s
@@ -256,7 +256,7 @@ The count is data on every design, not just adders. You'll meet these in Lab 03:
 | Count | What it says |
 |---|---|
 | Exactly half | Tracks a signal that is high half the time |
-| 65,024 of 65,536 | 512 survivors, and 512 has a description |
+| 65,024 of 65,536 | 512 vectors survive the bug, and they share a pattern |
 | 0 values wrong, 25,726 flags wrong | The arithmetic is fine; look at the flag logic |
 
 Check: you can name the signal the 256 failures track.
@@ -265,7 +265,8 @@ Check: you can name the signal the 256 failures track.
 
 Which parts of the adder did the six hand-picked cases never move?
 
-1. Before you run it, write down which input you expect six hand-picked cases never to toggle.
+1. Before you run it, write down whether you expect the all-512 run to leave any toggle point
+   cold. It drives every input combination.
 
 2. Run the coverage add-on, a small package in the lab's `coverage/` folder:
 
@@ -296,7 +297,8 @@ Which parts of the adder did the six hand-picked cases never move?
 
    `c[0]` is the internal carry wire that `cin` drives (`assign c[0] = cin;` in `ripple4.sv`), so
    it is cold for the same reason. The tool has no idea what an adder is and never checked an
-   answer, and it named `cin` anyway.
+   answer, and it named `cin` anyway. `b[2]:1->0` is real but incidental: none of the six cases
+   happens to lower that bit.
 
    </details>
 
@@ -306,8 +308,9 @@ Which parts of the adder did the six hand-picked cases never move?
    <details>
    <summary>Answer</summary>
 
-   The loops in `cov_all.sv` end with `a` at 15, so `a[3]` rises and the test finishes before it
-   can fall. That is an artefact of loop order, not a gap in your stimulus.
+   `cov_all.sv` has `a` in its outermost loop (and `cin` innermost), so the loops end with `a` at
+   15: `a[3]` rises and the test finishes before it can fall. That is an artefact of loop order,
+   not a gap in your stimulus. Compare with your prediction from step 1.
 
    </details>
 
@@ -353,8 +356,7 @@ Questions:
    <summary>Answer</summary>
 
    Both choices are defensible. The reference keeps it because a test suite is read as often as it
-   is run: six named cases with a comment document what the module is for, and they are the first
-   row to go red when somebody deletes the module.
+   is run: six named cases with a comment document what the module is for.
    [`solutions/README.md`](https://github.com/uoftasic/dd104/tree/main/labs/lab-01-the-adder-you-already-trust/solutions)
    gives the full case, and one more decision worth disagreeing with.
 

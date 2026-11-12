@@ -22,7 +22,7 @@ Package: [`labs/cocotb-intro/`](https://github.com/uoftasic/dd104/tree/main/labs
   directory:
 
   ```bash
-  mod dd104
+  mod dd104     # in a new terminal, load .designinit first (Lab 01, Part 1)
   cd labs/cocotb-intro
   ```
 

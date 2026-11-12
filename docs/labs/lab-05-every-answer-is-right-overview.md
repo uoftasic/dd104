@@ -30,7 +30,7 @@ processor is running watches `halt`. A design that produces every right answer o
 missed its timing budget.
 
 ```bash
-mod dd104
+mod dd104     # in a new terminal, load .designinit first (Lab 01, Part 1)
 cd labs/lab-05-every-answer-is-right
 ```
 
