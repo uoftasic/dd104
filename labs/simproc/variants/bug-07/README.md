@@ -21,16 +21,16 @@ LOAD r0,r1       R0 = mem[R1]
 
 | | R0 | R1 | mem[40] |
 |---|---|---|---|
-| should be | **90** | 40 | 90 |
-| this core | **6** | 40 | 90 |
+| should be | 90 | 40 | 90 |
+| this core | 6 | 40 | 90 |
 
 `mem[40]` still contains 90 afterwards, so nothing overwrote it. The pointer
 register still contains 40. `STORE` puts things exactly where it is told.
 
 ## What you have
 
-`src/` — the core: 1178 + 49 lines of SystemVerilog. One line of it is wrong.
-`test/` — the testbench that shipped with this chip.
+`src/`: the core, 1178 + 49 lines of SystemVerilog. One line of it is wrong.
+`test/`: the testbench that shipped with this chip.
 
 ```bash
 cd test && make -B
@@ -40,7 +40,7 @@ It passes.
 
 ## What finishing looks like
 
-1. A test that **fails** on this core and would pass on a correct one.
+1. A test that fails on this core and would pass on a correct one.
 2. The one-line fix.
 3. That same test passing.
 

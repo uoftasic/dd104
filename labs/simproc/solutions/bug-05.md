@@ -1,6 +1,6 @@
 # bug-05 — branch displacement is zero-extended
 
-Catalogue **B05**. Tier 3, Lab 04 (control flow).
+Catalogue B05. Tier 3, Lab 04 (control flow).
 
 ```diff
 --- a/src/simproc_system.sv     line 621, the branch target calculation
@@ -12,15 +12,15 @@ Catalogue **B05**. Tier 3, Lab 04 (control flow).
 
 | | |
 |---|---|
-| Boilerplate `test/test.py` | **passes** |
-| Suite | 7/10 — caught by **T04**, **T07**, **T08** |
-| Symptom demo | a 3-iteration countdown ends with R0 = **2**; the body ran once |
+| Boilerplate `test/test.py` | passes |
+| Suite | 7/10 — caught by T04, T07, T08 |
+| Symptom demo | a 3-iteration countdown ends with R0 = 2; the body ran once |
 
 Sweeping all sixteen displacements from an instruction at address 20:
 
 | displacement | correct target | this core |
 |---|---|---|
-| `+0` … `+7` | 21 … 28 | 21 … 28 — **all correct** |
+| `+0` … `+7` | 21 … 28 | 21 … 28 — all correct |
 | `-1` | 20 | 36 |
 | `-2` | 19 | 35 |
 | `-3` | 18 | 34 |

@@ -1,6 +1,6 @@
 # bug-08 — `STORE` never pulses `done`
 
-Catalogue **B08**. Tier 4, Lab 05 (protocol, not data).
+Catalogue B08. Tier 4, Lab 05 (protocol, not data).
 
 ```diff
 --- a/src/simproc_system.sv     line 602, CYCLE_3, the STORE clause
@@ -12,9 +12,9 @@ Catalogue **B08**. Tier 4, Lab 05 (protocol, not data).
 
 | | |
 |---|---|
-| Boilerplate `test/test.py` | **passes** |
-| Suite | 9/10 — caught by **T09, and nothing else** |
-| Symptom demo | 14 instructions retired, **11** `done` pulses; every value correct |
+| Boilerplate `test/test.py` | passes |
+| Suite | 9/10 — caught by T09, and nothing else |
+| Symptom demo | 14 instructions retired, 11 `done` pulses; every value correct |
 
 T01–T08 and T10 all pass. Registers, memory, flags and the PC are correct on
 every program tried, including 20 random ones.

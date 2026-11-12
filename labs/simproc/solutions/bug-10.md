@@ -1,6 +1,6 @@
 # bug-10 — `ORI` adds instead of ORing
 
-Catalogue **B10**. Tier 5, Lab 06 (the hard end).
+Catalogue B10. Tier 5, Lab 06 (the hard end).
 
 ```diff
 --- a/src/simproc_system.sv     line 678, CYCLE_4, the ORI clause
@@ -12,10 +12,10 @@ Catalogue **B10**. Tier 5, Lab 06 (the hard end).
 
 | | |
 |---|---|
-| Boilerplate `test/test.py` | **passes** |
-| Suite | 7/10 — caught by **T02**, **T03**, **T08** |
-| Symptom demo | `ORI 5 ; ORI 3` gives **8**; it should give 7 |
-| Control | `ORI 8 ; ORI 3` gives **11** on this core *and* on a correct one |
+| Boilerplate `test/test.py` | passes |
+| Suite | 7/10 — caught by T02, T03, T08 |
+| Symptom demo | `ORI 5 ; ORI 3` gives 8; it should give 7 |
+| Control | `ORI 8 ; ORI 3` gives 11 on this core *and* on a correct one |
 
 ## Why it hides
 
@@ -23,9 +23,9 @@ Catalogue **B10**. Tier 5, Lab 06 (the hard end).
 
 Two consequences, and they cover almost everything a real program does:
 
-1. **The first `ORI` after a reset is always right.** R0 is 0, and `0 | imm` is
+1. The first `ORI` after a reset is always right. R0 is 0, and `0 | imm` is
    `0 + imm` for every immediate.
-2. **Building a constant out of disjoint bit groups is always right.** `ORI 8`
+2. Building a constant out of disjoint bit groups is always right. `ORI 8`
    then `ORI 3` — the natural way to assemble a value in a machine with a 5-bit
    immediate — never overlaps, so it never diverges. Measured: 11 on both cores.
 

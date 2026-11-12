@@ -1,6 +1,6 @@
 # bug-02 — `NAND` is wired as `NOR`
 
-Catalogue **B02**. Tier 1, Lab 03.
+Catalogue B02. Tier 1, Lab 03.
 
 ```diff
 --- a/src/simproc_system.sv     line 813, inside the ALU
@@ -12,9 +12,9 @@ Catalogue **B02**. Tier 1, Lab 03.
 
 | | |
 |---|---|
-| Boilerplate `test/test.py` | **passes** |
-| Suite | 8/10 — caught by **T01**, **T08** |
-| ALU sweep | **65,280** of 65,536 `NAND` vectors wrong; 34,954 flag pairs wrong |
+| Boilerplate `test/test.py` | passes |
+| Suite | 8/10 — caught by T01, T08 |
+| ALU sweep | 65,280 of 65,536 `NAND` vectors wrong; 34,954 flag pairs wrong |
 
 ## Why it hides
 

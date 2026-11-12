@@ -14,8 +14,8 @@ ORI 1            R0 = 17      -- this must run; 16 is not zero
 
 | | R0 |
 |---|---|
-| should be | **17** — the branch is not taken, the `ORI 1` runs |
-| this core | **16** — the branch was taken and skipped it |
+| should be | 17 — the branch is not taken, the `ORI 1` runs |
+| this core | 16 — the branch was taken and skipped it |
 
 The value in R0 after `ORI 16` really is 16. Read it back and it is 16. The
 machine still decided that 16 was zero.
@@ -25,8 +25,8 @@ the same number.
 
 ## What you have
 
-`src/` — the core: 1178 + 49 lines of SystemVerilog. One line of it is wrong.
-`test/` — the testbench that shipped with this chip.
+`src/`: the core, 1178 + 49 lines of SystemVerilog. One line of it is wrong.
+`test/`: the testbench that shipped with this chip.
 
 ```bash
 cd test && make -B
@@ -36,7 +36,7 @@ It passes.
 
 ## What finishing looks like
 
-1. A test that **fails** on this core and would pass on a correct one.
+1. A test that fails on this core and would pass on a correct one.
 2. The one-line fix.
 3. That same test passing.
 

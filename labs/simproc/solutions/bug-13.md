@@ -1,6 +1,6 @@
 # bug-13 — `STORE` drops to IDLE for one cycle
 
-Catalogue **B13**. Tier 4, Lab 05.
+Catalogue B13. Tier 4, Lab 05.
 
 ```diff
 --- a/src/simproc_system.sv     line 603, CYCLE_3, the STORE clause
@@ -17,10 +17,10 @@ CYCLE_1 — so the program continues, one cycle later, with a one-cycle blip on 
 
 | | |
 |---|---|
-| Boilerplate `test/test.py` | **passes** |
-| Suite | 9/10 — caught by **T07, and nothing else** |
+| Boilerplate `test/test.py` | passes |
+| Suite | 9/10 — caught by T07, and nothing else |
 | Symptom demo | identical R0, R1, R2, `mem[32]`, and 14 of 14 `done` pulses |
-| | **3 clocks with `halt` high while `run` was asserted** (correct: 0) |
+| | 3 clocks with `halt` high while `run` was asserted (correct: 0) |
 
 Three `STORE`s in the program, three blips. Every architectural result matches a
 correct core exactly.
@@ -33,7 +33,7 @@ count. Only the timing and one status pin differ.
 
 ## What it teaches
 
-**Functional equivalence is not correctness.** On a real chip this is two things
+Functional equivalence is not correctness. On a real chip this is two things
 at once:
 
 - a performance bug — one wasted cycle on every `STORE`, forever;

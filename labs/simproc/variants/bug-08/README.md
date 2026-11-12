@@ -20,8 +20,8 @@ STORE r1,r2 ; ADD r1,r0 ; STORE r1,r2 ; ADD r1,r0 ; STORE r1,r2
 
 | | instructions retired | `done` pulses |
 |---|---|---|
-| should be | 14 | **14** |
-| this core | 14 | **11** |
+| should be | 14 | 14 |
+| this core | 14 | 11 |
 
 `mem[32]` ends at 21 and R1 ends at 21, both correct. The core executes all
 fourteen instructions and the fourteenth one finishes. Three pulses are simply
@@ -29,8 +29,8 @@ not there.
 
 ## What you have
 
-`src/` — the core: 1178 + 49 lines of SystemVerilog. One line of it is wrong.
-`test/` — the testbench that shipped with this chip.
+`src/`: the core, 1178 + 49 lines of SystemVerilog. One line of it is wrong.
+`test/`: the testbench that shipped with this chip.
 
 ```bash
 cd test && make -B
@@ -40,7 +40,7 @@ It passes.
 
 ## What finishing looks like
 
-1. A test that **fails** on this core and would pass on a correct one.
+1. A test that fails on this core and would pass on a correct one.
 2. The one-line fix.
 3. That same test passing.
 
