@@ -29,7 +29,7 @@ written bug report for one of them.
 | Prerequisites | [IC101](https://uoftasic.com/ic101/), then [DD101](https://uoftasic.com/dd101/), [DD102](https://uoftasic.com/dd102/) and [DD103](https://uoftasic.com/dd103/), in that order |
 | Tools | cocotb 2.0.1, Icarus Verilog 14.0, Verilator 5.050, Surfer and GTKWave, all in the workbench image `hpretl/iic-osic-tools:2026.08` |
 | Machine | The workbench you already have. No PDK, no LibreLane, no synthesis. Most runs take under ten seconds; the longest, Lab 06's `make check-all`, takes about four and a half minutes. |
-| Total time | 16–20 hours, self-paced |
+| Total time | About 19 hours, self-paced. The Course path rows below add up to 18 h 55 min. |
 
 Check your cocotb version before you search the web for help: `cocotb-config --version` should
 print `2.0.1`. Most cocotb tutorials online are for 1.x. Three things they use are errors in 2.x:
@@ -42,14 +42,15 @@ print `2.0.1`. Most cocotb tutorials online are for 1.x. Three things they use a
 
 Work down this table in order. A Read row is guide pages: reading only, no commands. A Do row
 is one lab writeup, where every command in the course lives. Each lab's "Before you start"
-section repeats which pages it expects you to have read.
+section repeats which pages it expects you to have read. The counter lab has no number, but it
+isn't optional.
 
-| # | | Pages | Time |
+| # | | What | Time |
 |---|---|---|---|
 | 1 | Read | [Getting started](guide/getting-started.md) · [What a passing test proves](guide/it-works-is-not-a-result.md) · [What a testbench is](guide/what-a-testbench-is.md) · [Your first cocotb test](guide/your-first-cocotb-test.md) · [The lazy testbench](guide/the-lazy-testbench.md) · [Coverage as a question](guide/coverage-is-a-question.md) | 1 h 15 min |
-| 2 | Do | [Lab 01: The adder you already trust](labs/lab-01-the-adder-you-already-trust-overview.md). Set up, watch a reasonable testbench pass on a broken adder, then make it fail. | 1 h 30 min |
+| 2 | Do | [Lab 01: The adder you already trust](labs/lab-01-the-adder-you-already-trust-overview.md). Load the course, watch a reasonable testbench pass on a broken adder, then fix the testbench so it catches it. | 1 h 30 min |
 | 3 | Read | [Clocks, resets and triggers](guide/clocks-resets-and-triggers.md) · [cocotb 2.x and older tutorials](guide/cocotb-2x-vs-every-tutorial.md) · [Driving and checking a design](guide/driving-and-checking.md) · [Waveforms](guide/waveforms.md) | 1 h |
-| 4 | Do | [cocotb on a counter](labs/cocotb-intro-overview.md) (an unnumbered lab, but not optional). Triggers, the cocotb 1.x forms that break in 2.x, a check that passes the good counter and fails a broken one, and waveforms. | 1 h 15 min |
+| 4 | Do | [Lab: cocotb on a counter](labs/cocotb-intro-overview.md). Run the guide pages' cocotb examples on an 8-bit counter, including the 1.x forms that fail in 2.x, then break the counter on purpose and see which tests notice. | 1 h 15 min |
 | 5 | Read | [Two simulators](guide/two-simulators-two-jobs.md) · [SimProc in one page](guide/simproc-in-one-page.md) | 45 min |
 | 6 | Do | [Lab 02: The only test this chip has](labs/lab-02-the-only-test-this-chip-has-overview.md). Run the shipped test against all thirteen broken cores, then write a better one. | 1 h 45 min |
 | 7 | Read | [Flags as architectural state](guide/flags-are-state.md) | 20 min |
@@ -57,9 +58,9 @@ section repeats which pages it expects you to have read.
 | 9 | Read | [The golden model](guide/the-golden-model.md) · [Where bugs hide](guide/where-bugs-hide.md) · [Directed and random tests](guide/directed-random-and-the-gap.md) | 1 h |
 | 10 | Do | [Lab 04: Your first bug hunt](labs/lab-04-your-first-bug-hunt-overview.md). Get a mystery core, find the bug, and prove the fix with a test. | 2 h 30 min |
 | 11 | Read | [Handshakes and timing](guide/the-handshake-is-the-contract.md) | 25 min |
-| 12 | Do | [Lab 05: Every answer is right](labs/lab-05-every-answer-is-right-overview.md). Two cores where every value is correct and the chip is still broken. | 1 h 15 min |
+| 12 | Do | [Lab 05: Every answer is right](labs/lab-05-every-answer-is-right-overview.md). Write three checks that catch two cores on which every value is correct, then hunt both. | 1 h 15 min |
 | 13 | Read | [Writing the bug report](guide/writing-the-bug-report.md) | 25 min |
-| 14 | Do | [Lab 06: Capstone](labs/lab-06-capstone-overview.md). One suite that catches all thirteen, and a written bug report. | 3 h 30 min |
+| 14 | Do | [Lab 06: Capstone](labs/lab-06-capstone-overview.md). Build one suite that catches all thirteen bugs, and write a bug report for one of them. | 3 h 30 min |
 
 Keep these open in a tab while you work. They are for looking things up, not for reading
 start to finish:
