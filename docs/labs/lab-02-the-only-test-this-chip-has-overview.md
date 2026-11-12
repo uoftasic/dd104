@@ -3,7 +3,7 @@
 You'll run SimProc's one shipped test against the good core and all thirteen broken ones and
 watch every one pass. Then you'll drive the processor from Python, try the harness's example
 testbench, compare Icarus with Verilator, and write a test that passes on the good core and fails
-on the one whose `SUB` is backwards.
+on the one whose `SUB` has its operands swapped.
 
 This lab takes about 1 hour 45 minutes.
 
@@ -55,6 +55,13 @@ cd labs/lab-02-the-only-test-this-chip-has
 3. You should see:
 
    ```
+   ========================================================================
+    THE TEST THIS CHIP SHIPPED WITH
+   ========================================================================
+    test/test.py, from the SimProc repository, untouched. It sets
+    ui_in = 1, waits 100 clock cycles, and asserts uo_out == 3.
+    Decoded: uart_tx = 1 (idle), halt = 1 (IDLE), done = 0.
+    It asserts that the processor is NOT RUNNING.
    ------------------------------------------------------------------------
        PASS  the golden core                              5.4s
        PASS  B01_sub_operands_swapped                     1.9s
