@@ -28,10 +28,10 @@ Per operation, from the sweep:
 | SHR | 0 | 3,136 |
 
 Every one is derivable by hand. ADD: there are 15 nonzero 8-bit results whose low
-nibble is zero (0x10, 0x20 … 0xF0), and each is reachable by 256 operand pairs —
+nibble is zero (0x10, 0x20 … 0xF0), and each is reachable by 256 operand pairs:
 15 × 256 = 3,840. OR: the low nibble of `A | B` is zero only when both operands
 have a zero low nibble, which is 16 × 16 = 256 pairs, minus the one genuinely-zero
-case — 255.
+case: 255.
 
 ## Why it hides
 
@@ -39,7 +39,7 @@ Every arithmetic result this core produces is correct. Only the flag is wrong,
 and only for results that are nonzero but end in four zero bits. A test that
 compares values and never compares flags passes completely.
 
-T08 misses it — 20 random programs, 600 random instructions, all pass. That
+T08 misses it: 20 random programs, 600 random instructions, all pass. That
 is the most useful single fact in this variant: random stimulus with no coverage
 model does not find a flag bug, because flags are only observable through a
 *subsequent* branch, and a random program rarely puts the right branch after the

@@ -23,8 +23,8 @@ At `clk_per_bit = 32` and above, this core is indistinguishable from a correct
 one. The full ten-test suite scores 10/10 on it. Every program runs, every
 result is right.
 
-At `clk_per_bit = 16`, `PING` answers `0xAA` — the link's own health check says
-the link is fine — and data does not survive the trip. (`ValueError` is cocotb
+At `clk_per_bit = 16`, `PING` answers `0xAA`, so the link's own health check says
+the link is fine, and data does not survive the trip. (`ValueError` is cocotb
 reporting that the byte it read back has bits that are neither 0 nor 1.)
 
 ## What you have
@@ -36,7 +36,7 @@ reporting that the byte it read back has bits that are neither 0 nor 1.)
 cd test && make -B
 ```
 
-It passes — and so does everything else, if you only ever run at one baud rate.
+It passes, and so does everything else if you only ever run at one baud rate.
 
 ## What finishing looks like
 
@@ -48,5 +48,5 @@ Two questions worth answering before you start reading code, because the answers
 are the bug:
 
 - Why does `PING` still work at `clk_per_bit = 16` when nothing else does?
-  Look at the byte `PING` sends — `0xF0` — and at the byte it replies with.
+  Look at the byte `PING` sends (`0xF0`) and at the byte it replies with.
 - Why does the failure get *worse* as the bit period gets *shorter*?

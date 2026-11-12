@@ -10,7 +10,7 @@ Catalogue B13. Tier 4, Lab 05.
 
 The `STORE` path stops asking whether the core is still running and always goes
 to IDLE. Because `run_reg` is still set, the next cycle sends it straight back to
-CYCLE_1 — so the program continues, one cycle later, with a one-cycle blip on the
+CYCLE_1, so the program continues, one cycle later, with a one-cycle blip on the
 `halt` pin.
 
 ## Measured
@@ -36,8 +36,8 @@ count. Only the timing and one status pin differ.
 Functional equivalence is not correctness. On a real chip this is two things
 at once:
 
-- a performance bug — one wasted cycle on every `STORE`, forever;
-- a debug-visibility bug — anyone watching `halt` to see whether the core is
+- a performance bug: one wasted cycle on every `STORE`, forever;
+- a debug-visibility bug: anyone watching `halt` to see whether the core is
   running sees it stop, repeatedly, for no reason in the program.
 
 Only a protocol assertion sees it: *`halt` must stay low for as long as `run` is
@@ -47,7 +47,7 @@ lesson.
 Pair with bug-08 in the same lab. Both leave every number correct; one drops a
 handshake pulse, the other adds a state that should not exist. Between them they
 make the case that a testbench needs to check the *protocol* and not only the
-data — which is the whole reason assertions exist.
+data, which is the whole reason assertions exist.
 
 ## The fix
 

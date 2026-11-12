@@ -32,7 +32,7 @@ what dropping a sign extension does.
 ## Why it hides
 
 The forward half of the number line is correct, and the forward half is the half
-that gets tested first. "Skip the next instruction" — `BZ +1`, `BNZ +1` — is the
+that gets tested first. "Skip the next instruction" (`BZ +1`, `BNZ +1`) is the
 first branch anybody writes, and it works. A test suite full of skip-the-next
 passes completely.
 
@@ -43,7 +43,7 @@ to branch backwards.
 
 Sign extension is a silent half of the number line. More generally: when a field
 is signed, the test that sweeps it must cross zero, and 16 values is a small
-enough space to sweep exhaustively — T04 does exactly that and it is not a clever
+enough space to sweep exhaustively. T04 does exactly that, and it is not a clever
 test, it is the obvious one.
 
 ## The fix
