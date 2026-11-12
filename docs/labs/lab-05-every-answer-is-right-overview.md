@@ -185,8 +185,10 @@ Can you make the pulse count fail loudly, with a message that points at the culp
    > 1 time(s), and that is where to look.
 
 `8, expected 9` and "some pulses are missing" are very different amounts of help. The first says
-the shortfall is one instruction, and the program has exactly one `STORE`. A failure message that
-does the arithmetic for the reader saves an hour, and costs one line.
+the shortfall is one instruction, so look at the instructions that appear once in the program:
+the one `SHL` and the one `STORE`. (The reference message says there is exactly one such
+instruction; `PROGRAM` has two.) A failure message that does the arithmetic for the reader saves an
+hour, and costs one line.
 
 Check: `caught` on `B08`.
 
@@ -251,8 +253,9 @@ Does the program take exactly as many cycles as the instruction costs say?
    <details>
    <summary>Answer</summary>
 
-   $38 - 37 = 1$, and the program has exactly one `STORE`: one extra cycle, once per store. In a
-   program with five stores, five extra cycles would point at the same instruction by the same
+   $38 - 37 = 1$: one extra cycle, from an instruction that runs once. The program has one `SHL`
+   and one `STORE`, so the count narrows the search to those two. In a program with five stores and
+   nothing else run five times, five extra cycles would point straight at the stores by the same
    division. This
    check turns "the answer is right and arrived late" into a red row with a number attached, and it
    costs one addition done once from the instruction costs in
