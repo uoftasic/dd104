@@ -1,9 +1,10 @@
 # Lab 05: Every answer is right
 
 You'll meet two broken processors on which every register, flag, PC value and byte of memory is
-correct for every program you can write. The golden model agrees with them completely and your
-Lab 04 suite passes on both. You'll write three short checks that catch them, measure the UART
-receiver's turnaround time, and hunt both bugs.
+correct for every program you can write. The golden model agrees with them completely, and an
+architecturally complete suite built from Lab 04's passes on both. You'll write three short checks
+that catch them, run a test that measures the UART receiver's turnaround time, and hunt both
+bugs.
 
 This lab takes about 75 minutes.
 
@@ -65,7 +66,8 @@ Does a suite that checks every architectural result catch these two cores?
     three things this lab is about.
    ```
 
-`test_architecture.py` is Lab 04's finished suite: ten tests that compare all four registers, the
+`test_architecture.py` is Lab 04's finished suite with its one cycle-count assertion removed
+(question 1 in Finishing says why): ten tests that compare all four registers, the
 PC, both flags and every byte of memory with the golden model after every instruction of a mixed
 program, plus every shift amount in both directions, all sixteen branch displacements, a compare
 followed by two branches, and `LOAD` and `STORE` through pointers in a different register from the
@@ -104,8 +106,8 @@ How many clock cycles should this lab's program take, and how many `done` pulses
    `37` and `9` are exact.
 
 2. Work out the 37 yourself from the instruction costs in the table at the top of this page. Every
-   test in this lab uses the same nine-instruction program, one of them a `STORE`. Write the sum
-   down; you will assert it in Part 6.
+   test in this lab uses the same nine-instruction program, `PROGRAM` at the top of
+   `test_lab05.py`, one of them a `STORE`. Write the sum down; you will assert it in Part 6.
 
    <details>
    <summary>Answer</summary>
@@ -134,7 +136,15 @@ What happens to a scoreboard triggered by `done` on a core that drops a `done` p
 
    You should see `MISSED`: the shipped file passes.
 
-2. Find the same log line from the broken run. It says `8 comparisons for a 9-instruction program`.
+2. `make check` doesn't show the simulator's log. To see the broken run's log, run the checker
+   with `-v`:
+
+   ```bash
+   python3 ../common/check.py --tb test_lab05 --bug B08 --dir . -v
+   ```
+
+   You should see the same `MISSED` verdict, then the log, with
+   `a done-triggered scoreboard would have made 8 comparisons for a 9-instruction program`.
 
 3. Nothing went red and no assertion failed. What would a scoreboard triggered by `done` have
    reported on this core, and why is that worse than a failure?
@@ -168,7 +178,8 @@ Can you make the pulse count fail loudly, with a message that points at the culp
            AssertionError: `done` pulsed 8 times for a 9-instruction program.
    ```
 
-   The reference message continues:
+   These blocks, here and in Part 5, come from the finished file with all four tests; until you
+   have written the other two, yours shows fewer tests. The reference message continues:
 
    > The shortfall is 1. There is exactly one instruction in this program that appears exactly
    > 1 time(s), and that is where to look.
@@ -183,8 +194,10 @@ Check: `caught` on `B08`.
 
 Is `halt` ever high while the core is running?
 
-1. Write the second TODO: use `await sp.count_halt_cycles(n)`, which runs the loaded program for
-   `n` cycles of execution and returns how many of them had `halt` high. Assert that it is zero.
+1. Write the second TODO as a new test: use `await sp.count_halt_cycles(n)`, which runs the loaded
+   program for `n` cycles of execution and returns how many of them had `halt` high. For `n`, use
+   the cycle count `sp.run()` returns, then `sp.reset()` before counting, the way `t02` does for
+   `count_done_pulses`. Assert that the result is zero.
 
 2. Run it against `B13`:
 
@@ -238,8 +251,9 @@ Does the program take exactly as many cycles as the instruction costs say?
    <details>
    <summary>Answer</summary>
 
-   $38 - 37 = 1$, and the program has exactly one `STORE`: one extra cycle, once per store. Had the
-   number been 42 with five stores, the same division would point at the same instruction. This
+   $38 - 37 = 1$, and the program has exactly one `STORE`: one extra cycle, once per store. In a
+   program with five stores, five extra cycles would point at the same instruction by the same
+   division. This
    check turns "the answer is right and arrived late" into a red row with a number attached, and it
    costs one addition done once from the instruction costs in
    [the ISA reference](reference/simproc-instruction-set.md).
@@ -342,7 +356,8 @@ Can you find and fix both bugs with your new checks?
    ```
 
    The three-row grade is the same as [Lab 04](labs/lab-04-your-first-bug-hunt-overview.md)'s,
-   and row 2 is still the deliverable. Bring in your checks from Parts 4–6. `make hunt` with an
+   and row 2 is still the deliverable. Your checks from Parts 4–6 are in `test_lab05.py`, which
+   `make hunt` and `make verdict` run. `make hunt` with an
    architectural suite alone will say `quiet` however much stimulus you add; the way out is a
    different kind of check.
 
@@ -364,7 +379,7 @@ The complete difference between a working processor and these two:
 | Clock cycles, `sp.run()` | 37 | 37 | 38 |
 | Every register, flag, byte of memory, PC | Correct | Correct | Correct |
 
-All twelve figures are exact, and three of them differ from the golden core's.
+All twelve entries are exact, and three of them differ from the golden core's.
 
 | Check | Expected | |
 |---|---|---|
