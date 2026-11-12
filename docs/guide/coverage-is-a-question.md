@@ -1,28 +1,25 @@
-# Coverage as a question, not a metric
+# Coverage as a question
 
-**Question this page answers:** *How do I know when I have tested enough?*
+This page answers: *how do I know when I have tested enough?*
 
-You do not, and no number will tell you. That is the honest answer, and everything useful
-about coverage follows from taking it seriously rather than looking for a way around it.
+You don't, and no number will tell you. Everything useful about coverage follows from accepting
+that rather than looking for a way around it.
 
-Coverage is not a score you are trying to raise. **Coverage is a machine that generates
-questions about your stimulus**, and each question is worth exactly as much as the answer you
-give it. The number attached to it is a side effect.
+Treat coverage as a tool that generates questions about your stimulus rather than as a score to
+raise. Each question is worth as much as the answer you give it, and the percentage attached is a
+side effect.
 
-The fastest way to believe that is to point a real coverage tool at the two testbenches from
+The quickest way to see this is to point a real coverage tool at the two stimulus sets from
 [The lazy testbench](guide/the-lazy-testbench.md) and watch it find the blind spot without being
 told anything about adders.
 
-## Run it
+## What the coverage run prints
 
-```bash
-cd labs/lab-01-the-adder-you-already-trust/coverage
-make
-```
-
-This one takes about **twelve seconds**, because it builds the design twice with Verilator —
-Icarus has no coverage instrumentation, so this is the one place in the early course where
-the strict simulator is the only one that can answer.
+The Lab 01 package has a `coverage/` add-on that runs Verilator's toggle coverage on the six
+hand-picked cases and on all 512 vectors. Icarus has no coverage instrumentation, so this is the
+one place early in the course where only the stricter simulator can answer. You'll run it in
+[Lab 01, Part 5](labs/lab-01-the-adder-you-already-trust-overview.md#part-5-ask-a-coverage-tool),
+and this is what it prints:
 
 ```
 ==================================================================
@@ -69,151 +66,138 @@ cov_all.dat
 ==================================================================
 ```
 
-Note that this run used `../src/ripple4.sv` — the **correct** adder. There is no bug here at
-all. Coverage is not looking for one, and that is the first thing to understand about it.
+Both runs use `../src/ripple4.sv`, the correct adder. There is no bug here at all. Coverage is not
+looking for one, and that is the first thing to understand about it.
 
-## What it just told you
+## What it found
 
-`%000000` on the `cin` line.
+Look at `%000000` on the `cin` line.
 
-`verilator_coverage --annotate` rewrites your source with a count in the left margin and a
-flag character for anything it considers under-covered — `%` when a point falls below
-`--annotate-min` (10 by default). You do not need the full legend; you need the two facts on
-that one line. The flag is `%`, and the count is `000000`.
+`verilator_coverage --annotate` rewrites your source with a count in the left margin and a flag
+for anything it considers under-covered: `%` when a point falls below `--annotate-min` (10 by
+default). You don't need the full legend, only the two facts on that line: the flag is `%`, and
+the count is `000000`.
 
-The explicit list above it says the same thing without ambiguity: of the forty-eight toggle
-points in this design, five never fired, and two of them are `cin:0->1` and `cin:1->0`. **The
-carry-in never moved, in either direction, in the entire run** — and the tool wrote that on
-the exact line of source where it lives.
+The list above it says the same thing more plainly. Of the 48 toggle points in the design, five
+never fired, and two of them are `cin:0->1` and `cin:1->0`. The carry-in never moved in either
+direction during the whole run, and the tool reported it on the line of source where `cin` lives.
 
-It did that without knowing what an adder is, without a reference model, without an
-assertion, and without anyone telling it that `cin` was the interesting input. It asked one
-mechanical question of every bit in the design — *did this go 0→1, and did it go 1→0?* — and
-five of the answers were no.
+It did that without knowing what an adder is, without a reference model, without an assertion,
+and without being told `cin` was interesting. It asked one mechanical question of every bit in
+the design, *did this go 0→1, and did it go 1→0?*, and five of the answers were no.
 
-That is the whole value proposition. **Coverage does not know what is correct. It knows what
-you never touched, and "what you never touched" is where bugs are.**
+That is the value of coverage. It does not know what is correct. It knows what you never touched,
+and the places you never touched are where bugs survive.
 
-The other three cold points are the same finding wearing different hats: `c[0]` is the wire
-`cin` is assigned to, so of course it never moved either. `b[2]:1->0` is real but incidental
-— none of the six cases happens to lower that particular bit.
+The other three cold points follow from the first two or are incidental. `c[0]` is the wire `cin`
+is assigned to, so it never moved either. `b[2]:1->0` is real but incidental: none of the six
+cases happens to lower that bit.
 
-## Three traps, all visible in that one output
+## Three traps in that one output
 
 ### 1. `design line points : 0`
 
-Line coverage — the metric almost everybody means when they say "coverage", and the one your
-software friends live by — found **zero** points inside `ripple4.sv` and `fulladder.sv`. Not
-zero *covered*. Zero *points*. There is nothing there to count: the design is continuous
-assignments, and a continuous assignment is not a statement that executes.
+Line coverage is what most people mean by "coverage", and it is what software teams track. It
+found zero points inside `ripple4.sv` and `fulladder.sv`: not zero covered, zero points. The
+design is continuous assignments, and a continuous assignment is not a statement that executes,
+so there is nothing to count.
 
-So a report saying **"100 % line coverage"** on this design would be perfectly true and
-completely empty. It would also be true of the six-case run and the exhaustive run equally,
-which means it cannot distinguish them, which means it is worth nothing here.
+A report saying "100 % line coverage" on this design would be true and empty. It would also be
+true of the six-case run and the exhaustive run alike, so it cannot tell them apart.
 
-> **Name the metric, or the number means nothing.** "We have 92 % coverage" is not a
-> sentence. "We have 92 % *statement* coverage and we have never measured functional
-> coverage" is.
+> Name the metric, or the number means nothing. "We have 92 % coverage" is not a useful sentence.
+> "We have 92 % statement coverage and have never measured functional coverage" is.
 
-### 2. The stimulus files check nothing at all
+### 2. The stimulus files check nothing
 
 Open [`cov_six.sv`](https://github.com/uoftasic/dd104/blob/main/labs/lab-01-the-adder-you-already-trust/coverage/cov_six.sv).
-There is not one assertion in it. It drives six values and prints them, and that is the whole
-file.
+It has no assertions. It drives six values and prints them, and that is the whole file.
 
-It scores exactly what a fully-checking version would score. **Coverage instruments the
-design, so it can only ever measure what your stimulus reached — it has no way to know
-whether you looked at the answer.** A testbench that drives every input, exercises every
-line, toggles every bit, and asserts nothing is 100 % covered and 0 % useful. That
-combination is not hypothetical; it is what a large, old, unmaintained regression suite drifts
-into.
+It scores exactly what a fully checking version would score. Coverage instruments the design, so
+it can only measure what your stimulus reached; it cannot know whether you looked at the answer.
+A testbench that drives every input, toggles every bit and asserts nothing is 100 % covered and
+useless. That is not hypothetical: it is what a large, old, unmaintained regression suite tends to
+drift into.
 
-Which gives you the pairing to hold on to:
-
-| | asserts nothing | asserts properly |
+| | Asserts nothing | Asserts properly |
 |---|---|---|
-| **poor coverage** | worthless, and it looks it | worthless, and it looks fine |
-| **good coverage** | **worthless, and it looks excellent** | the only useful square |
+| Poor coverage | Useless, and it looks it | Useless, and it looks fine |
+| Good coverage | Useless, and it looks excellent | The only useful combination |
 
-The dangerous cell is the bottom-left, because it is the one with a good number on it.
+The dangerous cell is bottom-left, because it is the one with a good number on it.
 
 ### 3. Even the exhaustive run has a hole
 
-Look at the second block. All 512 vectors, and **one point still never moved**: `a[3]:1->0`.
+In the second block, all 512 vectors ran and one point still never moved: `a[3]:1->0`.
 
-Nothing is untested. Every input combination was applied. What happened is that the sweep
-ends with `a = 15` and then stops, so the top bit of `a` goes up several times and never comes
-back down. **Toggle coverage counts transitions, not values**, and the loop order is part of
-your stimulus.
+Nothing is untested; every input combination was applied. The sweep ends with `a = 15` and stops,
+so the top bit of `a` goes up several times and never comes back down. Toggle coverage counts
+transitions, not values, so loop order is part of your stimulus.
 
-There is a second, sharper version of this in the same package. `cov_all.sv` puts `cin` in the
-*innermost* loop on purpose. Write the same sweep with `cin` outermost — 256 vectors at
-`cin = 0`, then 256 at `cin = 1` — and you visit every value of `cin` while toggling it
-exactly once, so `cin:1->0` stays cold in a test that is genuinely exhaustive.
+The same package has a sharper version of this. `cov_all.sv` puts `cin` in the innermost loop on
+purpose. Write the same sweep with `cin` outermost, 256 vectors at `cin = 0` and then 256 at
+`cin = 1`, and you visit every value of `cin` while toggling it only once, so `cin:1->0` stays cold
+in a test that really is exhaustive.
 
-This is the lesson that stops you treating coverage as a scoreboard:
+> A coverage hole is a question, not a verdict. Uncovered does not mean untested, and covered
+> does not mean correct. Find out which one you are looking at.
 
-> **A coverage hole is a question, not a verdict.** Uncovered does not mean untested, and
-> covered certainly does not mean correct. Go and find out which one you are looking at.
+Some holes are real gaps: `cin` in the six-case run, so fix your stimulus. Some are artefacts of
+how the metric is defined: `a[3]:1->0`, so note it and move on. Some are unreachable by
+construction, and those are the most valuable: a point your design cannot reach is either dead
+logic to delete or a part of your understanding that is wrong. Chasing a number would have you
+paper over all three the same way.
 
-Some holes are real gaps (`cin` in the six-case run — go fix your stimulus). Some are
-artefacts of how the metric is defined (`a[3]:1->0` — write it down and move on). Some are
-**unreachable by construction**, and those are the most valuable of all: a point your design
-genuinely cannot reach is either dead logic you should delete, or a piece of your
-understanding that is wrong. Chasing a number would have you paper over all three
-identically.
+## Functional coverage on a processor
 
-## The kind of coverage that actually helps on a processor
+Toggle coverage on a nine-line adder is a good teacher because you can hold the whole design in
+your head. On SimProc it is nearly useless: almost any program toggles nearly every bit, and you
+would sit at 99 % with `SUB` backwards.
 
-Toggle coverage on a nine-line adder is a good teacher because you can hold the whole thing
-in your head. On SimProc it is nearly useless: a processor running almost any program will
-toggle nearly every bit, and you will sit at 99 % with `SUB` backwards.
+What you need there is **functional coverage**: coverage of things you named yourself because
+they matter to the design's specification rather than its wiring. You write the list. For SimProc
+it starts like this:
 
-What you need there is **functional coverage** — coverage of things you named yourself,
-because they are meaningful to the design's *specification* rather than its wiring. You write
-the list. On SimProc it starts like this:
-
-| the question | why it is on the list |
+| The question | Why it is on the list |
 |---|---|
-| have I executed every opcode? | eleven exist; three encodings are unimplemented on purpose |
-| have I executed `SUB` with **two different** operands? | `SUB rX, rX` is symmetric and hides an operand swap |
-| have I executed `NAND` with two different operands? | `NAND rX, rX` is how you write NOT — the one case where NAND and NOR agree |
-| have I used **all four** shift amounts, in both directions? | shifting by 1 is what everybody writes |
-| have I taken a **backward** branch? | forward displacements are correct under one sign-extension bug and one only |
-| have I taken **and** not-taken every branch? | a branch never taken has never been tested |
-| have I run two branches off **one** compare? | flags are supposed to survive a branch |
-| have I checked a `done` pulse per retired instruction? | two bugs disturb nothing else |
-| have I run the UART at more than one baud rate? | one bug is invisible at the default |
+| Have I executed every opcode? | Eleven exist; three encodings are unimplemented on purpose |
+| Have I executed `SUB` with two different operands? | `SUB rX, rX` is symmetric and hides an operand swap |
+| Have I executed `NAND` with two different operands? | `NAND rX, rX` is how you write NOT, the one case where NAND and NOR agree |
+| Have I used all four shift amounts, in both directions? | Shifting by 1 is what everybody writes |
+| Have I taken a backward branch? | Forward displacements are correct under one sign-extension bug |
+| Have I taken and not taken every branch? | A branch never taken has never been tested |
+| Have I run two branches off one compare? | Flags are supposed to survive a branch |
+| Have I checked for one `done` pulse per retired instruction? | Two bugs disturb nothing else |
+| Have I run the UART at more than one baud rate? | One bug is invisible at the default |
 
-Every line in that table is a question about stimulus that you could answer today, with a
-`for` loop and a set. None of them requires a tool. **Functional coverage is a list you
-maintain, and the list is the engineering** — the counting is clerical.
+You could answer each of those today with a `for` loop and a set, without any tool. Functional
+coverage is a list you maintain. Writing the list is the engineering; counting is clerical.
 
-And you will notice something about that table if you read it twice: it is not organised
-around the design's structure at all. It is organised around **the ways an operation can be
-symmetric, or default, or one-sided** — the places where a wrong implementation and a right
-one agree. That is where the thirteen SimProc bugs live, and it is not an accident:
-[Where bugs hide](guide/where-bugs-hide.md) is the taxonomy, and every entry in it is a hole this
-kind of list is designed to notice.
+Read the table again and you'll see it is organised around the ways an operation can be symmetric,
+defaulted or one-sided, rather than around the design's structure. Those are the places where a
+wrong implementation and a right one agree. That is where the thirteen SimProc bugs live.
+[Where bugs hide](guide/where-bugs-hide.md) is the full taxonomy, and every entry in it is a hole
+this kind of list is designed to notice.
 
-## The reflex
+> Never quote a coverage number without naming the metric and the assertions behind it. When you
+> find a hole, ask it a question instead of closing it. "Why did nothing ever set `cin`?" finds
+> the bug. "How do I get this to 100 %?" hides it.
 
-> **Never quote a coverage number without naming the metric and the assertion behind it.**
-> And when you find a hole, do not close it — *ask it*. "Why did nothing ever set `cin`?" is
-> the question that finds the bug. "How do I get this to 100 %?" is the question that hides
-> it.
+## Before Lab 01
 
-## Where this goes
-
-You now have the four ideas the rest of DD104 runs on:
+You now have the four ideas the rest of DD104 builds on:
 
 1. A green tick is a claim exactly as large as the stimulus behind it.
-2. A testbench drives, observes and decides — and it is only a testbench once you have seen
-   it fail.
-3. If you can walk the input space, walk it; when you cannot, the shape of a failure still
-   tells you where to look.
+2. A testbench drives, observes and decides, and it is only a testbench once you have seen it
+   fail.
+3. If you can walk the input space, walk it. When you can't, the shape of a failure still tells
+   you where to look.
 4. Coverage asks where you have not been. It never tells you whether you were right.
 
-Next: [Your first cocotb test](guide/your-first-cocotb-test.md), where you stop borrowing a
-harness and start writing one — and then [Lab 01](labs/lab-01-the-adder-you-already-trust-overview.md), which
-is four lines of work and the first `VERDICT: PASS` in this course.
+## Check yourself
+
+1. A colleague reports "100 % line coverage" on a design made entirely of `assign` statements.
+   What has been measured?
+2. Why can a testbench with no assertions score full toggle coverage?
+
+Next: [Lab 01: The adder you already trust](labs/lab-01-the-adder-you-already-trust-overview.md).

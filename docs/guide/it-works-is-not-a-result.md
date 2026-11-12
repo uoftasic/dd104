@@ -1,59 +1,51 @@
-# "It works" is not a result
+# What a passing test proves
 
-**Question this page answers:** *I ran my design and it did the thing. Why isn't that
-enough?*
+This page answers: *I ran my design and it did the thing. Why isn't that enough?*
 
-By the end of DD103 you had a `.gds` file: a real chip layout, DRC clean, LVS clean, hardened
-by a flow that ran eighty stages and printed a green tick at the end of every one of them.
-Nobody, at any point in that entire pipeline, looked at whether your design was **right**.
+By the end of DD103 you had a `.gds` file: a chip layout, DRC clean and LVS clean, produced by
+a flow that ran eighty stages and printed a green tick after each one. No stage of that flow
+checked whether your design was right. That is a division of labour, not a flaw in the tools,
+and the gap it leaves is what this course is about.
 
-That is not a criticism of the tools. It is a division of labour, and it is worth seeing
-clearly, because the gap it leaves is the entire subject of this course.
-
-| The tool | The question it answers | The question it does not answer |
+| Tool | The question it answers | The question it does not answer |
 |---|---|---|
-| Yosys | can this be built out of gates? | are they the right gates? |
-| Verilator lint | is this legal SystemVerilog? | does it compute what you meant? |
-| OpenSTA | will the signals arrive in time? | are they the right signals? |
-| LibreLane / DRC / LVS | can this be manufactured, and does the layout match the netlist? | does the netlist do anything useful? |
+| Yosys | Can this be built out of gates? | Are they the right gates? |
+| Verilator lint | Is this legal SystemVerilog? | Does it compute what you meant? |
+| OpenSTA | Will the signals arrive in time? | Are they the right signals? |
+| LibreLane / DRC / LVS | Can this be manufactured, and does the layout match the netlist? | Does the netlist do anything useful? |
 
-Every one of those can pass, in full, on a processor whose `SUB` instruction computes
-`B - A`. It will be a beautiful chip. It will subtract backwards forever.
+All of those can pass on a processor whose `SUB` instruction computes `B - A`. You get a clean
+chip that subtracts backwards.
 
-## The word "works" is hiding three different claims
+## Three meanings of "works"
 
-When you say a design works, you are usually saying one of these and hoping it implies the
-others:
+When you say a design works, you usually mean one of these and hope it implies the others:
 
-1. **It compiled.** The tool accepted it.
-2. **It ran.** It did not hang, crash, or emit `x`.
-3. **It produced the answer I expected — on the inputs I thought of.**
+1. It compiled. The tool accepted it.
+2. It ran. It did not hang, crash or emit `x`.
+3. It produced the answer you expected, on the inputs you thought of.
 
-Only the third is about correctness, and it carries a clause most people do not say out loud:
-*on the inputs I thought of.* The inputs you thought of are a sample drawn by the same brain
-that wrote the bug. That is the structural problem, and it does not go away by being careful.
+Only the third is about correctness, and it carries a clause people rarely say out loud: *on
+the inputs you thought of*. Those inputs were picked by the same person who wrote the bug, so
+they tend to share its blind spots. Being careful does not fix that.
 
-> **The prior you are bringing, and where it betrays you.**
+> If you came from software, tests may feel like the chore after the interesting part: skip
+> them and you find out in staging and push a fix. That last step does not transfer. You cannot
+> push a fix to a chip that has already been manufactured.
 >
-> **If you came from software:** tests are the chore after the interesting part, and if you
-> skip them, you find out in staging and push a fix. The fix is the part that does not
-> transfer. There is no `git push` to a chip that has already been manufactured.
->
-> **If you came from circuits:** broken things look broken. A floating node reads as an X, a
-> shorted output smokes. But an RTL bug is not damage — it is a *different, perfectly
-> well-formed circuit* that computes the wrong function, cleanly, at full speed, with clean
-> edges on every signal. There is nothing to see. This is DD103's `unique case` lesson again,
-> and it is worse here.
+> If you came from circuits, you may expect broken things to look broken: a floating node reads
+> as X, a shorted output smokes. An RTL bug is not damage. It is a different, well-formed circuit
+> that computes the wrong function at full speed with clean edges on every signal, so there is
+> nothing to see. This is DD103's `unique case` lesson again, in a worse form.
 
-## The argument this course is built on
+## The test SimProc shipped with
 
-You are about to be handed **SimProc**: a real 8-bit processor, about 1,200 lines of
-SystemVerilog, written by students on this team, wrapped for a real chip. Registers, an ALU,
-a memory, a UART you can talk to. It is a genuine piece of hardware design and there is
-nothing toy about it.
+From Lab 02 on, the design under test is SimProc: an 8-bit processor of about 1,200 lines of
+SystemVerilog, written by students on this team and wrapped for a real chip. It has registers,
+an ALU, a memory and a UART you can talk to.
 
-It shipped with **one test.** Here it is, in full — `test/test.py` from the SimProc
-repository, and this is the entire file's content once you strip the boilerplate:
+It shipped with one test. This is `test/test.py` from the SimProc repository with the
+boilerplate stripped:
 
 ```python
 dut.ui_in.value = 1
@@ -62,9 +54,9 @@ await ClockCycles(dut.clk, 100)
 assert dut.uo_out.value == 3
 ```
 
-Set one input pin high, wait a hundred clocks, check the output byte equals 3. Decode `3`
-against the chip's pin map — `uo_out[0]` is the UART transmit line, `uo_out[1]` is `halt`,
-`uo_out[2]` is `done`:
+It sets one input pin high, waits a hundred clocks and checks that the output byte equals 3.
+Decode `3` against the chip's pin map, where `uo_out[0]` is the UART transmit line,
+`uo_out[1]` is `halt` and `uo_out[2]` is `done`:
 
 ```
 uo_out = 0b00000011
@@ -73,13 +65,11 @@ uo_out = 0b00000011
            │    └──── done    = 0   no instruction has completed
 ```
 
-**It asserts that the processor is not running.** It sends no command, loads no program,
-executes no instruction, and never once looks at a register, a flag, or a byte of memory.
+The test asserts that the processor is not running. It sends no command, loads no program,
+executes no instruction, and never looks at a register, a flag or a byte of memory. This is the
+real file, it passes, and for a long time it was the only evidence anyone had.
 
-That is not a strawman written for this course. That is the real file, and it is green, and
-for a long time it was the only evidence anybody had.
-
-**And the file says so itself.** Two lines above that assertion, in the original, untouched:
+The file even says so. Two lines above the assertion, in the original:
 
 ```python
     # The following assersion is just an example of how to check the output values.
@@ -87,48 +77,27 @@ for a long time it was the only evidence anybody had.
     assert dut.uo_out.value == 3
 ```
 
-That is the project template's own comment, typo and all, still sitting there. Nobody
-overrode a warning or ignored a failure. The placeholder simply stayed a placeholder, the
-tick stayed green, and there was never a moment where anything went wrong. **That is what
-this failure mode looks like from the inside, and it is why it is so common.** Almost every
-first tapeout looks like this.
+That is the project template's own comment, typo included. Nobody overrode a warning or ignored
+a failure. The placeholder stayed a placeholder and the tick stayed green, so at no point did
+anything look wrong. That is why this failure mode is so common: almost every first tapeout
+looks like this.
 
-## Thirteen broken processors, one test, thirteen passes
+## Thirteen broken processors
 
-DD104 ships thirteen deliberately broken versions of SimProc. Each one is a **single-line
-edit**: `SUB` computes `B - A`; `NAND` is wired as `NOR`; the zero flag only looks at the
-bottom four bits; branches sign-extend the wrong way; `LOAD` reads through the destination
-register instead of the pointer.
+DD104 ships thirteen deliberately broken versions of SimProc. Each is a one-line edit: `SUB`
+computes `B - A`, `NAND` is wired as `NOR`, the zero flag looks only at the bottom four bits,
+branches sign-extend the wrong way, `LOAD` reads its address from the destination register
+instead of the pointer, and so on.
 
-Run the shipped test against all fourteen cores — the good one and the thirteen broken ones:
-
-```bash
-cd labs/common
-make shuttle
-```
+This is what the shipped test prints against the good core and all thirteen broken ones. You'll
+produce it yourself in [Lab 02, Part 1](labs/lab-02-the-only-test-this-chip-has-overview.md#part-1-the-shipped-test):
 
 ```
-========================================================================
- THE TEST THIS CHIP SHIPPED WITH
-========================================================================
- test/test.py, from the SimProc repository, untouched. It sets
- ui_in = 1, waits 100 clock cycles, and asserts uo_out == 3.
- Decoded: uart_tx = 1 (idle), halt = 1 (IDLE), done = 0.
- It asserts that the processor is NOT RUNNING.
 ------------------------------------------------------------------------
     PASS  the golden core                              2.8s
     PASS  B01_sub_operands_swapped                     1.3s
     PASS  B02_nand_is_nor                              1.4s
-    PASS  B03_zero_flag_low_nibble                     1.4s
-    PASS  B04_alu_writeback_reg_field                  1.5s
-    PASS  B06_shift_amount_one_bit                     1.6s
-    PASS  B07_load_address_from_ra                     1.4s
-    PASS  B05_branch_offset_zero_extended              1.4s
-    PASS  B09_branch_clobbers_flags                    1.3s
-    PASS  B08_store_drops_done                         1.4s
-    PASS  B13_store_falls_to_idle                      1.3s
-    PASS  B10_ori_adds_instead_of_ors                  1.3s
-    PASS  B11_ori_writes_r1_reads_r0                   1.3s
+    ...
     PASS  B12_uart_rx_bit_period                       1.3s
 ------------------------------------------------------------------------
  13 of 13 deliberately broken processors pass the
@@ -136,90 +105,74 @@ make shuttle
 ========================================================================
 ```
 
-Around twenty seconds of wall clock — the per-core figures above are from one run and
-yours will differ by a few seconds either way. The sentence at the bottom is the course in
-one line:
+Thirteen out of thirteen is not bad luck. The test spends its hundred clock cycles watching a
+processor sit still, and every one of the thirteen bugs is somewhere the processor only goes
+when it is running. The stimulus never reaches the thing the test is supposed to check.
 
-**The only test this chip has, passes on a processor whose `SUB` is backwards.**
-
-Thirteen out of thirteen is not bad luck. It is what happens when a test's stimulus never
-reaches the thing it is supposed to be testing. The test spends its hundred clock cycles
-watching a processor sit still, and every one of those thirteen bugs lives somewhere the
-processor only goes when it is running.
-
-## Why this is a discipline and not a chore
-
-Here is the economic shape of it, and it is unlike anything in software.
+## What a bug costs
 
 | Where the bug is found | What it costs |
 |---|---|
-| in simulation | an edit and a re-run — **about eight seconds** |
-| in FPGA bring-up | a re-synthesis and a lab afternoon |
-| in silicon | a new mask set: months and a great deal of money |
-| in silicon, in a product | a recall, or a customer working around your bug forever |
+| In simulation | An edit and a rerun, about eight seconds |
+| In FPGA bring-up | A re-synthesis and an afternoon in the lab |
+| In silicon | A new mask set: months and a lot of money |
+| In silicon, in a product | A recall, or a customer working around your bug forever |
 
-Each row is roughly a hundred times the one above it. That ratio is why "pre-silicon
-verification" is a job title, why verification engineers outnumber design engineers on most
-commercial chip teams, and why the discipline has its own vocabulary, its own tools, and its
-own idea of what counts as evidence.
+Each row costs roughly a hundred times the row above it. That ratio is why pre-silicon
+verification is a job title, why verification engineers outnumber design engineers on most
+commercial chip teams, and why the field has its own tools and its own idea of evidence.
 
-And what counts as evidence is the part worth taking away. In this field, **a passing test is
-not evidence until you know what it would have caught.** A green tick is a claim, and the
-claim it makes is exactly as large as the stimulus behind it — which for `test/test.py` is
+In this field, a passing test is not evidence until you know what it would have caught. A green
+tick makes a claim exactly as large as the stimulus behind it. For `test/test.py` the claim is
 "this chip powers up idle".
 
-## The reflex
+## What to ask of a passing test
 
-You will hear a version of this on every page of this course, but it starts here:
+You'll see this question on every page of the course:
 
-> **When a test passes, ask what it would have caught.** If you cannot name a specific bug
-> that would turn it red, you have not learned anything from the green.
+> When a test passes, ask what it would have caught. If you cannot name a specific bug that
+> would turn it red, the green has told you nothing.
 
-The mechanical form of that question is the one DD104 uses everywhere: run your test against
-a design you know is broken. Every lab package here does that automatically, with `make
-check`, and it will not give you a passing verdict until your testbench has both passed the
-good core **and** failed a broken one.
+The mechanical way to answer it is to run your test against a design you know is broken. Every
+lab package does this with `make check`, and it will not give you a passing verdict until your
+testbench has passed the good design and failed a broken one. A result has two sides, and you
+need both.
 
-Two-sided or nothing. That is what a result looks like.
+## Two kinds of red
 
-## And a red test is two different results
+The same suspicion applies to a failing test, and ignoring it has already given a DD104 student
+a false PASS. A test that did not pass has not necessarily checked anything. There are two
+unrelated ways to come back not-green:
 
-Applying the same suspicion to the other colour, because it has already cost a DD104 student a
-false PASS: **a test that did not pass has not necessarily *checked* anything.** There are two
-ways to come back not-green and they are not related.
-
-| | what happened | what it tells you |
+| | What happened | What it tells you |
 |---|---|---|
-| **the check fired** | you drove the design, compared what came out against what should have, and they differed | a statement about the **design** |
-| **the test blew up** | `NameError`, `TypeError`, an import that failed, a variable you never spelled the same way twice | a statement about the **testbench** |
+| The check fired | You drove the design, compared what came out with what should have, and they differed | Something about the design |
+| The test blew up | `NameError`, `TypeError`, a failed import, a variable spelled two ways | Something about the testbench |
 
-Only the first one is a caught bug. The second compared nothing, so it says nothing about the
-design under test — and it would say the same nothing about a design that was perfectly
-correct.
+Only the first is a caught bug. The second compared nothing, so it would say the same thing
+about a perfectly correct design.
 
-The reason this needs saying out loud is that the failure only shows up in the code you never
-execute while things are working:
+This failure hides in code that only runs when something is wrong:
 
 ```python
 if bad:
     raise AssertionError(f"{len(bad)} of {checked} wrong: {summary}")   # `summary` undefined
 ```
 
-That line runs the first time something is wrong — which is the first time it is ever run at
-all. So the testbench passes the good design, crashes on the broken one, and *looks exactly
-like a catch.* cocotb records both outcomes in `results.xml` the same way, as a `<failure>`
-element, distinguished only by an `error_type` attribute:
+That line first runs the first time the design is wrong. So the testbench passes the good
+design, crashes on the broken one, and looks exactly like a catch. cocotb records both outcomes
+in `results.xml` as a `<failure>` element, distinguished only by an `error_type` attribute:
 
 ```xml
 <failure error_type="AssertionError" error_msg="256 of 512 vectors are wrong" />
 <failure error_type="NameError"      error_msg="name 'summary' is not defined" />
 ```
 
-DD104's graders once read those two lines identically, and told a student **`3 of 3 ALU bugs
-caught`** about a testbench that crashed three times. Every checker in this course now reads
-[`labs/common/verdict.py`](https://github.com/uoftasic/dd104/blob/main/labs/common/verdict.py),
-which is the one place the distinction is made, and marks such a run `BROKEN` — never `caught`,
-never `ok`:
+DD104's graders once read those two lines the same way, and told a student `3 of 3 ALU bugs
+caught` about a testbench that had crashed three times. Every checker in the course now goes
+through [`labs/common/verdict.py`](https://github.com/uoftasic/dd104/blob/main/labs/common/verdict.py),
+the one place that makes the distinction, and marks such a run `BROKEN`, never `caught` or
+`ok`:
 
 ```
   BROKEN  B01_sub_operands_swapped           3 tests, 1 BLEW UP
@@ -227,27 +180,13 @@ never `ok`:
  VERDICT: FAIL -- 1 of your tests did not run to the end.
 ```
 
-The reflex extends by one clause: **when a test fails, ask whether it failed or fell over.**
+So the question gets a second half: when a test fails, ask whether it failed or fell over.
 
-## Try this
+## Check yourself
 
-Before you go on, spend two minutes with the file itself:
+1. In one sentence, write the strongest true claim the shipped test above supports. (You'll
+   compare your answer with the course's in Lab 02, Part 1.)
+2. A testbench passes on the good core and raises `TypeError` on a broken one. Has it caught
+   the bug?
 
-```bash
-cd labs/common
-cat test_shuttle.py
-```
-
-It is the shipped test, untouched, with a comment block explaining the pin decode. Read it
-and try to write down — in one sentence, in English — the strongest true claim it supports.
-
-The honest answer is *"after reset and 100 clock cycles with `ui_in[0]` high, this design
-drives `uo_out` to `0x03`."* That is a real claim. It is even a useful one; it would catch a
-core that came up running by accident, or a UART that transmitted garbage at power-on. It is
-just an extremely small claim, and nothing about the way it is written tells you so.
-
-**Every test you write for the rest of your career supports exactly one claim of that shape.
-The skill is knowing how big yours is.**
-
-Next: [What a testbench actually is](guide/what-a-testbench-is.md) — the second circuit, whose job
-is doubt.
+Next: [What a testbench is](guide/what-a-testbench-is.md).
