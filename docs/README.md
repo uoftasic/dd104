@@ -6,7 +6,7 @@ before they cost a mask set.
 Part of the UofT ASIC Team education materials, published at <https://uoftasic.com/dd104/>.
 The labs run in the workbench: the IIC-OSIC-TOOLS container you start from the `workspace` clone
 you set up in [IC101](https://uoftasic.com/ic101/). You get this course's files with the
-workbench's `mod` command (`mod add dd104`); [Lab 01, Part 1](labs/lab-01-the-adder-you-already-trust-overview.md#part-1-set-up)
+workbench's `mod` command (`mod add dd104`); [Lab 01, Part 1](labs/lab-01-the-adder-you-already-trust-overview.md#part-1-load-the-course)
 walks you through it.
 
 ## Who this course is for

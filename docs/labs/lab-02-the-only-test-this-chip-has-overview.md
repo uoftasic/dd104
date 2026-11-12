@@ -22,7 +22,7 @@ directory. Every lab from here on does the same.
 
 In this lab, "the golden core" is the correct SimProc, and the thirteen broken ones are named
 `B01` to `B13`. Work in a terminal on the noVNC desktop. `mod dd104` takes you to the course folder,
-as in [Lab 01, Part 1](labs/lab-01-the-adder-you-already-trust-overview.md#part-1-set-up):
+as in [Lab 01, Part 1](labs/lab-01-the-adder-you-already-trust-overview.md#part-1-load-the-course):
 
 ```bash
 mod dd104

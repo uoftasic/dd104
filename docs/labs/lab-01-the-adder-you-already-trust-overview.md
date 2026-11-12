@@ -23,65 +23,29 @@ Package: [`labs/lab-01-the-adder-you-already-trust/`](https://github.com/uoftasi
   bug hunt; that starts in [Lab 04](labs/lab-04-your-first-bug-hunt-overview.md). You may read the
   changed line.
 
-## Part 1: Set up
+## Part 1: Load the course
 
-1. On your own machine, in your `workspace` clone, start the desktop:
+Can you reach DD104's files, on the tool versions this course's outputs were recorded with?
+If you haven't set up the workbench yet, do
+[IC101 Lab 03](https://uoftasic.com/ic101/#/labs/lab-03-launch-the-workbench-overview) first.
 
-   ```bash
-   cd workspace
-   ./scripts/start_vnc.sh          # Windows: scripts\start_vnc.bat
-   ```
+1. From your `workspace` clone, start the desktop (`./scripts/start_vnc.sh`, or
+   `scripts\start_vnc.bat` on Windows), open <http://localhost/> and open a terminal on the
+   desktop. Type every command from here on in that terminal.
 
-   Open <http://localhost/> and open a terminal on that desktop. Type every command from here on
-   in that terminal, not on your laptop. If the page is blank or asks for a password you don't
-   have, see [IC101: Launch the noVNC desktop](https://uoftasic.com/ic101/#/guide/launch-novnc).
-
-2. Load the environment. The leading `.` is the shell's `source` command: it runs the file in
-   your current shell, which is the only way a script can change your environment. Do this in
-   every new terminal.
+2. Load the environment and get the course files:
 
    ```bash
-   . /foss/designs/common/.designinit
+   . /foss/designs/common/.designinit   # in every new terminal
+   mod add dd104                        # first time only: clones github.com/uoftasic/dd104
+   mod dd104                            # every time after that
    ```
 
-   You should see:
+   You should see the `ASIC-EDU: PDK=sky130A ...` banner, then
+   `OK  module ready: /foss/designs/modules/dd104`, then `cwd: /foss/designs/modules/dd104`.
+   DD104 uses no PDK; here `.designinit` does one thing for you, which is to define `mod`.
 
-   ```
-   ASIC-EDU: PDK=sky130A  PDK_ROOT=/foss/pdks  designs=/foss/designs
-             run 'mod' to list course modules, or 'mod <name>' to enter one.
-   ```
-
-   In DD104 this line only defines `mod`; DD103 also used it to select a process technology, which
-   DD104 does not need. If `mod` already works in this terminal, you can skip this step.
-
-3. Get the course files:
-
-   ```bash
-   mod add dd104      # first time only: clones github.com/uoftasic/dd104
-   mod dd104          # every time after that
-   ```
-
-   Between them, the two commands print:
-
-   ```
-   Cloning https://github.com/uoftasic/dd104.git
-        into /foss/designs/modules/dd104
-   Cloning into '/foss/designs/modules/dd104'...
-   OK  module ready: /foss/designs/modules/dd104
-       run: mod dd104
-   cwd: /foss/designs/modules/dd104
-   ```
-
-   If something goes wrong:
-
-   | What you see | What it means |
-   |---|---|
-   | `bash: /foss/designs/common/.designinit: No such file or directory` | The workspace is not mounted. `ls /foss/designs/` should list `common/` and `modules/`. If it is empty, relaunch `start_vnc.sh` from your `workspace` clone (see [IC101](https://uoftasic.com/ic101/)). You can still run every lab from a clone of this repo inside the workbench image, because `make` alone needs none of this. |
-   | `bash: mod: command not found` | You did not run step 2 in this terminal. Every new tab starts clean. |
-   | `mod: no such module: dd104` | You ran `mod dd104` before `mod add dd104`. |
-   | `fatal: could not read Username for 'https://github.com'` | git could not read the repo anonymously and is asking you to log in. Check that you typed `dd104`. If you did, ask in [Discord](https://discord.gg/hrJnP5UsGz). Do not type your password. |
-
-4. Check your tool versions:
+3. Check the versions that every exact number in this course depends on:
 
    ```bash
    iverilog -V | head -1
@@ -99,12 +63,19 @@ Package: [`labs/lab-01-the-adder-you-already-trust/`](https://github.com/uoftasi
    surfer 0.6.0 (git: v0.6.0)
    ```
 
-   If `cocotb-config --version` prints anything starting with `1.`, you are not in the workbench.
+   Two `Unable to get version from ...` lines after the Icarus line are harmless; they appear
+   because `head` stops reading early. If `cocotb-config` prints a version starting with `1.`, you
+   are not in the workbench. Don't use `gtkwave --version` as a check: outside the noVNC desktop it
+   fails with `Could not initialize GTK!  Is DISPLAY env var/xhost set?`, which doesn't mean
+   GTKWave is broken.
 
-   Don't use `gtkwave --version` as a check. Without a display attached (in a terminal that is not
-   on the noVNC desktop) it fails with
-   `Could not initialize GTK!  Is DISPLAY env var/xhost set?`, which does not mean the install is
-   broken. Run GTKWave from a terminal on the noVNC desktop and it works.
+| If you see | Do this |
+|---|---|
+| `bash: /foss/designs/common/.designinit: No such file or directory` | The workspace isn't mounted: relaunch `start_vnc` from your `workspace` clone. Every lab also runs from a plain clone of this repo inside the workbench image, because `make` needs none of this setup. |
+| `mod: no such module: dd104` | You ran `mod dd104` before `mod add dd104`. |
+| `fatal: could not read Username for 'https://github.com'` | git couldn't read the repo anonymously and is asking you to log in. Check that you typed `dd104`; if you did, ask in [Discord](https://discord.gg/hrJnP5UsGz). Don't type your password. |
+
+For anything else, see IC101's [Troubleshooting](https://uoftasic.com/ic101/#/reference/troubleshooting) page.
 
 Check: `cocotb-config --version` prints `2.0.1` and you are in `/foss/designs/modules/dd104`.
 
