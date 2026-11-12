@@ -1,108 +1,77 @@
 # DD104 — Pre-Silicon Verification
 
-An 8-bit processor with bugs hidden in it, and the tools to find them before they cost a mask
-set.
+Find the bugs hidden in a real 8-bit processor, using cocotb, Icarus Verilog and Verilator,
+before they cost a mask set.
 
-Part of the **UofT ASIC Team** education materials. Published at **https://uoftasic.com/dd104/**.
-Labs run inside the shared **workspace** you set up in [IC101](https://uoftasic.com/ic101/).
+Part of the UofT ASIC Team education materials, published at <https://uoftasic.com/dd104/>.
+The labs run in the workbench: the IIC-OSIC-TOOLS container you start from the `workspace` clone
+you set up in [IC101](https://uoftasic.com/ic101/). You get this course's files with
+`mod add dd104`; [Lab 01, Part 1](labs/lab-01-the-adder-you-already-trust-overview.md#part-1-set-up)
+walks you through it.
 
-## At a glance
+## Who this course is for
+
+You have finished the digital track up to DD103: you can write SystemVerilog, simulate it, and
+take it through a flow to layout. Nothing in that flow checked whether the design computes what
+you meant. This course is about that gap.
+
+SimProc is an 8-bit processor written by students on this team and wrapped for a real chip
+(a TinyTapeout shuttle): an ALU, four registers, 64 bytes of memory and a UART, about 1,200
+lines of SystemVerilog. It
+shipped with one test, and that test passes on a processor whose `SUB` is backwards. DD104
+ships thirteen broken versions of SimProc, each a one-line edit, and all thirteen pass that
+test. By the end of the course you will have a test suite that catches all thirteen, and a
+written bug report for one of them.
 
 | | |
 |---|---|
-| **Track** | Digital |
-| **Prerequisites** | [IC101](https://uoftasic.com/ic101/) → [DD101](https://uoftasic.com/dd101/) → [DD102](https://uoftasic.com/dd102/) → [DD103](https://uoftasic.com/dd103/), in that order |
-| **Tools** | cocotb, Icarus Verilog, Verilator, Surfer / GTKWave — all inside the workbench |
-| **Time** | 16–20 hours, self-paced |
-| **Machine** | The same workbench you already have. **No PDK, no LibreLane, no synthesis.** The longest thing you run is about a minute; most of it is under ten seconds. |
+| Track | Digital |
+| Prerequisites | [IC101](https://uoftasic.com/ic101/), then [DD101](https://uoftasic.com/dd101/), [DD102](https://uoftasic.com/dd102/) and [DD103](https://uoftasic.com/dd103/), in that order |
+| Tools | cocotb 2.0.1, Icarus Verilog 14.0, Verilator 5.050, Surfer and GTKWave, all in the workbench image `hpretl/iic-osic-tools:2026.08` |
+| Machine | The workbench you already have. No PDK, no LibreLane, no synthesis. Most runs take under ten seconds; the longest, Lab 06's `make check-all`, takes about four and a half minutes. |
+| Total time | 16–20 hours, self-paced |
 
-> **This course is pinned to the workbench image `hpretl/iic-osic-tools:2026.08`**, which
-> ships **cocotb 2.0.1**, **Icarus Verilog 14.0** and **Verilator 5.050**.
->
-> Check yours: `cocotb-config --version` should say `2.0.1`.
+Check your cocotb version before you search the web for help: `cocotb-config --version` should
+print `2.0.1`. Most cocotb tutorials online are for 1.x, and three of the 1.x forms are errors
+in 2.x. [cocotb 2.x and older tutorials](guide/cocotb-2x-vs-every-tutorial.md) has the list.
 
-> ### ⚠ Most cocotb tutorials you will find are 1.x. Three things break; the rest only warn.
->
-> Almost everything a search engine returns is cocotb 1.x, and cocotb 2.0 changed some of it.
-> **Three changes are hard errors:** `cocotb.start_soon`, not `cocotb.fork`; `async def`, not
-> `@cocotb.coroutine`; `dut.sig.value = 1`, not `dut.sig <= 1`.
->
-> Everything else you have read about — `units=`, `MODULE=`, `.value.integer` — **still runs on
-> the cocotb in your container** and only prints a deprecation warning. Write the new spellings
-> anyway; a deprecation is a countdown. But do not go looking for a failure that is not there.
-> Full breakdown, measured: [cocotb 2.x vs every tutorial](guide/cocotb-2x-vs-every-tutorial.md).
+## Course path
 
-> **Every lab runs with `make` alone**, from a clone of this repo, with no environment setup —
-> and every one of them prints a verdict rather than a shrug. If a setup step fails at 2 a.m.,
-> type `make` anyway.
+Work down this table in order. A Read row is guide pages: reading only, no commands. A Do row
+is one lab writeup, where every command in the course lives. Each lab's "Before you start"
+section repeats which pages it expects you to have read.
 
-## The argument
+| # | | Pages | Time |
+|---|---|---|---|
+| 1 | Read | [Getting started](guide/getting-started.md) · [What a passing test proves](guide/it-works-is-not-a-result.md) · [What a testbench is](guide/what-a-testbench-is.md) · [Your first cocotb test](guide/your-first-cocotb-test.md) · [The lazy testbench](guide/the-lazy-testbench.md) · [Coverage as a question](guide/coverage-is-a-question.md) | 1 h 15 min |
+| 2 | Do | [Lab 01: The adder you already trust](labs/lab-01-the-adder-you-already-trust-overview.md). Set up, watch a reasonable testbench pass on a broken adder, then make it fail. | 1 h 30 min |
+| 3 | Read | [Clocks, resets and triggers](guide/clocks-resets-and-triggers.md) · [cocotb 2.x and older tutorials](guide/cocotb-2x-vs-every-tutorial.md) · [Driving and checking a design](guide/driving-and-checking.md) · [Waveforms](guide/waveforms.md) | 1 h |
+| 4 | Do | [cocotb on a counter](labs/cocotb-intro-overview.md) (not numbered, but not optional). Triggers, the 1.x traps, a check that passes the good counter and fails a broken one, and waveforms. | 1 h 15 min |
+| 5 | Read | [Two simulators](guide/two-simulators-two-jobs.md) · [SimProc in one page](guide/simproc-in-one-page.md) | 45 min |
+| 6 | Do | [Lab 02: The only test this chip has](labs/lab-02-the-only-test-this-chip-has-overview.md). Run the shipped test against all thirteen broken cores, then write a better one. | 1 h 45 min |
+| 7 | Read | [Flags as architectural state](guide/flags-are-state.md) | 20 min |
+| 8 | Do | [Lab 03: Three blocks before the processor](labs/lab-03-three-blocks-before-the-processor-overview.md). Unit-test three SimProc modules, including all 393,216 ALU vectors. | 2 h |
+| 9 | Read | [The golden model](guide/the-golden-model.md) · [Where bugs hide](guide/where-bugs-hide.md) · [Directed and random tests](guide/directed-random-and-the-gap.md) | 1 h |
+| 10 | Do | [Lab 04: Your first bug hunt](labs/lab-04-your-first-bug-hunt-overview.md). Get a mystery core, find the bug, and prove the fix with a test. | 2 h 30 min |
+| 11 | Read | [Handshakes and timing](guide/the-handshake-is-the-contract.md) | 25 min |
+| 12 | Do | [Lab 05: Every answer is right](labs/lab-05-every-answer-is-right-overview.md). Two cores where every value is correct and the chip is still broken. | 1 h 15 min |
+| 13 | Read | [Writing the bug report](guide/writing-the-bug-report.md) | 25 min |
+| 14 | Do | [Lab 06: Capstone](labs/lab-06-capstone-overview.md). One suite that catches all thirteen, and a written bug report. | 3 h 30 min |
 
-SimProc is a real 8-bit processor: an ALU, four registers, 64 bytes of memory, a UART you can
-talk to, about 1,200 lines of SystemVerilog written by students on this team and wrapped for a
-real chip.
+Keep these open in a tab while you work. They are for looking things up, not for reading
+start to finish:
 
-It shipped with one test. That test sets an input pin high, waits a hundred clock cycles, and
-asserts the output byte equals 3 — which, decoded against the pin map, means *the processor is
-not running*.
+- [The SimProc instruction set](reference/simproc-instruction-set.md)
+- [The SimProc harness](reference/the-harness-api.md)
+- [Output that is not an error](reference/output-that-is-not-an-error.md)
 
-DD104 ships **thirteen deliberately broken versions of that processor**, each one a single-line
-edit. All thirteen pass the shipped test.
+## Getting help
 
-**The only test this chip has, passes on a processor whose `SUB` is backwards.** Everything in
-this course follows from that sentence.
-
-## What you'll do
-
-1. Watch a perfectly reasonable testbench pass on a **broken** 4-bit adder, then make it fail
-2. Point a real coverage tool at your own stimulus and have it find the input you forgot
-3. Walk **393,216** ALU vectors and find three bugs by brute force
-4. Be dealt a **mystery core** and hunt a bug nobody has named for you
-5. Debug two processors on which **every register, flag and byte of memory is correct**
-6. Finish with a test suite that catches all thirteen — and a written bug report for one
-
-## Path
-
-| Part | Guide | Lab |
-|------|-------|-----|
-| 0 | [Getting started](guide/getting-started.md) | — |
-| I — Why "it works" is not a result | **["It works" is not a result](guide/it-works-is-not-a-result.md)** · [What a testbench actually is](guide/what-a-testbench-is.md) · [The lazy testbench](guide/the-lazy-testbench.md) · [Coverage as a question](guide/coverage-is-a-question.md) | [Lab 01](labs/lab-01-the-adder-you-already-trust-overview.md) |
-| II — The tools that do the doubting | [Your first cocotb test](guide/your-first-cocotb-test.md) · [Clocks, resets and triggers](guide/clocks-resets-and-triggers.md) · **[cocotb 2.x vs every tutorial](guide/cocotb-2x-vs-every-tutorial.md)** · [Driving and checking](guide/driving-and-checking.md) · [Waveforms](guide/waveforms.md) · [Two simulators, two jobs](guide/two-simulators-two-jobs.md) | [Lab 02](labs/lab-02-the-only-test-this-chip-has-overview.md) |
-| III — The machine under test | [SimProc in one page](guide/simproc-in-one-page.md) · [The golden model](guide/the-golden-model.md) · [Flags are architectural state](guide/flags-are-state.md) | [Lab 03](labs/lab-03-three-blocks-before-the-processor-overview.md) |
-| IV — How bugs hide | [Where bugs hide](guide/where-bugs-hide.md) · [Directed, random, and the gap](guide/directed-random-and-the-gap.md) | [Lab 04](labs/lab-04-your-first-bug-hunt-overview.md) |
-| V — Right answers, broken chip | [The handshake is part of the contract](guide/the-handshake-is-the-contract.md) | [Lab 05](labs/lab-05-every-answer-is-right-overview.md) |
-| Capstone | [Writing the bug report](guide/writing-the-bug-report.md) | [Lab 06](labs/lab-06-capstone-overview.md) |
-
-> **Every page above is written, and all six lab packages run today with `make` alone.** Each
-> lab writeup carries the theory it needs; the harness is documented page by page in
-> [The SimProc harness](reference/the-harness-api.md) and in
-> [`labs/common/README.md`](https://github.com/uoftasic/dd104/blob/main/labs/common/README.md).
-> If something leaves you stuck, say so in Discord.
-
-**Stuck?** Ask in the [team Discord](https://discord.gg/hrJnP5UsGz). Nobody expects you to work
-this out alone at 2 a.m. — see [Getting help](guide/getting-started.md#getting-help).
-
-Reference: [The SimProc instruction set](reference/simproc-instruction-set.md) ·
-[The SimProc harness](reference/the-harness-api.md) ·
-[Output that is not an error](reference/output-that-is-not-an-error.md)
-
-## Quick start
-
-```bash
-# in the noVNC desktop, after IC101
-. /foss/designs/common/.designinit
-mod add dd104          # first time only
-mod dd104
-cocotb-config --version                            # expect: 2.0.1
-cd labs/lab-01-the-adder-you-already-trust && make # ends on VERDICT: FAIL, on purpose
-```
-
-## What you'll have at the end
-
-A testbench that catches all thirteen bugs in a real processor, and — more useful than the
-testbench — the habit of asking, of any green test anywhere, *what would this have caught?*
+Ask in the [team Discord](https://discord.gg/hrJnP5UsGz). Nobody expects you to work this out
+alone. [Getting started](guide/getting-started.md#getting-help) says what to include in a
+question so it can be answered quickly.
 
 ## Next courses
 
-- **DD201** — High-Level Synthesis
-- **DD202** — Computer Architecture
+- DD201 — High-Level Synthesis
+- DD202 — Computer Architecture

@@ -1,36 +1,36 @@
 - [Home](README.md)
-- **Guide**
+- **1. Testbenches**
   - [Getting started](guide/getting-started.md)
-  - **I. Why "it works" is not a result**
-    - ["It works" is not a result](guide/it-works-is-not-a-result.md)
-    - [What a testbench actually is](guide/what-a-testbench-is.md)
-    - [The lazy testbench](guide/the-lazy-testbench.md)
-    - [Coverage as a question](guide/coverage-is-a-question.md)
-  - **II. The tools that do the doubting**
-    - [Your first cocotb test](guide/your-first-cocotb-test.md)
-    - [Clocks, resets and triggers](guide/clocks-resets-and-triggers.md)
-    - [cocotb 2.x vs every tutorial](guide/cocotb-2x-vs-every-tutorial.md)
-    - [Driving and checking a design](guide/driving-and-checking.md)
-    - [Waveforms when the assertion is not enough](guide/waveforms.md)
-    - [Two simulators, two jobs](guide/two-simulators-two-jobs.md)
-  - **III. The machine under test**
-    - [SimProc in one page](guide/simproc-in-one-page.md)
-    - [The golden model](guide/the-golden-model.md)
-    - [Flags are architectural state](guide/flags-are-state.md)
-  - **IV. How bugs hide**
-    - [Where bugs hide](guide/where-bugs-hide.md)
-    - [Directed, random, and the gap](guide/directed-random-and-the-gap.md)
-  - **V. Right answers, broken chip**
-    - [The handshake is part of the contract](guide/the-handshake-is-the-contract.md)
-  - **Capstone**
-    - [Writing the bug report](guide/writing-the-bug-report.md)
-- **Labs**
-  - [Lab 01 — The adder you already trust](labs/lab-01-the-adder-you-already-trust-overview.md)
-  - [Lab 02 — The only test this chip has](labs/lab-02-the-only-test-this-chip-has-overview.md)
-  - [Lab 03 — Three blocks before the processor](labs/lab-03-three-blocks-before-the-processor-overview.md)
-  - [Lab 04 — Your first bug hunt](labs/lab-04-your-first-bug-hunt-overview.md)
-  - [Lab 05 — Every answer is right](labs/lab-05-every-answer-is-right-overview.md)
-  - [Lab 06 — Capstone: three that hide](labs/lab-06-capstone-overview.md)
+  - [What a passing test proves](guide/it-works-is-not-a-result.md)
+  - [What a testbench is](guide/what-a-testbench-is.md)
+  - [Your first cocotb test](guide/your-first-cocotb-test.md)
+  - [The lazy testbench](guide/the-lazy-testbench.md)
+  - [Coverage as a question](guide/coverage-is-a-question.md)
+  - [Lab 01: The adder you already trust](labs/lab-01-the-adder-you-already-trust-overview.md)
+- **2. cocotb**
+  - [Clocks, resets and triggers](guide/clocks-resets-and-triggers.md)
+  - [cocotb 2.x and older tutorials](guide/cocotb-2x-vs-every-tutorial.md)
+  - [Driving and checking a design](guide/driving-and-checking.md)
+  - [Waveforms](guide/waveforms.md)
+  - [Lab: cocotb on a counter](labs/cocotb-intro-overview.md)
+- **3. SimProc**
+  - [Two simulators](guide/two-simulators-two-jobs.md)
+  - [SimProc in one page](guide/simproc-in-one-page.md)
+  - [Lab 02: The only test this chip has](labs/lab-02-the-only-test-this-chip-has-overview.md)
+- **4. Unit tests**
+  - [Flags as architectural state](guide/flags-are-state.md)
+  - [Lab 03: Three blocks before the processor](labs/lab-03-three-blocks-before-the-processor-overview.md)
+- **5. Bug hunting**
+  - [The golden model](guide/the-golden-model.md)
+  - [Where bugs hide](guide/where-bugs-hide.md)
+  - [Directed and random tests](guide/directed-random-and-the-gap.md)
+  - [Lab 04: Your first bug hunt](labs/lab-04-your-first-bug-hunt-overview.md)
+- **6. Handshakes**
+  - [Handshakes and timing](guide/the-handshake-is-the-contract.md)
+  - [Lab 05: Every answer is right](labs/lab-05-every-answer-is-right-overview.md)
+- **7. Capstone**
+  - [Writing the bug report](guide/writing-the-bug-report.md)
+  - [Lab 06: Capstone](labs/lab-06-capstone-overview.md)
 - **Reference**
   - [The SimProc instruction set](reference/simproc-instruction-set.md)
   - [The SimProc harness](reference/the-harness-api.md)
@@ -38,4 +38,4 @@
 - **Repo**
   - [Lab packages](https://github.com/uoftasic/dd104/tree/main/labs)
   - [The harness](https://github.com/uoftasic/dd104/tree/main/labs/common)
-  - [Learning cocotb on something small](https://github.com/uoftasic/dd104/tree/main/labs/cocotb-intro)
+  - [The counter package](https://github.com/uoftasic/dd104/tree/main/labs/cocotb-intro)
