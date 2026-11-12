@@ -1,6 +1,6 @@
 # Scripts
 
-Utilities for **DD104 — Pre-Silicon Verification** under the UofT ASIC org (`uoftasic`).
+Utilities for DD104 — Pre-Silicon Verification under the UofT ASIC org (`uoftasic`).
 
 ## Entry points
 
