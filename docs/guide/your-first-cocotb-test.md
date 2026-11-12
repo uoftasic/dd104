@@ -1,30 +1,23 @@
 # Your first cocotb test
 
-**Question this page answers:** *A testbench is a Verilog file, isn't it? Why am I writing
-Python?*
+This page answers: *a testbench is a Verilog file, isn't it? Why am I writing Python?*
 
-You are writing Python because the thing you actually need — "load this program, run it, and
-tell me whether register 1 holds 247" — is four lines of Python and about forty lines of
-Verilog, and thirty of those forty are bookkeeping you will get subtly wrong.
+Because what you actually need, "load this program, run it, and tell me whether register 1
+holds 247", is four lines of Python and about forty lines of Verilog, thirty of which are
+bookkeeping that is easy to get subtly wrong.
 
-cocotb does not replace the simulator. Icarus still compiles the SystemVerilog and still runs
-it. cocotb attaches to the running simulation through a standard interface the simulator
-already exposes (VPI), and hands you the design as a Python object. You drive pins by
-assigning to them and read them back by looking.
+cocotb does not replace the simulator. Icarus still compiles and runs the SystemVerilog. cocotb
+attaches to the running simulation through a standard interface the simulator already exposes
+(VPI) and hands you the design as a Python object. You drive pins by assigning to them and read
+them back by looking at them.
 
-## The whole thing, running
-
-Everything on this page is in [`labs/cocotb-intro/`](https://github.com/uoftasic/dd104/tree/main/labs/cocotb-intro).
-
-```bash
-cd labs/cocotb-intro
-make hello
-```
+Every file on this page is in [`labs/cocotb-intro/`](https://github.com/uoftasic/dd104/tree/main/labs/cocotb-intro),
+and you'll run them in [cocotb on a counter](labs/cocotb-intro-overview.md).
 
 ## The design
 
-`rtl/counter.sv`, sixteen lines of logic — an 8-bit counter with an enable, a parallel load and
-an active-low **synchronous** reset:
+`rtl/counter.sv` is sixteen lines of logic: an 8-bit counter with an enable, a parallel load
+and an active-low synchronous reset.
 
 ```systemverilog
 always_ff @(posedge clk) begin
@@ -36,14 +29,14 @@ end
 assign tc = en & (q == 8'hFF);
 ```
 
-(Excerpt. The complete file, with its port list, is
-[`labs/cocotb-intro/rtl/counter.sv`](https://github.com/uoftasic/dd104/blob/main/labs/cocotb-intro/rtl/counter.sv).)
+This is an excerpt; the complete file with its port list is
+[`labs/cocotb-intro/rtl/counter.sv`](https://github.com/uoftasic/dd104/blob/main/labs/cocotb-intro/rtl/counter.sv).
 
 ## The test
 
-This is the complete contents of
-[`labs/cocotb-intro/test_01_hello.py`](https://github.com/uoftasic/dd104/blob/main/labs/cocotb-intro/test_01_hello.py),
-with its explanatory header comment and its numbered inline comments removed:
+This is all of
+[`labs/cocotb-intro/test_01_hello.py`](https://github.com/uoftasic/dd104/blob/main/labs/cocotb-intro/test_01_hello.py)
+except its header comment and numbered inline comments:
 
 ```python
 import cocotb
@@ -75,36 +68,34 @@ async def counts_up(dut):
     dut._log.info(f"q = {int(dut.q.value)} after one enabled clock. That is the whole test.")
 ```
 
-Five things in that file are worth naming, because every cocotb test you ever write has all
-five.
+Every cocotb test you write has the same five parts.
 
-**`@cocotb.test()`** marks a function as a test. cocotb finds them by importing your module and
-looking for the decorator. A function without it is not a test — it is just a function, and
-cocotb will not run it, will not complain, and will not mention it.
+**`@cocotb.test()`** marks a function as a test. cocotb imports your module and looks for the
+decorator. A function without it is just a function: cocotb will not run it and will not
+mention it.
 
-**`async def` and `await`.** Your test is a coroutine. Every `await` is a point where your test
-says "wake me when this happens" and the simulator runs until it does. Between `await`s, zero
-simulated time passes, no matter how much Python you execute.
+**`async def` and `await`.** Your test is a coroutine. Each `await` says "wake me when this
+happens", and the simulator runs until it does. Between `await`s no simulated time passes, however
+much Python you run.
 
-**`dut`** is the top-level HDL module, handed to you as an object. `dut.q` is the signal named
-`q`. Sub-modules are attributes too: in SimProc you will write
+**`dut`** is the top-level HDL module as an object. `dut.q` is the signal named `q`.
+Sub-modules are attributes too: in SimProc you will write
 `dut.tt_um_ieeeuoftasic_simproc.U1.CPU1.curr_state`.
 
 **`.value`** on both sides. `dut.rst_n.value = 0` drives a pin; `dut.q.value` reads one. In
-cocotb 1.x, leaving the `.value` off a write was the quietest bug in the system — it replaced
-the attribute with a plain integer and drove nothing, silently. 2.x catches it:
+cocotb 1.x, leaving `.value` off a write was a silent bug: it replaced the attribute with a plain
+integer and drove nothing. cocotb 2.x catches it:
 
 ```
 AttributeError: Cannot set attribute 'load' on simulation object counter. Did you forget to add `.value`?
 ```
 
-That message is a genuine improvement over 1.x and it is worth knowing it exists, because it
-means a signal that never changes is *not* explained by a missing `.value`. Look elsewhere.
+So in 2.x, a signal that never changes is not explained by a missing `.value`. Look elsewhere.
 
-**The clock is a task you start.** `Clock(dut.clk, 10, unit="ns")` describes a clock; `.start()`
-is a coroutine that drives it forever; `cocotb.start_soon(...)` runs that coroutine in the
-background. Miss this line and your design simply never moves — every `await RisingEdge(clk)`
-waits forever and the test hangs with no message.
+**The clock is a task you start.** `Clock(dut.clk, 10, unit="ns")` describes a clock, `.start()`
+is a coroutine that drives it forever, and `cocotb.start_soon(...)` runs that coroutine in the
+background. Without that line the design never moves: every `await RisingEdge(clk)` waits
+forever and the test hangs with no message.
 
 ## What it prints
 
@@ -126,19 +117,19 @@ waits forever and the test hangs with no message.
                                                         **************************************************************************************
 ```
 
-Read the left column: that is **simulated** time, in nanoseconds, not wall-clock time. The test
-took 21 ns of simulation and rather less than that of your life.
+The left column is simulated time in nanoseconds, not wall-clock time. The test took 21 ns of
+simulation and a lot less than that of your time.
 
 `Seeding Python random module with 1787717251` is cocotb reseeding Python's global `random` on
-every run. When a random test fails, that number is how you get the same run back — set
+every run. When a random test fails, that number gets you the same run back: set
 `COCOTB_RANDOM_SEED` to it.
 
-## The line that is not there, and why
+## Where the file names live
 
-Nothing in `test_01_hello.py` says which file to compile or which module is the top. That is in
-[`sim.mk`](https://github.com/uoftasic/dd104/blob/main/labs/cocotb-intro/sim.mk). Excerpt —
-these are the twelve working lines; the shipped file adds a comment header and the `?=`
-defaults for `HERE`, `TB`, `RTL` and `SIM` that the two `$(...)` references below expand to:
+Nothing in `test_01_hello.py` says which file to compile or which module is the top level. That
+is in [`sim.mk`](https://github.com/uoftasic/dd104/blob/main/labs/cocotb-intro/sim.mk). These
+are its twelve working lines; the shipped file adds a comment header and the `?=` defaults for
+`HERE`, `TB`, `RTL` and `SIM` that the two `$(...)` references expand to:
 
 ```make
 TOPLEVEL_LANG       ?= verilog
@@ -155,37 +146,30 @@ endif
 include $(shell cocotb-config --makefiles)/Makefile.sim
 ```
 
-Three of those lines are worth remembering because each has a failure mode you will meet:
+Three of those lines each have a failure you will meet:
 
-- **`COCOTB_TEST_MODULES`** is `test_01_hello` — no `.py`, no path. cocotb *imports* it, which
-  means it has to be on `PYTHONPATH`; that is what the `export` line is for. Get it wrong and
-  you get `ModuleNotFoundError: No module named 'test_01_hello'` wrapped in twenty lines of
-  `importlib` traceback.
-- **`COMPILE_ARGS += -g2012`.** Icarus defaults to an older Verilog standard, and without this
-  flag `logic`, `always_ff` and `always_comb` are all syntax errors — on lines that are
-  perfectly good SystemVerilog.
-- **`COCOTB_TEST_MODULES` used to be called `MODULE`**, and `COCOTB_TOPLEVEL` used to be
-  `TOPLEVEL`. Both old names still work in 2.0.1 and warn. See
-  [cocotb 2.x vs every tutorial you will find](guide/cocotb-2x-vs-every-tutorial.md), which is
-  the page that will save you the most time in this course.
+- `COCOTB_TEST_MODULES` is `test_01_hello`, with no `.py` and no path. cocotb imports it, so it
+  has to be on `PYTHONPATH`, which is what the `export` line is for. Get it wrong and you get
+  `ModuleNotFoundError: No module named 'test_01_hello'` inside twenty lines of `importlib`
+  traceback.
+- `COMPILE_ARGS += -g2012`. Icarus defaults to an older Verilog standard, and without this flag
+  `logic`, `always_ff` and `always_comb` are syntax errors on lines of perfectly good
+  SystemVerilog.
+- `COCOTB_TEST_MODULES` used to be called `MODULE`, and `COCOTB_TOPLEVEL` used to be
+  `TOPLEVEL`. Both old names still work in 2.0.1 and print a warning. See
+  [cocotb 2.x and older tutorials](guide/cocotb-2x-vs-every-tutorial.md).
 
-## Two dead ends that look official
+## Two commands that run nothing
 
-A cocotb test file is a Python file full of `async def`s with a decorator on them. It looks
-exactly like something you should be able to run directly, or hand to `pytest`. Both look
-official. Neither works, and neither says so.
+A cocotb test file is a Python file full of decorated `async def`s, so it looks like something
+you could run directly or hand to `pytest`. Neither works, and neither says so.
 
 ```bash
 python3 test_01_hello.py
 ```
 
-```
-exit=0
-```
-
-**Zero bytes of output and a successful exit.** Python imported the module, defined the
-function, and stopped — there is no simulator, so there is nothing to run against. Nothing is
-wrong and nothing happened.
+This prints nothing and exits 0. Python imported the module, defined the function and stopped.
+There is no simulator, so there was nothing to run against.
 
 ```bash
 python3 -m pytest test_01_hello.py
@@ -201,16 +185,16 @@ collected 0 items
 ============================ no tests ran in 0.03s =============================
 ```
 
-Exit 5. `collected 0 items` — pytest is looking for functions named `test_*`, and cocotb tests
-are named whatever you called them and marked with `@cocotb.test()`. (cocotb *does* have a
-`pytest` integration, via `cocotb_tools.runner`, but it needs a Python file that builds and
+This exits 5. `collected 0 items` means pytest looked for functions named `test_*`, and cocotb
+tests are named whatever you called them and marked with `@cocotb.test()`. (cocotb does have a
+pytest integration, through `cocotb_tools.runner`, but it needs a Python file that builds and
 launches the simulator. It is not "point pytest at the test file".)
 
-**Reflex check:** a cocotb test only runs when a **simulator** runs it. If you did not see
-`Running on Icarus Verilog version 14.0` and a `TESTS=` line, nothing was tested — whatever the
-exit code said.
+A cocotb test only runs when a simulator runs it, and in this course `make` is what starts the
+simulator. If you did not see `Running on Icarus Verilog version 14.0` and a `TESTS=` line,
+nothing was tested, whatever the exit code said.
 
-## Try this: break it on purpose
+## Reading a value at the clock edge
 
 Delete the `Timer` line, so the test reads the counter at the instant of the clock edge:
 
@@ -219,7 +203,8 @@ Delete the `Timer` line, so the test reads the counter at the instant of the clo
     assert dut.q.value == 1, f"after one enabled clock q is {dut.q.value}, expected 1"
 ```
 
-**What you should see** — measured, not predicted:
+You'll try this in [cocotb on a counter, Part 1](labs/cocotb-intro-overview.md#part-1-your-first-test).
+Here is what it prints:
 
 ```
     20.00ns WARNING  cocotb.Test counts_up.counts_up    after one enabled clock q is 00000000, expected 1
@@ -233,27 +218,33 @@ Delete the `Timer` line, so the test reads the counter at the instant of the clo
     20.00ns WARNING  cocotb.regression                  test_norace.counts_up failed
 ```
 
-Not a hang, not a crash — a wrong value, off by exactly one clock. `await RisingEdge(clk)`
-returns *at* the edge, at the same instant the flip-flop is deciding what to become, and under
-Icarus you get the old value. The next page measures both numbers side by side and gives you
-three ways to stop losing that race.
+It does not hang or crash. It gives a wrong value, off by exactly one clock. `await
+RisingEdge(clk)` returns at the edge, the same instant the flip-flop is deciding what to become,
+and under Icarus you get the old value. [Clocks, resets and triggers](guide/clocks-resets-and-triggers.md)
+measures both values side by side and gives three ways to avoid the race.
 
-Two things in that output are worth naming now, because they show up on every failure you will
-ever read.
+Two things in that output appear on every failure you will read.
 
-**The `assert ... +  where ...` lines are not part of your message.** They are pytest's
-assertion rewriting, which cocotb 2.x enables: it takes your `assert` apart and shows what each
-piece evaluated to. `LogicArrayObject(counter.q) = HierarchyObject(counter).q` is it telling you
-where the value came from. Useful once you expect it, alarming the first time.
+The `assert ... +  where ...` lines are not part of your message. They are pytest's assertion
+rewriting, which cocotb 2.x turns on: it takes your `assert` apart and shows what each piece
+evaluated to. `LogicArrayObject(counter.q) = HierarchyObject(counter).q` is it telling you where
+the value came from. Useful once you expect it, alarming the first time.
 
-**`q is 00000000`, not `q is 0`.** `dut.q.value` is a `LogicArray`, and printing one gives you
-the bit pattern, because a `LogicArray` can hold `X` and `Z` — states that have no integer at
-all. `int(dut.q.value)` gives you `0`; on a signal that is partly `X` it raises
+The message says `q is 00000000`, not `q is 0`. `dut.q.value` is a `LogicArray`, and printing
+one gives the bit pattern because a `LogicArray` can hold `X` and `Z`, which have no integer
+value. `int(dut.q.value)` gives `0`; on a signal that is partly `X` it raises
 `ValueError: Can't convert LogicArray to int: it contains non-0/1 values`. Both behaviours are
-correct and you want both.
+correct, and you want both.
 
-**Why an engineer cares:** this is not a cocotb quirk, it is the difference between the
-*value* on a wire and the value *after* the clock event, and it is the single most common
-reason a first testbench reports numbers that are all correct but one cycle late.
+This race comes from how simulators schedule a clock edge, not from cocotb: it is the difference
+between the value on a wire and its value after the clock event. It is the most common reason a
+first testbench reports numbers that are all correct but one cycle late.
 
-Next: [Clocks, resets and triggers](guide/clocks-resets-and-triggers.md).
+## Check yourself
+
+1. Your test file has no `@cocotb.test()` on one of its functions. What happens to that
+   function when you run `make`?
+2. You forgot `cocotb.start_soon(...)` on the clock. What does your test do?
+3. Why does the test above need `await Timer(1, unit="ns")` after the rising edge?
+
+Next: [The lazy testbench](guide/the-lazy-testbench.md).
