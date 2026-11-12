@@ -139,7 +139,7 @@ four settings:
 
 The excess is `clk_per_bit / 2` in all four rows.
 
-## A BFM without the gap corrupts the next byte
+## Sending without the gap
 
 `t02` sends the same three bytes twice: once through the harness's `send_byte()`, which leaves the
 gap, and once through `send_frame_only()`, which is `send_byte()` with its last two lines deleted.
@@ -180,7 +180,7 @@ The corruption has a shape, and the shape is the diagnosis:
 The receiver was still in `DONE` when the second start bit began, missed that falling edge, picked
 up the next falling edge instead, and never recovered. Every later frame is late by the same amount.
 
-## Why nobody catches it
+## `PING` without the gap
 
 `t03` sends `PING` the same broken way:
 

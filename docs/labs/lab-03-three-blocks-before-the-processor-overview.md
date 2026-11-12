@@ -41,7 +41,7 @@ cd labs/lab-03-three-blocks-before-the-processor
 `make` runs everything in about a minute. The individual targets below are faster, and they are
 the ones you will use.
 
-## Part 1: A module you can finish
+## Part 1: The program counter
 
 1. Run the program-counter tests, which ship complete:
 
@@ -75,7 +75,7 @@ the ones you will use.
 
 Check: `TESTS=4 PASS=4`, `2674.00` ns.
 
-## Part 2: A module with a surprise
+## Part 2: The register file
 
 1. Run the register-file tests, which ship with two tests and three TODOs:
 
@@ -203,7 +203,7 @@ survive review, and it is why they are in the catalogue.
 
 Check: your derivations give 65,024 and 65,280.
 
-## Part 5: A clean sweep on a broken chip
+## Part 5: Value-only checks against `B03`
 
 1. Run the check against `B03` with the shipped `test_alu.py`, which checks `ALUout` and ignores
    the flags:

@@ -196,7 +196,7 @@ nothing was tested, whatever the exit code said.
 
 ## Reading a value at the clock edge
 
-Delete the `Timer` line, so the test reads the counter at the instant of the clock edge:
+Without the `Timer` line, the test reads the counter at the instant of the clock edge:
 
 ```python
     await RisingEdge(dut.clk)

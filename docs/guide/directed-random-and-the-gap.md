@@ -144,7 +144,7 @@ write, and the reference suite's `R06` and `R04` are those two tests.
 > A constrained random generator's constraints describe what it will never find. Write them down as
 > a to-do list, because that is what they are.
 
-## A catch you must not take credit for
+## Why `R10` catches `B05`
 
 `R10` does fail on `B05`, and the table says the generator never emits a backward branch. Both are
 true, and it is worth two minutes to see why.

@@ -44,7 +44,7 @@ It is a real bug of a real kind. A port tied off during bring-up and never recon
 the most common defects in industrial RTL, and it survives review because the line looks
 deliberate.
 
-## The testbench a reasonable person writes
+## The shipped testbench
 
 `test_adder.py` ships with two tests, and the first was written by someone thinking about
 addition:

@@ -162,8 +162,8 @@ browsing, not debugging; go back to the assertion and make it print more.
 
 ## A bug you can only see in the picture
 
-Run `test_04_waves` against the broken counter and it passes, with a log identical line for line
-to the good run's: same times, same values, same `PASS`. `test_04_waves` never checks `tc`, so
+Against the broken counter, `test_04_waves` passes, with a log identical line for line to the
+good run's: same times, same values, same `PASS`. `test_04_waves` never checks `tc`, so
 nothing in the text output tells the two counters apart. The picture does:
 
 ![Surfer showing the broken counter: tc high for the whole parked stretch](../assets/img/surfer-counter-broken.png)
