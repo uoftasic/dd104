@@ -120,7 +120,7 @@ Against the eleven-test reference suite, `B10` is caught by 2 of 11 tests.
 
 Check: `make check BUG=B10` says `caught`.
 
-## Part 3: B11, the one that looks hardest
+## Part 3: B11, the wrong destination register
 
 1. See how the reference suite does against it:
 
@@ -170,7 +170,7 @@ half-applied.
 
 Check: your suite catches `B11`.
 
-## Part 4: B12, sweep the parameter
+## Part 4: B12, the baud rate
 
 `clk_per_bit` is `uio_in × 4`. Every lab so far has run at the default `uio_in = 8`, so
 `clk_per_bit = 32`.
@@ -206,8 +206,8 @@ The rows at 24 and above show why sampling is not sweeping. At the default this 
 correct one, and the rest of your suite scores the same on it. The bug adds one clock per received
 bit, so the sample point drifts further off centre with each bit of a frame, and a long bit period
 has room to absorb it. It fails at short bit periods first, so which speeds work is the diagnosis.
-Against the reference suite, `B12` is caught by 1 of 11 tests, the only one that sweeps. A
-parametric design tested at one parameter value has been tested once.
+Against the reference suite, `B12` is caught by 1 of 11 tests, the only one that sweeps. When a
+design has a parameter, test it at more than one value.
 
 Check: `make check BUG=B12` says `caught`.
 
@@ -284,7 +284,9 @@ Before writing the real report, do the whole loop on a bug whose answer you alre
    You should see `ok` on the golden core and `caught  B01_sub_operands_swapped  3 tests, 1 FAILED`,
    with `SUB r1, r2 with r1 = 200 and r2 = 100 left r1 = 156.`
 
-2. Deal `B01` in the Lab 04 package and grade the reproducer against it:
+2. Deal `B01` in the Lab 04 package and grade the reproducer against it. `make new` deletes the
+   `core/` already in `labs/lab-04-your-first-bug-hunt`, so finish anything you still want from
+   your Lab 04 core first.
 
    ```bash
    cd ../lab-04-your-first-bug-hunt
@@ -319,10 +321,9 @@ Before writing the real report, do the whole loop on a bug whose answer you alre
    [Writing the bug report](guide/writing-the-bug-report.md),
    including `note      (100 - 200) mod 256 = 156`.
 
-5. Clean up and go back:
+5. Go back to the capstone package:
 
    ```bash
-   rm -rf core
    cd ../lab-06-capstone
    ```
 
@@ -348,8 +349,8 @@ Check: row 2 stayed `caught` after the fix.
    4. Where it is not: what still works.
    5. The habit the suite gained, in one line, and the test that enforces it, by name.
 
-The deliverable of verification is not a red test. It is a report someone can act on without
-redoing your week. Part 4 is the one people skip and the one designers read first: "every `ORI`
+A red test is where the report starts. The report is what someone can act on without redoing your
+week. Part 4 is the one people skip and the one designers read first: "every `ORI`
 whose immediate is disjoint from `r0` is correct, all 393,216 ALU vectors are correct, and both
 branches and all memory accesses are unaffected" turns a report into a map. The report is finished
 when a test in the suite fails before the fix and passes after, which is what `make verdict`
@@ -378,7 +379,7 @@ speeds. Each clause is there because a bug got past you first. A test suite is a
 long, specific, checkable claim, and you write one because nobody, including you next year, can
 hold a claim that long in their head.
 
-What transfers from this course is not cocotb. It is the question to ask of any green test,
+The part of this course you will use everywhere is the question to ask of any green test,
 including your own: what would this have caught?
 
 ## Finishing
