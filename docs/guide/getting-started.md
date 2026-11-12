@@ -2,7 +2,7 @@
 
 This page covers what DD104 needs from your machine, which tool versions it is pinned to, how
 to read the labs' output, and how to get help. You'll do the actual setup in
-[Lab 01, Part 1](labs/lab-01-the-adder-you-already-trust-overview.md#part-1-set-up).
+[Lab 01, Part 1](labs/lab-01-the-adder-you-already-trust-overview.md#part-1-load-the-course).
 
 ## Requirements
 
