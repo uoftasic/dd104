@@ -43,6 +43,8 @@ the ones you will use.
 
 ## Part 1: The program counter
 
+What does a complete unit test of a small block look like?
+
 1. Run the program-counter tests, which ship complete:
 
    ```bash
@@ -59,23 +61,33 @@ the ones you will use.
    ** TESTS=4 PASS=4 FAIL=0 SKIP=0                  2674.00 **
    ```
 
-   All five simulated times are exact.
+   All five simulated times are exact. The 28 Icarus `sorry:` notes appear on these unit-level
+   compiles too; see [Output that is not an error](reference/output-that-is-not-an-error.md).
 
 2. Read `test_pc.py`. It is 120 lines including comments, and it is the model for everything you
    write in this lab: drive on one edge, sample after the other, and never let your stimulus race
    the DUT's clock. `program_counter` is an 8-bit register with a synchronous reset and a load
    enable, and it can be asked to do exactly four things: reset, load, hold, and reset while
-   loading. All four are tested, so nothing is left.
+   loading. All four are tested.
 
-3. Look closely at the two tests people usually skip. `t03_hold_when_not_pc_wr` drives junk on
-   `pc_in` with `pc_wr` low and checks nothing moved; a PC that loads correctly and never holds
-   would pass `t02` perfectly. `t04_reset_beats_load` raises `rst` and `pc_wr` together. Priority
-   between two control inputs is a decision somebody made, it is invisible from the port list, and
-   the next person to touch the file can reverse it by swapping two branches.
+3. `t03_hold_when_not_pc_wr` and `t04_reset_beats_load` are the two tests people usually skip.
+   What could go wrong in the RTL that each one catches and `t02` does not?
+
+   <details>
+   <summary>Answer</summary>
+
+   `t03` drives junk on `pc_in` with `pc_wr` low and checks nothing moved; a PC that loads
+   correctly and never holds would pass `t02` perfectly. `t04` raises `rst` and `pc_wr` together.
+   Priority between two control inputs is a decision somebody made, it is invisible from the port
+   list, and the next person to touch the file can reverse it by swapping two branches.
+
+   </details>
 
 Check: `TESTS=4 PASS=4`, `2674.00` ns.
 
 ## Part 2: The register file
+
+Is `r0` hardwired to zero, as it is on RISC-V and MIPS?
 
 1. Run the register-file tests, which ship with two tests and three TODOs:
 
@@ -86,24 +98,33 @@ Check: `TESTS=4 PASS=4`, `2674.00` ns.
    You should see `TESTS=2 PASS=2` and `51.00` ns total, both exact.
 
 2. Do the TODO in `t03` first. Most small processors hardwire register 0 to zero: RISC-V's `x0`
-   reads as zero and discards writes, and so does MIPS's `$zero`. Assuming the same here is
-   reasonable. Check it: write `0xFF` into `r0` and read it back, then write a different value and
-   read it again. One write landing is not proof, because a register that latched the first write
-   and then stuck would also pass.
-
-   What you find changes how you read every `ORI` in this course. Better to learn it now than at
-   1 a.m. in [Lab 06](labs/lab-06-capstone-overview.md).
+   reads as zero and discards writes, and so does MIPS's `$zero`. Write down whether you expect
+   the same here. Then check it: write `0xFF` into `r0` and read it back, then write a different
+   value and read it again. One write landing is not proof, because a register that latched the
+   first write and then stuck would also pass.
 
 3. Do `t04` and `t05`. They are two shapes you'll see everywhere: one write moves one register,
    and an enable that is not enabled writes nothing. Run `t05` for several cycles rather than one.
    "It did not write on the first edge" and "it does not write" are different claims, and only the
    second is the requirement.
 
-4. Run `make rf` again.
+4. Run `make rf` again. Was your prediction about `r0` right?
+
+   <details>
+   <summary>Answer</summary>
+
+   `r0` is an ordinary register here. It holds whatever you last put in it, and `ORI`, the only
+   instruction that can introduce a constant, writes `r0` and nothing else. That changes how you
+   read every `ORI` in this course. Better to learn it now than at 1 a.m. in
+   [Lab 06](labs/lab-06-capstone-overview.md).
+
+   </details>
 
 Check: `make rf` runs five tests, all passing, and you know whether `r0` is hardwired.
 
 ## Part 3: All 393,216 ALU vectors
+
+Is the ALU right on every vector it can be given?
 
 This is the ALU's whole logic, from
 [`labs/common/rtl/simproc_system.sv`](https://github.com/uoftasic/dd104/blob/main/labs/common/rtl/simproc_system.sv),
@@ -161,6 +182,8 @@ Check: `393216 vectors checked, 0 value mismatches`.
 
 ## Part 4: Two bugs, and the count
 
+What does the number of wrong vectors tell you about a bug?
+
 1. Run the check against the first two ALU bugs:
 
    ```bash
@@ -183,30 +206,49 @@ Check: `393216 vectors checked, 0 value mismatches`.
    zero, which is part of the diagnosis: an operation with no mismatches is not the broken one.
 
 2. Derive both counts by hand. The counts from the run are only the check; the derivation is the
-   exercise.
+   exercise. `B01` swaps the operands of `SUB`. Which `SUB` vectors survive it?
 
-   For `B01`, 65,024 of 65,536 `SUB` vectors are wrong. The survivors are the pairs where $A - B$
-   and $B - A$ are the same byte, which happens when $2(A-B) \equiv 0 \pmod{256}$, that is, when
-   $A - B \equiv 0$ or $A - B \equiv 128$. Each congruence has 256 solutions, so there are
-   $256 + 256 = 512$ survivors and $65{,}536 - 512 = 65{,}024$ failures. `SUB rX, rX`, the idiom
-   for clearing a register that appears in nearly every program on this machine, is one of the
-   512.
+   <details>
+   <summary>Answer</summary>
 
-   For `B02`, 65,280 of 65,536 `NAND` vectors are wrong. $\lnot(A \wedge B) = \lnot(A \vee B)$
-   exactly when $A \wedge B = A \vee B$, which is exactly when $A = B$. That is 256 survivors, and
-   $65{,}536 - 256 = 65{,}280$. In a four-register machine with no `NOT`, `NAND rX, rX` is how you
-   write `NOT`, which makes it the most common `NAND` anyone writes, and it is exactly the case
-   where the bug is invisible.
+   The survivors are the pairs where $A - B$ and $B - A$ are the same byte, which happens when
+   $2(A-B) \equiv 0 \pmod{256}$, that is, when $A - B \equiv 0$ or $A - B \equiv 128$. Each
+   congruence has 256 solutions, so there are $256 + 256 = 512$ survivors and
+   $65{,}536 - 512 = 65{,}024$ failures.
 
-Both bugs survive the most idiomatic use of the instruction they break. That is what lets a bug
-survive review, and it is why they are in the catalogue.
+   </details>
+
+3. `B02` makes `NAND` compute NOR. Which `NAND` vectors survive it?
+
+   <details>
+   <summary>Answer</summary>
+
+   $\lnot(A \wedge B) = \lnot(A \vee B)$ exactly when $A \wedge B = A \vee B$, which is exactly
+   when $A = B$. That is 256 survivors, and $65{,}536 - 256 = 65{,}280$.
+
+   </details>
+
+4. What do the two sets of survivors have in common?
+
+   <details>
+   <summary>Answer</summary>
+
+   Each contains the most idiomatic use of the instruction. `SUB rX, rX`, the idiom for clearing a
+   register that appears in nearly every program on this machine, is one of `B01`'s 512. In a
+   four-register machine with no `NOT`, `NAND rX, rX` is how you write `NOT`, which makes it the
+   most common `NAND` anyone writes, and it is exactly the case where `B02` is invisible. That is
+   what lets a bug survive review, and it is why they are in the catalogue.
+
+   </details>
 
 Check: your derivations give 65,024 and 65,280.
 
 ## Part 5: Value-only checks against `B03`
 
-1. Run the check against `B03` with the shipped `test_alu.py`, which checks `ALUout` and ignores
-   the flags:
+Can a testbench that checks only values see a bug in the `Z` flag?
+
+1. `B03` breaks the zero flag. Before you run, write down whether the shipped `test_alu.py`, which
+   checks `ALUout` on all 393,216 vectors and ignores the flags, will catch it. Then run:
 
    ```bash
    make check BUG=B03
@@ -222,9 +264,16 @@ Check: your derivations give 65,024 and 65,280.
       That bug hides behind: every test that checks results and not flags
    ```
 
-   All 393,216 vectors were driven and every value was correct, on a broken ALU. A value-only
-   testbench cannot see this bug however many vectors you add, because the values are not what is
-   wrong. A different kind of check is needed.
+   All 393,216 vectors were driven and every value was correct, on a broken ALU. Would adding more
+   vectors help?
+
+   <details>
+   <summary>Answer</summary>
+
+   No. A value-only testbench cannot see this bug however many vectors you add, because the values
+   are not what is wrong. A different kind of check is needed.
+
+   </details>
 
 2. See the same blind spot on the whole processor. In `labs/common`, run the thorough value-only
    testbench and then the example testbench against `B03`:
@@ -246,6 +295,8 @@ Check: `MISSED` on `B03` from both value-only testbenches, and `caught` from `te
 
 ## Part 6: Add the flags
 
+What does a sweep that checks the flags report on `B03`, and can you account for every count?
+
 1. Do the TODO in `t02` of `test_alu.py`. `spec()` already returns `(out, N, Z)`. Compare all
    three, and keep value mismatches and flag mismatches in separate counts.
 
@@ -263,9 +314,16 @@ Check: `MISSED` on `B03` from both value-only testbenches, and `caught` from `te
    {'ADD': 3840, 'SUB': 3840, 'OR': 255, 'NAND': 255, 'SHL': 14400, 'SHR': 3136}
    ```
 
-   All eight numbers are exact. "0 value mismatches, 25,726 flag mismatches" says the arithmetic
-   is fine and the flag logic is not, before anyone opens a waveform. A single combined count of
-   25,726 would have said much less, which is why you keep two counts.
+   All eight numbers are exact. What does "0 value mismatches, 25,726 flag mismatches" tell you
+   that a single combined count of 25,726 would not?
+
+   <details>
+   <summary>Answer</summary>
+
+   That the arithmetic is fine and the flag logic is not, before anyone opens a waveform. That is
+   why you keep two counts.
+
+   </details>
 
 3. If instead you see `NO COUNT`, your testbench crashed rather than caught anything:
 
@@ -279,42 +337,78 @@ Check: `MISSED` on `B03` from both value-only testbenches, and `caught` from `te
    condition you never test it under. A student's `t02` once crashed like this on all three broken
    ALUs, and an older `check.py` counted the three crashes as three catches. Fix the name and rerun.
 
-4. Close two of the six counts by hand. The bug makes `Z` wrong exactly when the result is
-   non-zero but its low four bits are zero: 15 possible results, `0x10`, `0x20`, … `0xF0`.
+4. Close the counts by hand. The bug makes `Z` wrong exactly when the result is non-zero but its
+   low four bits are zero: 15 possible results, `0x10`, `0x20`, … `0xF0`. Start with `ADD`
+   (3,840) and `OR` (255).
 
-   ADD gives 3,840. For any target byte $t$, exactly 256 pairs $(A,B)$ satisfy $A + B \equiv t$.
-   Fifteen targets at 256 pairs each is $15 \times 256 = 3840$. `SUB` is the same.
+   <details>
+   <summary>Answer: ADD</summary>
 
-   OR gives 255. $A \vee B$ has a zero low nibble only when $A[3{:}0] = B[3{:}0] = 0$, which is
+   For any target byte $t$, exactly 256 pairs $(A,B)$ satisfy $A + B \equiv t$. Fifteen targets at
+   256 pairs each is $15 \times 256 = 3840$. `SUB` is the same.
+
+   </details>
+
+   <details>
+   <summary>Answer: OR</summary>
+
+   $A \vee B$ has a zero low nibble only when $A[3{:}0] = B[3{:}0] = 0$, which is
    $16 \times 16 = 256$ pairs. One of those, $A = B = 0$, gives a genuinely zero result, which a
    low-nibble detector gets right by accident. $256 - 1 = 255$.
 
-5. Do `NAND` yourself; it is the same argument with `0xF` in place of `0`. `SHL` (14,400) and
-   `SHR` (3,136) each need one sum over the four shift amounts and are worth ten minutes.
+   </details>
+
+5. Do `NAND` yourself; it is the same argument as `OR` with `0xF` in place of `0`. `SHL` (14,400)
+   and `SHR` (3,136) each need one sum over the four shift amounts and are worth ten minutes.
+
+   <details>
+   <summary>Answer: NAND</summary>
+
+   $\lnot(A \wedge B)$ has a zero low nibble only when `A[3:0]` and `B[3:0]` are both `0xF`, which
+   is 256 pairs. One of those, `A = B = 0xFF`, gives a genuinely zero result. $256 - 1 = 255$.
+
+   </details>
+
+   <details>
+   <summary>Answer: SHL and SHR</summary>
+
+   Only `B[1:0]` matters, so each shift amount $s$ covers 64 values of `B`. Count the values of `A`
+   whose shifted result is non-zero with a zero low nibble, for $s = 0, 1, 2, 3$:
+
+   - `SHL`: 15, 30, 60, 120. Total $64 \times 225 = 14{,}400$.
+   - `SHR`: 15, 14, 12, 8. Total $64 \times 49 = 3{,}136$.
+
+   </details>
 
 Check: `3 of 3 ALU bugs caught`, and your hand counts match.
 
 ## Part 7: An undefined opcode
 
+Why keep a test for behaviour that no specification requires?
+
 1. Read `t03_the_undefined_opcodes` in `test_alu.py`, which ships passing. It checks that `ALUop`
    6 and 7 both return `0x00`, with `N=0` and `Z=1`.
 
-2. Answer: is that behaviour correct? Those two opcodes are not in the enum. The `case` has
-   `default: ALUout = 8'h00;`, so they return zero, which also sets `Z`. A zero result with `Z` set
-   looks like an ordinary answer, and nothing downstream can tell "the answer was zero" from "that
-   was not an instruction".
+2. Is that behaviour correct? Those two opcodes are not in the enum. Write down your answer, and
+   what `t03` is for.
 
-   The behaviour is defined but not specified anywhere; it is what the RTL happens to do. `t03`
-   pins it so that if somebody changes it (to X, to a trap, to a passthrough) a test goes red and a
-   person decides whether that was intended. A test can record a decision as well as check a
+   <details>
+   <summary>Answer</summary>
+
+   The `case` has `default: ALUout = 8'h00;`, so they return zero, which also sets `Z`. A zero
+   result with `Z` set looks like an ordinary answer, and nothing downstream can tell "the answer
+   was zero" from "that was not an instruction". The behaviour is defined but not specified
+   anywhere; it is what the RTL happens to do.
+
+   `t03` pins it so that if somebody changes it (to X, to a trap, to a passthrough) a test goes red
+   and a person decides whether that was intended. A test can record a decision as well as check a
    requirement, and the comment above it tells the next reader which it is.
+
+   </details>
 
 Check: you can say why `t03` exists even though no specification requires the behaviour it checks.
 
-## Finishing
-
-You are done when `make check-alu-bugs` says `3 of 3 ALU bugs caught` and `make rf` runs five
-tests. There is nothing to submit.
+## Expected results
 
 | Check | Expected | |
 |---|---|---|
@@ -330,15 +424,29 @@ tests. There is nothing to submit.
 | `make check-alu-bugs`, when done | `3 of 3 ALU bugs caught` | |
 | `make check-alu-bugs` wall clock | about 90 s | ballpark |
 
-The 28 Icarus `sorry:` notes appear on these unit-level compiles too; see
-[Output that is not an error](reference/output-that-is-not-an-error.md).
+## Finishing
 
-The catalogue has thirteen bugs and this lab reached three. The other ten are in the control path
-around the ALU (decode, write-back, branching, the handshake), where a unit test of the ALU cannot
-see them, and `make check-alu-bugs` says so in its closing line. Finishing a block proves the
-block is right. It says nothing about whether the right block is used, with the right operands, at
-the right time. That is Lab 04.
+You're done when `make check-alu-bugs` on your `test_alu.py` says `3 of 3 ALU bugs caught` and
+`make rf` runs your five tests, all passing.
 
-Next: read [The golden model](guide/the-golden-model.md), [Where bugs hide](guide/where-bugs-hide.md)
-and [Directed and random tests](guide/directed-random-and-the-gap.md), then do
-[Lab 04](labs/lab-04-your-first-bug-hunt-overview.md).
+Questions:
+
+1. The catalogue has thirteen bugs and this lab reached three. Why can't a unit test of the ALU
+   see the other ten?
+
+   <details>
+   <summary>Answer</summary>
+
+   The other ten are in the control path around the ALU (decode, write-back, branching, the
+   handshake), and `make check-alu-bugs` says so in its closing line. Finishing a block proves the
+   block is right. It says nothing about whether the right block is used, with the right operands,
+   at the right time. That is Lab 04.
+
+   </details>
+
+Submit: nothing for this lab.
+
+Next on the Course path: read [The golden model](guide/the-golden-model.md),
+[Where bugs hide](guide/where-bugs-hide.md) and
+[Directed and random tests](guide/directed-random-and-the-gap.md), then do
+[Lab 04: Your first bug hunt](labs/lab-04-your-first-bug-hunt-overview.md).
