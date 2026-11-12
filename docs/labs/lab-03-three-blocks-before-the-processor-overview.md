@@ -38,7 +38,7 @@ mod dd104     # in a new terminal, load .designinit first (Lab 01, Part 1)
 cd labs/lab-03-three-blocks-before-the-processor
 ```
 
-`make` runs `pc`, `rf`, `alu` and then `check` in about a minute. You don't need to run it now: the
+`make` runs `pc`, `rf`, `alu` and then `check` (against `B01`) in about a minute. You don't need to run it now: the
 individual targets below are faster, and they are the ones you will use.
 
 ## Part 1: The program counter
@@ -97,7 +97,8 @@ Is `r0` hardwired to zero, as it is on RISC-V and MIPS?
 
    You should see `TESTS=2 PASS=2` and `51.00` ns total, both exact.
 
-2. Do the TODO in `t03` first. Most small processors hardwire register 0 to zero: RISC-V's `x0`
+2. Each TODO is a comment describing a test; write it as a new `@cocotb.test()` function, like
+   `t01` and `t02`. Do `t03` first. Most small processors hardwire register 0 to zero: RISC-V's `x0`
    reads as zero and discards writes, and so does MIPS's `$zero`. Write down whether you expect
    the same here. Then check it: write `0xFF` into `r0` and read it back, then write a different
    value and read it again. One write landing is not proof, because a register that latched the
@@ -155,8 +156,8 @@ flag.
 
 > Write your specification model from the ISA, not from the Verilog. A model written by reading
 > the RTL agrees with the design about everything, including its bugs. That is the most common way
-> a verification effort wastes six months. `spec()` in `test_alu.py` is written that way, and it is
-> the model every check in this lab uses.
+> a verification effort wastes six months. `spec()` in `test_alu.py` is written from the ISA in
+> exactly this sense, and it is the model every check in this lab uses.
 
 1. Run the ALU tests:
 
@@ -321,8 +322,8 @@ What does a sweep that checks the flags report on `B03`, and can you account for
    {'ADD': 3840, 'SUB': 3840, 'OR': 255, 'NAND': 255, 'SHL': 14400, 'SHR': 3136}
    ```
 
-   All the numbers are exact; your message can be worded differently, but the counts should
-   match. What does "0 value mismatches, 25,726 flag mismatches" tell you
+   All the numbers are exact. Your message can be worded differently and needn't break the count
+   down by operation, but the totals should match. What does "0 value mismatches, 25,726 flag mismatches" tell you
    that a single combined count of 25,726 would not?
 
    <details>

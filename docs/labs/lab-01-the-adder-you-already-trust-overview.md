@@ -38,7 +38,7 @@ If you haven't set up the workbench yet, do
    ```bash
    . /foss/designs/common/.designinit   # in every new terminal
    mod add dd104                        # first time only: clones github.com/uoftasic/dd104
-   mod dd104                            # every time after that
+   mod dd104                            # every time, including the first
    ```
 
    You should see the `ASIC-EDU: PDK=sky130A ...` banner, then
@@ -83,7 +83,8 @@ Check: `cocotb-config --version` prints `2.0.1` and you are in `/foss/designs/mo
 
 Does the shipped testbench catch the broken adder?
 
-1. Before you run anything, write down two answers. You may read the lab's `test_adder.py` first.
+1. Before you run anything, write down two answers. You may read the lab's testbench first,
+   `labs/lab-01-the-adder-you-already-trust/test_adder.py`.
    First: will its two shipped tests catch `broken/ripple4.sv`? Second: if you ran every input the
    adder has, how many would come out wrong? Give a number, even a guess; you'll check it in
    Part 3.
@@ -167,7 +168,8 @@ Can you make the testbench catch the broken adder and report how many vectors ar
    ```
 
 3. Stop asserting on the first bad vector. Collect the bad ones in a list, run all 512, and
-   assert once at the end with `len(bad)` in the message. Part 4 is about why. Do both changes
+   assert once at the end with `len(bad)` and the total in the message (the reference solution
+   says `256 of 512 vectors are wrong`). Part 4 is about why. Do both changes
    before you run: `make check` will not pass with only the first one.
 
 4. Run `make sim`. You should see `checked 512 of the 512 possible input vectors` in the log and
@@ -220,8 +222,8 @@ Python stopped before the comparison, so the run says nothing about either adder
 and rerun. [`labs/common/verdict.py`](https://github.com/uoftasic/dd104/blob/main/labs/common/verdict.py)
 is where DD104 tells a test that failed an assertion from a test that crashed.
 
-Check: `make check` ends on `VERDICT: PASS`, and the failure on `broken/` says `256 of 512 vectors
-are wrong`.
+Check: `make check` ends on `VERDICT: PASS`, and your failure message on `broken/` reports 256
+wrong vectors out of 512.
 
 ## Part 4: Read the count
 
@@ -233,9 +235,10 @@ What does `256 of 512` tell you about the bug before you open the RTL?
    <details>
    <summary>Answer</summary>
 
-   `cin`. A failure count of exactly half means the fault tracks a signal that is high in half the
-   vectors, and in a space of $16 \times 16 \times 2$ only `cin` has that shape. You have narrowed
-   the bug to one wire without opening the RTL.
+   `cin`, the only one-bit input. A failure count of exactly half means the fault tracks a signal
+   that is high in half the vectors. Each bit of `a` and `b` is high in half the vectors too, but
+   the wrong vectors the reference solution's message lists (`0+0+1`, `0+1+1`, …) all have
+   `cin = 1`. You have narrowed the bug to one wire without opening the RTL.
 
    </details>
 
@@ -256,7 +259,7 @@ The count is data on every design, not just adders. You'll meet these in Lab 03:
 | Count | What it says |
 |---|---|
 | Exactly half | Tracks a signal that is high half the time |
-| 65,024 of 65,536 | 512 vectors survive the bug, and they share a pattern |
+| 65,024 of the 65,536 `SUB` vectors | 512 vectors survive the bug, and they share a pattern |
 | 0 values wrong, 25,726 flags wrong | The arithmetic is fine; look at the flag logic |
 
 Check: you can name the signal the 256 failures track.
@@ -310,7 +313,7 @@ Which parts of the adder did the six hand-picked cases never move?
 
    `cov_all.sv` has `a` in its outermost loop (and `cin` innermost), so the loops end with `a` at
    15: `a[3]` rises and the test finishes before it can fall. That is an artefact of loop order,
-   not a gap in your stimulus. Compare with your prediction from step 1.
+   not a gap in the stimulus. Compare with your prediction from step 1.
 
    </details>
 
@@ -337,15 +340,15 @@ Check: six cases leave 5 points cold, including both `cin` transitions; all 512 
 | `make check` final line | `VERDICT: PASS` | exact |
 | `make sim` total simulated time | `518.00` ns | exact |
 | The log line in your sweep | `checked 512 of the 512 possible input vectors` | exact |
-| The failure on `broken/` | `256 of 512 vectors are wrong` | exact |
+| The count in your failure on `broken/` | 256 of 512 | exact |
 | `make` wall clock | about 5 s | ballpark |
 | `coverage/`, six cases | 48 toggle points, 5 never toggled, 0 line points | exact |
 | `coverage/`, all 512 | 48 toggle points, 1 never toggled, 0 line points | exact |
 
 ## Finishing
 
-You're done when `make check` on your `test_adder.py` ends on `VERDICT: PASS` and its failure on
-`broken/` says `256 of 512 vectors are wrong`.
+You're done when `make check` on your `test_adder.py` ends on `VERDICT: PASS` and your failure
+message on `broken/` reports 256 wrong vectors out of 512.
 
 Questions:
 
