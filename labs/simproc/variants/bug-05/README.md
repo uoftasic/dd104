@@ -18,8 +18,8 @@ BNZ -2           back to the line above, while R0 != 0
 
 | | R0 at the end |
 |---|---|
-| should be | **0** — the body runs three times |
-| this core | **2** — the body ran once |
+| should be | 0 — the body runs three times |
+| this core | 2 — the body ran once |
 
 After that single pass the PC is nowhere near the loop.
 
@@ -28,7 +28,7 @@ address 20:
 
 | displacement | should land on | this core lands on |
 |---|---|---|
-| `+0` … `+7` | 21 … 28 | **21 … 28, every one correct** |
+| `+0` … `+7` | 21 … 28 | 21 … 28, every one correct |
 | `-1` | 20 | 36 |
 | `-2` | 19 | 35 |
 | `-3` | 18 | 34 |
@@ -39,8 +39,8 @@ far forward.
 
 ## What you have
 
-`src/` — the core: 1178 + 49 lines of SystemVerilog. One line of it is wrong.
-`test/` — the testbench that shipped with this chip.
+`src/`: the core, 1178 + 49 lines of SystemVerilog. One line of it is wrong.
+`test/`: the testbench that shipped with this chip.
 
 ```bash
 cd test && make -B
@@ -50,7 +50,7 @@ It passes.
 
 ## What finishing looks like
 
-1. A test that **fails** on this core and would pass on a correct one.
+1. A test that fails on this core and would pass on a correct one.
 2. The one-line fix.
 3. That same test passing.
 

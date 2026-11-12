@@ -19,8 +19,8 @@ STORE r1,r2 ; ADD r1,r0 ; STORE r1,r2 ; ADD r1,r0 ; STORE r1,r2
 
 | | R0 | R1 | R2 | mem[32] | `done` pulses | clocks with `halt` high while running |
 |---|---|---|---|---|---|---|
-| should be | 7 | 21 | 32 | 21 | 14 | **0** |
-| this core | 7 | 21 | 32 | 21 | 14 | **3** |
+| should be | 7 | 21 | 32 | 21 | 14 | 0 |
+| this core | 7 | 21 | 32 | 21 | 14 | 3 |
 
 Every architectural result is identical to a correct core. Registers, memory,
 flags, the program counter, the instruction count, the `done` count — all of it
@@ -30,8 +30,8 @@ Three clocks. Three `STORE`s.
 
 ## What you have
 
-`src/` — the core: 1178 + 49 lines of SystemVerilog. One line of it is wrong.
-`test/` — the testbench that shipped with this chip.
+`src/`: the core, 1178 + 49 lines of SystemVerilog. One line of it is wrong.
+`test/`: the testbench that shipped with this chip.
 
 ```bash
 cd test && make -B
@@ -41,7 +41,7 @@ It passes.
 
 ## What finishing looks like
 
-1. A test that **fails** on this core and would pass on a correct one.
+1. A test that fails on this core and would pass on a correct one.
 2. The one-line fix.
 3. That same test passing.
 

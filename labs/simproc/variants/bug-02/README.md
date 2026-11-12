@@ -21,8 +21,8 @@ NAND r1,r0       R1 = NAND(0x33, 0x0F)
 
 | | R1 |
 |---|---|
-| should be | **0xFC** (252) |
-| this core | **0xC0** (192) |
+| should be | 0xFC (252) |
+| this core | 0xC0 (192) |
 
 `~(0x33 & 0x0F)` is `~0x03` = `0xFC`. The core returned `0xC0`.
 
@@ -31,8 +31,8 @@ they are.
 
 ## What you have
 
-`src/` — the core: 1178 + 49 lines of SystemVerilog. One line of it is wrong.
-`test/` — the testbench that shipped with this chip.
+`src/`: the core, 1178 + 49 lines of SystemVerilog. One line of it is wrong.
+`test/`: the testbench that shipped with this chip.
 
 ```bash
 cd test && make -B
@@ -42,7 +42,7 @@ It passes.
 
 ## What finishing looks like
 
-1. A test that **fails** on this core and would pass on a correct one.
+1. A test that fails on this core and would pass on a correct one.
 2. The one-line fix.
 3. That same test passing.
 

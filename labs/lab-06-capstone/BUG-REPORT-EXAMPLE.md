@@ -1,12 +1,10 @@
-# Bug report — `B01_sub_operands_swapped`
+# Bug report: `B01_sub_operands_swapped`
 
 A worked example of [`BUG-REPORT-template.md`](BUG-REPORT-template.md), filled in end to end.
 
-`B01` is **not** in this lab's pool (`B10`, `B11`, `B12`), so nothing here gives your capstone
-away. It is here because it is the clearest case in the catalogue of a report whose *numbers*
-do the arguing.
-
-Read the shape, not the bug. Then write yours.
+`B01` is not in this lab's pool (`B10`, `B11`, `B12`), so nothing here gives your capstone
+away. It is here because it is the clearest case in the catalogue of a report whose numbers make
+the argument. Read it for the shape, then write yours.
 
 ---
 
@@ -46,10 +44,10 @@ make check TB=test_b01_repro BUG=B01      # t01 fails on the broken one
             AssertionError: SUB r1, r2 with r1 = 200 and r2 = 100 left r1 = 156.
 ```
 
-Minimised: no loop, no branch, no memory, no UART traffic beyond what the harness needs, no
-model. Both operands are constants, and they are **different** constants — see part 4.
+Minimised: no loop, no branch, no memory, no UART traffic beyond what the harness needs, and no
+model. Both operands are constants, and they are different constants (see part 4).
 
-## 2. Expected versus actual, as numbers, with the arithmetic shown
+## 2. Expected against actual, as numbers, with the arithmetic shown
 
 | | |
 |---|---|
@@ -58,9 +56,8 @@ model. Both operands are constants, and they are **different** constants — see
 | why the expected value is what it is | `SUB rA, rB` is specified as `rA - rB`. `200 - 100 = 100`. |
 | why the actual value is what it is | `156 = (100 - 200) mod 256`, which is `rB - rA`. |
 
-The difference is not an offset and not a bit — it is the **sign**. `100` and `156` are
-negatives of each other in eight bits, and that is the single most useful sentence in this
-report.
+The difference is the sign, not an offset or a single bit: `100` and `156` are negatives of each
+other in eight bits. That is the most useful sentence in this report.
 
 ## 3. The shape
 
@@ -77,7 +74,7 @@ ALU SHL  value_mismatch=     0 flag_mismatch=     0
 ALU SHR  value_mismatch=     0 flag_mismatch=     0
 ```
 
-**65,024 of the 65,536 `SUB` operand pairs are wrong, and every other operation is perfect.**
+65,024 of the 65,536 `SUB` operand pairs are wrong, and every other operation is perfect.
 
 The survivors are the diagnosis. `A - B == B - A (mod 256)` exactly when `2(A - B) == 0
 (mod 256)`, that is when `A - B` is `0` or `128`:
@@ -86,40 +83,40 @@ The survivors are the diagnosis. `A - B == B - A (mod 256)` exactly when `2(A - 
 |---|---|
 | `A == B` | 256 |
 | `\|A - B\| == 128` | 256 |
-| | **512** |
+| | 512 |
 
-`65,536 - 512 = 65,024`, to the digit. A count that factors into a sentence about the design is
-a hypothesis; this one says **the subtractor's operands are the wrong way round**, and nothing
-else produces exactly 512 survivors.
+`65,536 - 512 = 65,024` exactly. A count that factors into a sentence about the design is a
+hypothesis. This one says the subtractor's operands are the wrong way round, and nothing else
+produces exactly 512 survivors.
 
-The flag column matching the value column exactly (`65024` and `65024`) is a second, free
-finding: `N` and `Z` are computed *from* `ALUout`, so they are wrong precisely when it is. The
-flag logic is not implicated.
+The flag column matches the value column exactly (`65024` and `65024`), which is a second finding
+for free: `N` and `Z` are computed from `ALUout`, so they are wrong exactly when it is. The flag
+logic is not implicated.
 
-## 4. Where it is *not*
+## 4. Where it is not
 
-- **Every other ALU operation.** `ADD`, `OR`, `NAND`, `SHL`, `SHR`: zero mismatches out of
-  65,536 each.
-- **`SUB rX, rX`.** `A - A` is the same subtraction either way round. This is the idiom for
-  *clear a register* on this machine, it appears in almost every program in the course, and it
-  is why the bug survives so much stimulus. `t02_the_idiom_that_hides_it` **passes** on the
-  broken core and is in the file to say so.
-- **The 512 pairs above.** `t03_the_512_survivors` drives five of them in hardware and they
-  agree on both cores.
-- **The flags, decode, the register file, memory, the UART, cycle counts.** `SUB` still takes
-  four cycles and still writes the register the instruction names.
-- **A reset does not hide it and does not help.** It is combinational: no state is involved.
-- **It does not depend on the operands being distinct in the register file** — only on their
-  *values* being distinct.
+- Every other ALU operation. `ADD`, `OR`, `NAND`, `SHL`, `SHR`: zero mismatches out of 65,536
+  each.
+- `SUB rX, rX`. `A - A` is the same subtraction either way round. This is the idiom for clearing
+  a register on this machine, it appears in almost every program in the course, and it is why the
+  bug survives so much stimulus. `t02_the_idiom_that_hides_it` passes on the broken core and is in
+  the file to say so.
+- The 512 pairs above. `t03_the_512_survivors` drives five of them in hardware, and they agree on
+  both cores.
+- The flags, decode, the register file, memory, the UART and cycle counts. `SUB` still takes four
+  cycles and still writes the register the instruction names.
+- Reset. It neither hides the bug nor helps: the bug is combinational, with no state involved.
+- Register aliasing. It depends on the operand values being different, not on the operands being
+  different registers.
 
 That list is what turns "the ALU is broken" into "line 811 of `simproc_system.sv`".
 
-## 5. The reflex the suite gained
+## 5. The habit the suite gained
 
 > Reflex: *never test a binary operation with `op(x, x)`. Aliased operands make a swapped,
 > mirrored or wrong-source implementation indistinguishable from a correct one, and the aliases
-> you write by habit — `SUB rX, rX` for clear, `NAND rX, rX` for not, `LOAD rX, rX` for a
-> pointer dereference in place — are exactly the ones you will never suspect.*
+> you write by habit (`SUB rX, rX` for clear, `NAND rX, rX` for not, `LOAD rX, rX` for a
+> pointer dereference in place) are exactly the ones you will never suspect.*
 >
 > Enforced by: `t01_sub_with_two_distinct_operands` in
 > [`../common/test_b01_repro.py`](../common/test_b01_repro.py), which fails on this core and
@@ -127,7 +124,7 @@ That list is what turns "the ALU is broken" into "line 811 of `simproc_system.sv
 
 ---
 
-## The proof, mechanised
+## The same thing in `make verdict`
 
 `make verdict` is parts 1 and 5 turned into a grade. Dealt this core with the test written but
 no fix applied:
@@ -154,7 +151,7 @@ and after changing `ALUout = B - A;` back to `ALUout = A - B;` in `core/simproc_
    Row 2 is the part worth keeping. Commit that test.
 ```
 
-**Row 2 does not change when you fix the design**, because it is rebuilt from the catalogue
-every time rather than read from `core/`. That is the whole argument for the report being a
-reproducer: the patch is a thing one person did once, and the test is what stops the bug coming
-back in a year, in a rewrite, done by somebody who has never heard of you.
+Row 2 does not change when you fix the design, because it is rebuilt from the catalogue every
+time rather than read from `core/`. That is why the report is built around a reproducer: the patch
+is something one person did once, and the test is what stops the bug coming back in a year, in a
+rewrite, done by someone who has never heard of you.

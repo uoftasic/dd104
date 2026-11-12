@@ -18,8 +18,8 @@ ORI 8            R0 = 8
 
 | | R0 |
 |---|---|
-| should be | **8** — `BNZ` is not taken, so the `ORI 8` runs |
-| this core | **0** — `BNZ` was taken and skipped it |
+| should be | 8 — `BNZ` is not taken, so the `ORI 8` runs |
+| this core | 0 — `BNZ` was taken and skipped it |
 
 The first branch does the right thing. The second branch, reading the same
 comparison, does the opposite of the right thing.
@@ -29,8 +29,8 @@ you asked for.
 
 ## What you have
 
-`src/` — the core: 1178 + 49 lines of SystemVerilog. One line of it is wrong.
-`test/` — the testbench that shipped with this chip.
+`src/`: the core, 1178 + 49 lines of SystemVerilog. One line of it is wrong.
+`test/`: the testbench that shipped with this chip.
 
 ```bash
 cd test && make -B
@@ -40,7 +40,7 @@ It passes.
 
 ## What finishing looks like
 
-1. A test that **fails** on this core and would pass on a correct one.
+1. A test that fails on this core and would pass on a correct one.
 2. The one-line fix.
 3. That same test passing.
 

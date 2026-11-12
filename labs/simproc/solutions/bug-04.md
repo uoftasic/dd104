@@ -1,6 +1,6 @@
 # bug-04 — ALU write-back uses the `rB` field
 
-Catalogue **B04**. Tier 2, Lab 04 (decode and the register file).
+Catalogue B04. Tier 2, Lab 04 (decode and the register file).
 
 ```diff
 --- a/src/simproc_system.sv     line 648, CYCLE_4, the ADD/SUB/NAND/SHIFT write-back
@@ -15,9 +15,9 @@ Every ALU result lands in the *source* register instead of the destination.
 
 | | |
 |---|---|
-| Boilerplate `test/test.py` | **passes** |
-| Suite | **3/10** — caught by T01, T02, T03, T05, T06, T08, T10 |
-| Symptom demo | R1 should be 7; it is **0**, and never changes |
+| Boilerplate `test/test.py` | passes |
+| Suite | 3/10 — caught by T01, T02, T03, T05, T06, T08, T10 |
+| Symptom demo | R1 should be 7; it is 0, and never changes |
 
 ## Why it hides
 

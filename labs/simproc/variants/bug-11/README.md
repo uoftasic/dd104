@@ -14,8 +14,8 @@ ORI 3            R0 = R0 | 3
 
 | | R0 |
 |---|---|
-| should be | **7** |
-| this core | **0** |
+| should be | 7 |
+| this core | 0 |
 
 And with a single `ORI`, straight out of reset:
 
@@ -27,8 +27,8 @@ ORI 5            R0 = R0 | 5
 
 | | R0 |
 |---|---|
-| should be | **5** |
-| this core | **0** |
+| should be | 5 |
+| this core | 0 |
 
 The value 5 is not lost. It exists in the machine. It is just not in R0.
 
@@ -37,8 +37,8 @@ clear, `ADD` adds, `LOAD` and `STORE` are exact.
 
 ## What you have
 
-`src/` — the core: 1178 + 49 lines of SystemVerilog. One line of it is wrong.
-`test/` — the testbench that shipped with this chip.
+`src/`: the core, 1178 + 49 lines of SystemVerilog. One line of it is wrong.
+`test/`: the testbench that shipped with this chip.
 
 ```bash
 cd test && make -B
@@ -48,7 +48,7 @@ It passes.
 
 ## What finishing looks like
 
-1. A test that **fails** on this core and would pass on a correct one.
+1. A test that fails on this core and would pass on a correct one.
 2. The one-line fix.
 3. That same test passing.
 

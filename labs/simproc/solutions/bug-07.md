@@ -1,6 +1,6 @@
 # bug-07 — `LOAD` addresses memory with `rA`
 
-Catalogue **B07**. Tier 2, Lab 04. **The set piece of the whole catalogue.**
+Catalogue B07. Tier 2, Lab 04. The set piece of the whole catalogue.
 
 ```diff
 --- a/src/simproc_system.sv     line 589, CYCLE_3, the LOAD clause
@@ -17,9 +17,9 @@ exact.
 
 | | |
 |---|---|
-| Boilerplate `test/test.py` | **passes** |
-| Suite | 9/10 — caught by **T10, and nothing else** |
-| Symptom demo | `LOAD r0,r1` with R1 = 40 and `mem[40] = 90` gives R0 = **6** |
+| Boilerplate `test/test.py` | passes |
+| Suite | 9/10 — caught by T10, and nothing else |
+| Symptom demo | `LOAD r0,r1` with R1 = 40 and `mem[40] = 90` gives R0 = 6 |
 
 6 is the byte at address 0 — the first instruction of the program, read as data,
 because R0 held 0.
@@ -34,7 +34,7 @@ idiom: you have finished with the address and you want the value.
 
 The first `LOAD`/`STORE` test written for this core, T06, used `LOAD r1,r1`. It
 passes on this variant. The bug was found by injecting it and discovering that
-the test suite did not move, and **T10 was written specifically to catch it** —
+the test suite did not move, and T10 was written specifically to catch it —
 "LOAD and STORE where the pointer register and the data register differ."
 
 That is a better lesson than the bug. The person writing the testbench had a
@@ -50,7 +50,7 @@ textbook.
 
 Aliasing hides bugs. When two operands can be the same register, a test that
 lets them be the same register is testing half the instruction. Make every
-operand distinct **on purpose**, and write down why.
+operand distinct on purpose, and write down why.
 
 ## The fix
 

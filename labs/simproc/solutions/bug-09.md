@@ -1,6 +1,6 @@
 # bug-09 — a branch overwrites the flags
 
-Catalogue **B09**. Tier 3, Lab 04.
+Catalogue B09. Tier 3, Lab 04.
 
 ```diff
 --- a/src/simproc_system.sv     line 622, the branch clause
@@ -9,7 +9,7 @@ Catalogue **B09**. Tier 3, Lab 04.
                      pc_in           = alu_out;
 ```
 
-The one variant that **adds** a line rather than changing one. Branches use the
+The one variant that adds a line rather than changing one. Branches use the
 ALU to compute `PC + 1 + offset`; this makes them latch the flags from that
 address arithmetic, destroying whatever comparison the program was in the middle
 of using.
@@ -18,9 +18,9 @@ of using.
 
 | | |
 |---|---|
-| Boilerplate `test/test.py` | **passes** |
-| Suite | 8/10 — caught by **T05**, **T08** |
-| Symptom demo | R0 should be 8 after `BZ` then `BNZ`; it is **0** |
+| Boilerplate `test/test.py` | passes |
+| Suite | 8/10 — caught by T05, T08 |
+| Symptom demo | R0 should be 8 after `BZ` then `BNZ`; it is 0 |
 
 ## Why it hides
 

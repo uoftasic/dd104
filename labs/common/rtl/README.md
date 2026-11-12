@@ -1,7 +1,7 @@
-# `labs/common/rtl` — the SimProc under test
+# `labs/common/rtl`: the SimProc under test
 
-This is the processor every DD104 lab runs against. It is a fork of the real thing, not a
-teaching mock-up: it is the RTL that was submitted to a TinyTapeout shuttle.
+This is the processor every SimProc lab runs against: a fork of the RTL that was submitted to a
+TinyTapeout shuttle, not a teaching mock-up.
 
 ## Provenance
 
@@ -16,8 +16,8 @@ sha256  5da82589f8b045a92f0390093118394f029df9723711aa957ecd2fcadfcf3dbe
 
 ## What DD104 changed
 
-**Four lines, all of them comments. No logic changes, and the line count is identical**, so
-every line number in `bugs.py` and in every lab writeup is also an upstream line number.
+Four lines, all of them comments. There are no logic changes and the line count is identical,
+so every line number in `bugs.py` and in every lab writeup is also an upstream line number.
 
 | line | upstream | here |
 |---|---|---|
@@ -54,7 +54,7 @@ TinyTapeout testbench shell with the waveform dump made conditional on `+WAVES`.
 | 741–771 | `register_file` | four 8-bit registers, two combinational read ports |
 | 773–788 | `program_counter` | |
 | 789–823 | `ALU` | six operations, `N` and `Z`, no carry and no overflow |
-| 826–858 | `dp_ram` | 64 bytes, two ports, **combinational reads**, **no reset** |
+| 826–858 | `dp_ram` | 64 bytes, two ports, combinational reads, no reset |
 | 860–1178 | `UART_wrapper`, `UART_TX`, `UART_RX` | 8N1, no parity |
 
 Instance path from the testbench:
@@ -75,9 +75,9 @@ tb
 
 `simproc.py` wraps all of those; you should not need to type these paths yourself.
 
-## Two things that look like failures and are not
+## Output that looks like failure
 
-**Icarus prints 28 `sorry:` notes.** Compiling this design with `iverilog -g2012` emits 28
+Icarus prints 28 `sorry:` notes. Compiling this design with `iverilog -g2012` emits 28
 lines of the form
 
 ```
@@ -85,21 +85,20 @@ rtl/simproc_system.sv:552: sorry: constant selects in always_* processes are not
 supported (the process will be sensitive to all bits in 'instr_reg_out[7:0]').
 ```
 
-at 22 distinct locations — 543, 544, 552 ×2, 553, 555, 571, 573, 579, 587, 595, 610 ×2,
-611 ×2, 613, 621 ×2, 633, 644 ×2, 645 ×2, 648, 660, 662, 674, 677. They are **notes, not
-errors** —
-Icarus is saying it will make the process sensitive to the whole vector instead of the selected
-bits, which is more sensitivity, not less. The exit code is 0 and the simulation is correct.
+at 22 distinct locations: 543, 544, 552 ×2, 553, 555, 571, 573, 579, 587, 595, 610 ×2,
+611 ×2, 613, 621 ×2, 633, 644 ×2, 645 ×2, 648, 660, 662, 674, 677. They are notes, not
+errors. Icarus is saying it will make the process sensitive to the whole vector instead of the
+selected bits, which is more sensitivity, not less. The exit code is 0 and the simulation is correct.
 A real Icarus failure starts a line with `error:` and stops.
 
-**Verilator refuses to build at all.** `verilator --lint-only` on this design prints 12
+Verilator refuses to build at all. `verilator --lint-only` on this design prints 12
 warnings and then:
 
 ```
 %Error: Exiting due to 12 warning(s)
 ```
 
-Six `WIDTHTRUNC`, four `WIDTHEXPAND`, two `CASEINCOMPLETE` — 19 warnings with `-Wall`. That is
+Six `WIDTHTRUNC`, four `WIDTHEXPAND` and two `CASEINCOMPLETE` (19 warnings with `-Wall`). That is
 why `sim.mk` passes `-Wno-fatal` when `SIM=verilator`. Four of the twelve are the same finding
 at four different lines, and it is a real one:
 
@@ -110,7 +109,7 @@ at four different lines, and it is a real one:
   848 |             mem[addr_a] <= din_a;
 ```
 
-(also at 851, 856 and 857 — the RAM's other three port accesses.)
+(also at 851, 856 and 857, the RAM's other three port accesses.)
 
 The RAM is 64 entries and the address bus is 8 bits wide. Verilator finds that by reading the
 file. Icarus finds it at run time, as eight X bits on the chip's TX pin, if you ever read an

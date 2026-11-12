@@ -1,6 +1,6 @@
 # bug-03 — the `Z` flag only sees the low nibble
 
-Catalogue **B03**. Tier 1, Lab 03.
+Catalogue B03. Tier 1, Lab 03.
 
 ```diff
 --- a/src/simproc_system.sv     line 822, the ALU's flag logic
@@ -12,9 +12,9 @@ Catalogue **B03**. Tier 1, Lab 03.
 
 | | |
 |---|---|
-| Boilerplate `test/test.py` | **passes** |
-| Suite | 7/10 — caught by **T03**, **T06**, **T10** |
-| ALU sweep | **0 value mismatches. 25,726 flag mismatches.** |
+| Boilerplate `test/test.py` | passes |
+| Suite | 7/10 — caught by T03, T06, T10 |
+| ALU sweep | 0 value mismatches. 25,726 flag mismatches. |
 
 Per operation, from the sweep:
 
@@ -39,7 +39,7 @@ Every arithmetic result this core produces is correct. Only the flag is wrong,
 and only for results that are nonzero but end in four zero bits. A test that
 compares values and never compares flags passes completely.
 
-**T08 misses it** — 20 random programs, 600 random instructions, all pass. That
+T08 misses it — 20 random programs, 600 random instructions, all pass. That
 is the most useful single fact in this variant: random stimulus with no coverage
 model does not find a flag bug, because flags are only observable through a
 *subsequent* branch, and a random program rarely puts the right branch after the
