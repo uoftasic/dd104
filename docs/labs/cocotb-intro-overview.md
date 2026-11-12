@@ -1,4 +1,4 @@
-# cocotb on a counter
+# Lab: cocotb on a counter
 
 You'll run every cocotb example from the guide pages on an 8-bit counter: your first test, the
 clock-edge race, the triggers, the 1.x forms that warn and the ones that fail, a two-sided
