@@ -1,6 +1,6 @@
 # Lab 01: The adder you already trust
 
-You'll set up the course, then take the 4-bit ripple-carry adder from DD102, a copy of it with
+You'll load the course, then take the 4-bit ripple-carry adder from DD102, a copy of it with
 one line changed, and a testbench that cannot tell them apart. You'll fix the testbench so it
 catches the broken adder and reports how many vectors are wrong, then see which parts of the
 adder a coverage tool says your stimulus never moved.
@@ -81,10 +81,12 @@ Check: `cocotb-config --version` prints `2.0.1` and you are in `/foss/designs/mo
 
 ## Part 2: Run the shipped testbench
 
+Does the shipped testbench catch the broken adder?
+
 1. Before you run anything, write down two answers. You may read the lab's `test_adder.py` first.
-   First: will its two shipped tests catch `broken/ripple4.sv`? Second: if you ran every input the adder has, how
-   many would come out wrong? Give a number. Committing to a prediction is what makes being wrong
-   useful.
+   First: will its two shipped tests catch `broken/ripple4.sv`? Second: if you ran every input the
+   adder has, how many would come out wrong? Give a number, even a guess; you'll check it in
+   Part 3.
 
 2. Run the package:
 
@@ -131,17 +133,27 @@ Check: `cocotb-config --version` prints `2.0.1` and you are in `/foss/designs/mo
    ```
 
    The `262` counts `t01`'s six vectors as well as `t02`'s 256; the six are repeated inside the
-   256. The output is followed by `make: *** [Makefile:49: check] Error 1`. That error line is the verdict exiting
-   non-zero on purpose ([Getting started](guide/getting-started.md#reading-a-labs-output)
+   256. The output is followed by `make: *** [Makefile:49: check] Error 1`. That error line is the
+   verdict exiting non-zero on purpose ([Getting started](guide/getting-started.md#reading-a-labs-output)
    explains why). It disappears when the verdict passes.
 
-5. Compare with your prediction. `t02` drives every value of `a` and every value of `b`, so it is
-   exhaustive over two of the three inputs. The module has $4 + 4 + 1 = 9$ bits of input, and
-   $2^9 = 512$, not 256.
+5. Compare with your first prediction. `t02` is called "every a and every b". Why does it check
+   only 256 of the 512 vectors?
+
+   <details>
+   <summary>Answer</summary>
+
+   `t02` drives every value of `a` and every value of `b`, so it is exhaustive over two of the
+   three inputs. The module has $4 + 4 + 1 = 9$ bits of input, and $2^9 = 512$, not 256. `cin`
+   stays at 0.
+
+   </details>
 
 Check: the verdict says `MISSED` on `broken/` and `VERDICT: FAIL`.
 
 ## Part 3: Fix the testbench
+
+Can you make the testbench catch the broken adder and report how many vectors are wrong?
 
 1. Open `test_adder.py` and find the TODO in `t02`. It asks for two changes.
 
@@ -174,7 +186,8 @@ Check: the verdict says `MISSED` on `broken/` and `VERDICT: FAIL`.
 
    The test name in that block is whatever you called your test; the reference solution in
    `solutions/` renames `t02` to `t02_exhaustive`. The `AssertionError` line is cut off on purpose:
-   `make check` truncates long messages to fit its table.
+   `make check` truncates long messages to fit its table. Compare `256` with your second
+   prediction from Part 2.
 
 If the verdict is still FAIL, read its message. `check.py` measures how many vectors each run
 drove and tells you which half of the TODO is missing. Doing only the sweep makes `broken/` fail,
@@ -212,19 +225,31 @@ are wrong`.
 
 ## Part 4: Read the count
 
-1. Look at the count in your failure message: 256 of 512, exactly half.
+What does `256 of 512` tell you about the bug before you open the RTL?
 
-2. Answer this before reading on: which signal in the port list is high in exactly half of all
-   input vectors?
+1. Look at the count in your failure message: 256 of 512, exactly half. Which input in the port
+   list is high in exactly half of all input vectors? Write it down.
 
-   A failure count of exactly half means the fault tracks a signal that is high in half the
-   vectors. This module has one such input, and it is in the port list. You have narrowed the
-   bug to one wire without opening the RTL.
+   <details>
+   <summary>Answer</summary>
 
-3. Compare with the first-bad-vector verdict quoted in Part 3. Asserting on the first bad vector stops
-   the run at the first wrong one (index 256, the first vector with `cin = 1`) and reports one wrong
-   answer. Collecting reports `256 of 512`. Only the
+   `cin`. A failure count of exactly half means the fault tracks a signal that is high in half the
+   vectors, and in a space of $16 \times 16 \times 2$ only `cin` has that shape. You have narrowed
+   the bug to one wire without opening the RTL.
+
+   </details>
+
+2. Compare with the first-bad-vector verdict quoted in Part 3. What does each style of test
+   report on the broken adder?
+
+   <details>
+   <summary>Answer</summary>
+
+   Asserting on the first bad vector stops the run at the first wrong one (index 256, the first
+   vector with `cin = 1`) and reports one wrong answer. Collecting reports `256 of 512`. Only the
    second is a diagnosis.
+
+   </details>
 
 The count is data on every design, not just adders. You'll meet these in Lab 03:
 
@@ -238,7 +263,11 @@ Check: you can name the signal the 256 failures track.
 
 ## Part 5: Ask a coverage tool
 
-1. Run the coverage add-on, a small package in the lab's `coverage/` folder:
+Which parts of the adder did the six hand-picked cases never move?
+
+1. Before you run it, write down which input you expect six hand-picked cases never to toggle.
+
+2. Run the coverage add-on, a small package in the lab's `coverage/` folder:
 
    ```bash
    cd coverage
@@ -249,7 +278,7 @@ Check: you can name the signal the 256 failures track.
    the correct adder in `../src/` and the add-on's own stimulus files, `cov_six.sv` (the six
    hand-picked cases) and `cov_all.sv` (all 512), not your `test_adder.py`.
 
-2. In the six-case block, you should see `design toggle points : 48`, `never toggled : 5` and
+3. In the six-case block, you should see `design toggle points : 48`, `never toggled : 5` and
    these five points:
 
    ```
@@ -260,27 +289,45 @@ Check: you can name the signal the 256 failures track.
        ripple4.sv:8  c[0]:1->0
    ```
 
+   `cin` never moved in either direction. Why is `c[0]` cold too?
+
+   <details>
+   <summary>Answer</summary>
+
    `c[0]` is the internal carry wire that `cin` drives (`assign c[0] = cin;` in `ripple4.sv`), so
    it is cold for the same reason. The tool has no idea what an adder is and never checked an
    answer, and it named `cin` anyway.
 
-3. In the all-512 block, you should see `never toggled : 1`, the point `a[3]:1->0`. The loops in
-   `cov_all.sv` end with `a` at 15, so `a[3]` rises and the test finishes before it can fall. That is an artefact of
-   loop order, not a gap in your stimulus.
+   </details>
 
-4. Note `design line points : 0` in both runs. The design is continuous assignments, and line
-   coverage has nothing in it to count. A report claiming "100 % line coverage" on this adder would
-   be true and empty.
+4. In the all-512 block, you should see `never toggled : 1`, the point `a[3]:1->0`. Every input
+   combination ran. Why does one point stay cold?
+
+   <details>
+   <summary>Answer</summary>
+
+   The loops in `cov_all.sv` end with `a` at 15, so `a[3]` rises and the test finishes before it
+   can fall. That is an artefact of loop order, not a gap in your stimulus.
+
+   </details>
+
+5. Note `design line points : 0` in both runs. What would a report of "100 % line coverage" on
+   this adder tell you?
+
+   <details>
+   <summary>Answer</summary>
+
+   Nothing. The design is continuous assignments, and line coverage has nothing in it to count. The
+   claim would be true and empty, and true of the six-case run and the exhaustive run alike.
+
+   </details>
 
 The add-on has its own
 [`README.md`](https://github.com/uoftasic/dd104/tree/main/labs/lab-01-the-adder-you-already-trust/coverage).
 
 Check: six cases leave 5 points cold, including both `cin` transitions; all 512 leave 1.
 
-## Finishing
-
-You are done when `make check` says `VERDICT: PASS` and you have read the coverage report in
-Part 5. There is nothing to submit.
+## Expected results
 
 | Check | Expected | |
 |---|---|---|
@@ -292,11 +339,30 @@ Part 5. There is nothing to submit.
 | `coverage/`, six cases | 48 toggle points, 5 never toggled, 0 line points | exact |
 | `coverage/`, all 512 | 48 toggle points, 1 never toggled, 0 line points | exact |
 
-One question to argue with yourself before you open
-[`solutions/README.md`](https://github.com/uoftasic/dd104/tree/main/labs/lab-01-the-adder-you-already-trust/solutions):
-the reference solution keeps `t01_the_obvious_six`, even though your sweep drives every vector it
-drives and 506 more. Would you delete it? The solutions README gives the case for keeping it, and
-one more decision worth disagreeing with.
+## Finishing
 
-Next: read [Clocks, resets and triggers](guide/clocks-resets-and-triggers.md), then do
-[cocotb on a counter](labs/cocotb-intro-overview.md).
+You're done when `make check` on your `test_adder.py` ends on `VERDICT: PASS` and its failure on
+`broken/` says `256 of 512 vectors are wrong`.
+
+Questions:
+
+1. The reference solution keeps `t01_the_obvious_six`, even though your sweep drives every vector
+   it drives and 506 more. Would you delete it? Decide before you open the answer.
+
+   <details>
+   <summary>Answer</summary>
+
+   Both choices are defensible. The reference keeps it because a test suite is read as often as it
+   is run: six named cases with a comment document what the module is for, and they are the first
+   row to go red when somebody deletes the module.
+   [`solutions/README.md`](https://github.com/uoftasic/dd104/tree/main/labs/lab-01-the-adder-you-already-trust/solutions)
+   gives the full case, and one more decision worth disagreeing with.
+
+   </details>
+
+Submit: nothing for this lab.
+
+Next on the Course path: read [Clocks, resets and triggers](guide/clocks-resets-and-triggers.md),
+[cocotb 2.x and older tutorials](guide/cocotb-2x-vs-every-tutorial.md),
+[Driving and checking a design](guide/driving-and-checking.md) and [Waveforms](guide/waveforms.md),
+then do [Lab: cocotb on a counter](labs/cocotb-intro-overview.md).
