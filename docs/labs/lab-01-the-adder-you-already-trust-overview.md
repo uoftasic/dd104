@@ -2,8 +2,8 @@
 
 You'll set up the course, then take the 4-bit ripple-carry adder from DD102, a copy of it with
 one line changed, and a testbench that cannot tell them apart. You'll fix the testbench so it
-catches the broken adder and reports how many vectors are wrong, then ask a coverage tool the
-same question.
+catches the broken adder and reports how many vectors are wrong, then see which parts of the
+adder a coverage tool says your stimulus never moved.
 
 This lab takes about 90 minutes.
 
@@ -17,7 +17,8 @@ Package: [`labs/lab-01-the-adder-you-already-trust/`](https://github.com/uoftasi
   [The lazy testbench](guide/the-lazy-testbench.md) and
   [Coverage as a question](guide/coverage-is-a-question.md).
 - You need [IC101](https://uoftasic.com/ic101/) done (the noVNC desktop opens and you can get a
-  terminal) and [DD102](https://uoftasic.com/dd102/) done (you have written a `ripple4.sv`).
+  terminal) and [DD102](https://uoftasic.com/dd102/) done (you have written a `ripple4.sv`; the lab
+  ships its own copy in `src/`).
 - `broken/ripple4.sv` is not hidden, and its header says what is wrong with it. This lab is not a
   bug hunt; that starts in [Lab 04](labs/lab-04-your-first-bug-hunt-overview.md). You may read the
   changed line.
@@ -50,8 +51,8 @@ Package: [`labs/lab-01-the-adder-you-already-trust/`](https://github.com/uoftasi
              run 'mod' to list course modules, or 'mod <name>' to enter one.
    ```
 
-   In DD104 this line only defines `mod`. There is no process technology to get wrong here, so if
-   `mod` already works in your terminal you can skip this step.
+   In DD104 this line only defines `mod`; DD103 also used it to select a process technology, which
+   DD104 does not need. If `mod` already works in this terminal, you can skip this step.
 
 3. Get the course files:
 
@@ -75,7 +76,7 @@ Package: [`labs/lab-01-the-adder-you-already-trust/`](https://github.com/uoftasi
 
    | What you see | What it means |
    |---|---|
-   | `bash: /foss/designs/common/.designinit: No such file or directory` | The workspace is not mounted. `ls /foss/designs/` should list `common/` and `modules/`. If it is empty, relaunch `start_vnc.sh` from your `workspace` clone (see [IC101](https://uoftasic.com/ic101/)). You can still run every lab from any clone of this repo, because `make` alone needs none of this. |
+   | `bash: /foss/designs/common/.designinit: No such file or directory` | The workspace is not mounted. `ls /foss/designs/` should list `common/` and `modules/`. If it is empty, relaunch `start_vnc.sh` from your `workspace` clone (see [IC101](https://uoftasic.com/ic101/)). You can still run every lab from a clone of this repo inside the workbench image, because `make` alone needs none of this. |
    | `bash: mod: command not found` | You did not run step 2 in this terminal. Every new tab starts clean. |
    | `mod: no such module: dd104` | You ran `mod dd104` before `mod add dd104`. |
    | `fatal: could not read Username for 'https://github.com'` | git could not read the repo anonymously and is asking you to log in. Check that you typed `dd104`. If you did, ask in [Discord](https://discord.gg/hrJnP5UsGz). Do not type your password. |
@@ -109,8 +110,8 @@ Check: `cocotb-config --version` prints `2.0.1` and you are in `/foss/designs/mo
 
 ## Part 2: Run the shipped testbench
 
-1. Before you run anything, write down two answers. First: will the two shipped tests in
-   `test_adder.py` (in the lab folder you `cd` into in step 2) catch `broken/ripple4.sv`? Second: if you ran every input the adder has, how
+1. Before you run anything, write down two answers. You may read the lab's `test_adder.py` first.
+   First: will its two shipped tests catch `broken/ripple4.sv`? Second: if you ran every input the adder has, how
    many would come out wrong? Give a number. Committing to a prediction is what makes being wrong
    useful.
 
@@ -216,6 +217,9 @@ but the run stops at the first wrong vector, so the failure is one anecdote inst
    them.
 ```
 
+With the loop order from step 2, the 263 is `t01`'s six vectors plus the 257 that `t02` drives up
+to and including the first one with `cin = 1`.
+
 There is one more verdict `check.py` can print. A misspelled variable in the code that builds
 your failure message only runs once something is wrong, so the test passes the good adder,
 crashes on the broken one, and looks like a catch:
@@ -230,7 +234,7 @@ crashes on the broken one, and looks like a catch:
 
 Python stopped before the comparison, so the run says nothing about either adder. Fix the name
 and rerun. [`labs/common/verdict.py`](https://github.com/uoftasic/dd104/blob/main/labs/common/verdict.py)
-is where DD104 tells the two kinds of red apart.
+is where DD104 tells a test that failed an assertion from a test that crashed.
 
 Check: `make check` ends on `VERDICT: PASS`, and the failure on `broken/` says `256 of 512 vectors
 are wrong`.
@@ -246,7 +250,7 @@ are wrong`.
    vectors. This module has one such input, and it is in the port list. You have narrowed the
    bug to one wire without opening the RTL.
 
-3. Compare with the first-bad-vector version from Part 3. Asserting on the first bad vector stops
+3. Compare with the first-bad-vector verdict quoted in Part 3. Asserting on the first bad vector stops
    the run at the first wrong one (index 256, the first vector with `cin = 1`) and reports one wrong
    answer. Collecting reports `256 of 512`. Only the
    second is a diagnosis.
@@ -285,10 +289,12 @@ Check: you can name the signal the 256 failures track.
        ripple4.sv:8  c[0]:1->0
    ```
 
-   The tool has no idea what an adder is and never checked an answer, and it named `cin` anyway.
+   `c[0]` is the internal carry wire that `cin` drives (`assign c[0] = cin;` in `ripple4.sv`), so
+   it is cold for the same reason. The tool has no idea what an adder is and never checked an
+   answer, and it named `cin` anyway.
 
-3. In the all-512 block, you should see `never toggled : 1`, the point `a[3]:1->0`. The loops end
-   with `a` at 15, so `a[3]` rises and the test finishes before it can fall. That is an artefact of
+3. In the all-512 block, you should see `never toggled : 1`, the point `a[3]:1->0`. The loops in
+   `cov_all.sv` end with `a` at 15, so `a[3]` rises and the test finishes before it can fall. That is an artefact of
    loop order, not a gap in your stimulus.
 
 4. Note `design line points : 0` in both runs. The design is continuous assignments, and line

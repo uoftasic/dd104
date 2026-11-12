@@ -5,8 +5,8 @@ before they cost a mask set.
 
 Part of the UofT ASIC Team education materials, published at <https://uoftasic.com/dd104/>.
 The labs run in the workbench: the IIC-OSIC-TOOLS container you start from the `workspace` clone
-you set up in [IC101](https://uoftasic.com/ic101/). You get this course's files with
-`mod add dd104`; [Lab 01, Part 1](labs/lab-01-the-adder-you-already-trust-overview.md#part-1-set-up)
+you set up in [IC101](https://uoftasic.com/ic101/). You get this course's files with the
+workbench's `mod` command (`mod add dd104`); [Lab 01, Part 1](labs/lab-01-the-adder-you-already-trust-overview.md#part-1-set-up)
 walks you through it.
 
 ## Who this course is for
@@ -49,7 +49,7 @@ section repeats which pages it expects you to have read.
 | 1 | Read | [Getting started](guide/getting-started.md) · [What a passing test proves](guide/it-works-is-not-a-result.md) · [What a testbench is](guide/what-a-testbench-is.md) · [Your first cocotb test](guide/your-first-cocotb-test.md) · [The lazy testbench](guide/the-lazy-testbench.md) · [Coverage as a question](guide/coverage-is-a-question.md) | 1 h 15 min |
 | 2 | Do | [Lab 01: The adder you already trust](labs/lab-01-the-adder-you-already-trust-overview.md). Set up, watch a reasonable testbench pass on a broken adder, then make it fail. | 1 h 30 min |
 | 3 | Read | [Clocks, resets and triggers](guide/clocks-resets-and-triggers.md) · [cocotb 2.x and older tutorials](guide/cocotb-2x-vs-every-tutorial.md) · [Driving and checking a design](guide/driving-and-checking.md) · [Waveforms](guide/waveforms.md) | 1 h |
-| 4 | Do | [cocotb on a counter](labs/cocotb-intro-overview.md) (not numbered, but not optional). Triggers, the 1.x traps, a check that passes the good counter and fails a broken one, and waveforms. | 1 h 15 min |
+| 4 | Do | [cocotb on a counter](labs/cocotb-intro-overview.md) (an unnumbered lab, but not optional). Triggers, the cocotb 1.x forms that break in 2.x, a check that passes the good counter and fails a broken one, and waveforms. | 1 h 15 min |
 | 5 | Read | [Two simulators](guide/two-simulators-two-jobs.md) · [SimProc in one page](guide/simproc-in-one-page.md) | 45 min |
 | 6 | Do | [Lab 02: The only test this chip has](labs/lab-02-the-only-test-this-chip-has-overview.md). Run the shipped test against all thirteen broken cores, then write a better one. | 1 h 45 min |
 | 7 | Read | [Flags as architectural state](guide/flags-are-state.md) | 20 min |
