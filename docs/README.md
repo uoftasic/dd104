@@ -17,8 +17,8 @@ you meant. This course is about that gap.
 
 SimProc is an 8-bit processor written by students on this team and wrapped for a real chip
 (a TinyTapeout shuttle): an ALU, four registers, 64 bytes of memory and a UART, about 1,200
-lines of SystemVerilog. It
-shipped with one test, and that test passes on a processor whose `SUB` is backwards. DD104
+lines of SystemVerilog. It shipped with one test, and that test passes on a processor whose `SUB`
+has its operands swapped and computes `B - A`. DD104
 ships thirteen broken versions of SimProc, each a one-line edit, and all thirteen pass that
 test. By the end of the course you will have a test suite that catches all thirteen, and a
 written bug report for one of them.
@@ -32,8 +32,11 @@ written bug report for one of them.
 | Total time | 16–20 hours, self-paced |
 
 Check your cocotb version before you search the web for help: `cocotb-config --version` should
-print `2.0.1`. Most cocotb tutorials online are for 1.x, and three of the 1.x forms are errors
-in 2.x. [cocotb 2.x and older tutorials](guide/cocotb-2x-vs-every-tutorial.md) has the list.
+print `2.0.1`. Most cocotb tutorials online are for 1.x. Three things they use are errors in 2.x:
+`cocotb.fork` (use `cocotb.start_soon`), `@cocotb.coroutine` (use a plain `async def`) and
+`dut.sig <= 1` (use `dut.sig.value = 1`). Most of the rest, such as `units=`, `MODULE=` and
+`.value.integer`, still runs and only prints a deprecation warning.
+[cocotb 2.x and older tutorials](guide/cocotb-2x-vs-every-tutorial.md) has the full list.
 
 ## Course path
 
