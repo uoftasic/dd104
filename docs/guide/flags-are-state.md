@@ -28,7 +28,7 @@ zero.
 Every value it computes is still correct. `ALUout` is untouched, the register and memory get the
 right byte, the program counter is right, and `N` is right. One bit is sometimes wrong.
 
-## The exhaustive sweep shows its shape
+## The exhaustive sweep
 
 The ALU is 34 lines and its whole input space is 393,216 vectors, which Icarus walks in about
 twenty seconds. [Lab 03](labs/lab-03-three-blocks-before-the-processor-overview.md) is that walk.
@@ -86,7 +86,7 @@ From one number and its factorisation you have narrowed the bug to one of two wi
 opening the RTL. That is what "the count is the diagnosis" means, and it is the difference between
 a bug report a designer can act on and one that says "the ALU is broken".
 
-## A good testbench that cannot see it
+## A value-only testbench
 
 [`labs/common/test_values_only.py`](https://github.com/uoftasic/dd104/blob/main/labs/common/test_values_only.py)
 is not a strawman. It has three tests: `ADD` and `SUB` over twelve operand pairs each (zero, one,

@@ -63,7 +63,7 @@ The short version:
 | Control | `JMP` always; `BZ` `BNZ` `BPZ` on the flags. None of them touch the flags |
 | Nothing | `0xC` `0xD` `0xE` are unimplemented and behave like a slow no-op |
 
-## The FSM sets the timing
+## The FSM and its timing
 
 The core is a six-state machine: `IDLE`, then `CYCLE_1` to `CYCLE_5`. It is not pipelined, has
 no cache and speculates nothing, so a program's cycle count is the sum of its instructions' cycle

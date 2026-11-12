@@ -34,7 +34,7 @@ mod dd104
 cd labs/lab-05-every-answer-is-right
 ```
 
-## Part 1: Prove the negative first
+## Part 1: The architectural suite against both cores
 
 1. Run Lab 04's finished suite against both cores in this lab's pool:
 
@@ -102,7 +102,7 @@ one instruction retired. That is deliberate, as the next part shows.
 
 Check: `37 clock cycles` and `9 comparisons` in the log.
 
-## Part 3: A green run that scored eight out of nine
+## Part 3: The shipped file against `B08`
 
 1. Run the shipped file against `B08`:
 
@@ -120,8 +120,8 @@ The ninth instruction executed and wrote the right byte to the right address. It
 that it had finished, so nothing outside the core noticed it. Nine instructions retired with eight
 pulses, and that is the entire observable defect.
 
-A missing trigger does not fail your test. It quietly stops your test from testing, which is worse
-than a failure, because a failure is visible.
+A missing trigger does not fail your test; it stops part of your test from running, and nothing
+on the screen tells you. That is worse than a failure, which at least shows up.
 
 Check: the broken run says 8 comparisons.
 
@@ -148,7 +148,7 @@ does the arithmetic for the reader saves an hour, and costs one line.
 
 Check: `caught` on `B08`.
 
-## Part 5: Watch a pin that should never move
+## Part 5: Watch `halt`
 
 1. Write the second TODO: use `await sp.count_halt_cycles(n)`, which runs the loaded program for
    `n` cycles of execution and returns how many of them had `halt` high. Assert that it is zero.
@@ -178,8 +178,8 @@ because `RUN` is still asserted. Every value it produces is correct, in the righ
 right place. Its only symptoms are one wasted cycle and a one-cycle blip on a pin. On a real chip
 that is a performance bug (one store in a tight loop, run a million times, is a million wasted
 cycles) and a glitch any debugger can see, because anything watching `halt` sees the processor stop
-and start. "Functionally equivalent" is not the same as "correct". It is a claim about outputs, made
-by someone who has decided which outputs count.
+and start. "Functionally equivalent" is a claim about outputs, made by someone who has already
+decided which outputs count, so it does not mean "correct".
 
 Check: `caught` on `B13`, with `halt` high on 1 cycle.
 
@@ -218,7 +218,7 @@ Check: both `B13` failures appear.
    the core fetched its first instruction 57 clock cycles BEFORE uart_cmd(RUN) returned
    ```
 
-2. Explain `0x86` from `0x0C` using one rule. [Handshakes and timing](guide/the-handshake-is-the-contract.md#a-bfm-without-the-gap-corrupts-the-next-byte)
+2. Explain `0x86` from `0x0C` using one rule. [Handshakes and timing](guide/the-handshake-is-the-contract.md#sending-without-the-gap)
    has the answer.
 
 3. Change the command bytes and run it again:

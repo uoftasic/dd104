@@ -158,8 +158,8 @@ discarded.
    and arithmetic with `rA != rB` is wrong, you have answered questions 1, 3 and 4 at once and are
    looking at four lines of RTL.
 
-The difference between a five-minute debug and a two-hour one is rarely insight. It is whether you
-spent the first ten minutes narrowing or reading.
+A five-minute debug and a two-hour one rarely differ in insight. They differ in whether you spent
+the first ten minutes narrowing or reading.
 
 Check: your list of candidates has shrunk to one region of the design.
 

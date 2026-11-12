@@ -135,7 +135,7 @@ Now a failure gives a diagnosis you wrote before you needed it.
 Report differences, not just values. `expected 0x35, got 0x36 — a difference of +1` names the
 bug. `expected 0x35, got 0x36` makes the reader do subtraction at 2 a.m.
 
-## Two tests that pass and should not reassure you
+## Whole-sequence and random checks
 
 Comparing a whole sequence beats comparing one value. `the_wrap_is_where_the_bugs_live` collects
 five `(q, tc)` pairs and compares the list in one assertion, so a failure shows the whole
