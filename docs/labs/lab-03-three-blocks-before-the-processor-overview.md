@@ -34,12 +34,12 @@ failure in the processor is somewhere other than those blocks. Much of verificat
 the region a bug could be hiding in.
 
 ```bash
-mod dd104
+mod dd104     # in a new terminal, load .designinit first (Lab 01, Part 1)
 cd labs/lab-03-three-blocks-before-the-processor
 ```
 
-`make` runs everything in about a minute. The individual targets below are faster, and they are
-the ones you will use.
+`make` runs `pc`, `rf`, `alu` and then `check` in about a minute. You don't need to run it now: the
+individual targets below are faster, and they are the ones you will use.
 
 ## Part 1: The program counter
 
@@ -61,8 +61,8 @@ What does a complete unit test of a small block look like?
    ** TESTS=4 PASS=4 FAIL=0 SKIP=0                  2674.00 **
    ```
 
-   All five simulated times are exact. The 28 Icarus `sorry:` notes appear on these unit-level
-   compiles too; see [Output that is not an error](reference/output-that-is-not-an-error.md).
+   All five simulated times are exact. The same 28 Icarus `sorry:` notes you saw in Lab 02 appear
+   on these unit-level compiles; see [Output that is not an error](reference/output-that-is-not-an-error.md).
 
 2. Read `test_pc.py`. It is 120 lines including comments, and it is the model for everything you
    write in this lab: drive on one edge, sample after the other, and never let your stimulus race
@@ -101,7 +101,10 @@ Is `r0` hardwired to zero, as it is on RISC-V and MIPS?
    reads as zero and discards writes, and so does MIPS's `$zero`. Write down whether you expect
    the same here. Then check it: write `0xFF` into `r0` and read it back, then write a different
    value and read it again. One write landing is not proof, because a register that latched the
-   first write and then stuck would also pass.
+   first write and then stuck would also pass. The file's `write()` and `read()` helpers do one
+   write and one read; `t01` and `t02` show them in use. `make rf` runs against the correct
+   register file, so if your assertion fails, your expectation was wrong: fix the test, not the
+   RTL.
 
 3. Do `t04` and `t05`. They are two shapes you'll see everywhere: one write moves one register,
    and an enable that is not enabled writes nothing. Run `t05` for several cycles rather than one.
@@ -152,7 +155,8 @@ flag.
 
 > Write your specification model from the ISA, not from the Verilog. A model written by reading
 > the RTL agrees with the design about everything, including its bugs. That is the most common way
-> a verification effort wastes six months.
+> a verification effort wastes six months. `spec()` in `test_alu.py` is written that way, and it is
+> the model every check in this lab uses.
 
 1. Run the ALU tests:
 
@@ -173,7 +177,8 @@ flag.
    `393216`, `0 value mismatches` and `393224.00` are exact.
 
 That is six operations × 256 × 256, every legal vector the module can be given, checked against a
-specification model. There is no unexplored corner for a bug to sit in. Exhaustive testing is
+specification model. No corner of the input space is left unexplored (Part 5 shows what checking
+only the value misses). Exhaustive testing is
 usually not available: a pair of 8-bit operands is 65,536 vectors and fine, an 8-bit ALU with a
 3-bit opcode is 524,288 and fine, and a 32-bit adder is $2^{65}$ and never happening. When a block
 is small enough, brute force beats cleverness.
@@ -202,8 +207,9 @@ What does the number of wrong vectors tell you about a bug?
      First one: NAND(0x00, 0x01) = 0xFE, expected 0xFF.
    ```
 
-   `65024`, `65280` and the per-operation dictionaries are exact. Every other operation reports
-   zero, which is part of the diagnosis: an operation with no mismatches is not the broken one.
+   `65024`, `65280` and the per-operation dictionaries are exact. No other operation appears in
+   either dictionary, which is part of the diagnosis: an operation with no mismatches is not the
+   broken one.
 
 2. Derive both counts by hand. The counts from the run are only the check; the derivation is the
    exercise. `B01` swaps the operands of `SUB`. Which `SUB` vectors survive it?
@@ -237,7 +243,7 @@ What does the number of wrong vectors tell you about a bug?
    register that appears in nearly every program on this machine, is one of `B01`'s 512. In a
    four-register machine with no `NOT`, `NAND rX, rX` is how you write `NOT`, which makes it the
    most common `NAND` anyone writes, and it is exactly the case where `B02` is invisible. That is
-   what lets a bug survive review, and it is why they are in the catalogue.
+   what lets a bug survive review, and it is why they are in the bug catalogue.
 
    </details>
 
@@ -275,8 +281,9 @@ Can a testbench that checks only values see a bug in the `Z` flag?
 
    </details>
 
-2. See the same blind spot on the whole processor. In `labs/common`, run the thorough value-only
-   testbench and then the example testbench against `B03`:
+2. See the same blind spot on the whole processor. In `labs/common`, run `test_values_only.py`, a
+   thorough testbench that checks only values, and then `test_example.py`, the six-test example
+   from Lab 02, against `B03`:
 
    ```bash
    cd ../common
@@ -314,7 +321,8 @@ What does a sweep that checks the flags report on `B03`, and can you account for
    {'ADD': 3840, 'SUB': 3840, 'OR': 255, 'NAND': 255, 'SHL': 14400, 'SHR': 3136}
    ```
 
-   All eight numbers are exact. What does "0 value mismatches, 25,726 flag mismatches" tell you
+   All the numbers are exact; your message can be worded differently, but the counts should
+   match. What does "0 value mismatches, 25,726 flag mismatches" tell you
    that a single combined count of 25,726 would not?
 
    <details>

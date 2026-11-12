@@ -36,7 +36,7 @@ whole lab. The skill here is finding a bug in a design you cannot diff against a
 which is every design you will be paid to verify.
 
 ```bash
-mod dd104
+mod dd104     # in a new terminal, load .designinit first (Lab 01, Part 1)
 cd labs/lab-04-your-first-bug-hunt
 ```
 

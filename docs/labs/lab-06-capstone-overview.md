@@ -42,7 +42,7 @@ Use this coverage list as questions about your own suite. Each has an answer you
 The last two rows are `B12` and `B11`, and the fields row is `B10`.
 
 ```bash
-mod dd104
+mod dd104     # in a new terminal, load .designinit first (Lab 01, Part 1)
 cd labs/lab-06-capstone
 ```
 

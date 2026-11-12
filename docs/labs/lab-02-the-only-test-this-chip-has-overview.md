@@ -25,7 +25,7 @@ In this lab, "the golden core" is the correct SimProc, and the thirteen broken o
 as in [Lab 01, Part 1](labs/lab-01-the-adder-you-already-trust-overview.md#part-1-load-the-course):
 
 ```bash
-mod dd104
+mod dd104     # in a new terminal, load .designinit first (Lab 01, Part 1)
 cd labs/lab-02-the-only-test-this-chip-has
 ```
 
