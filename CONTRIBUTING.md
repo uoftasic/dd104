@@ -35,13 +35,21 @@ Only these three are fillable:
 ## Docs and labs
 
 - `docs/`: the published site. `docs/README.md` holds the Course path table, which alternates
-  Read rows (guide pages) and Do rows (one lab each). Keep `docs/_sidebar.md` in the same order.
+  Read rows (guide pages) and Do rows (one lab each) under the columns `| # | | What | Time |`.
+  Read and Do are plain text; a Do row links `Lab NN: Title` and ends with one sentence on what
+  you'll do. The row times add up to the total on the home page. Keep `docs/_sidebar.md` in the
+  same order, with the same lab names.
 - `docs/guide/`: reading only. Concepts, figures, worked examples and their output. No commands
   the student has to run; point to the lab part where they run it instead. Short "Check yourself"
   questions go at the end of the page.
-- `docs/labs/`: lab writeups, the only place students are told to run things. Shape: what you'll
-  build (2–3 lines), time, before you start, numbered parts of numbered steps each ending in a
-  "Check:", and Finishing.
+- `docs/labs/`: lab writeups, the only place students are told to run things. Title
+  `# Lab NN: Title`. Shape: what you'll build (2–3 lines), time, before you start, numbered parts
+  of numbered steps, each part opening with the question it answers and ending in a "Check:", and
+  Finishing. Questions sit at the step where they arise, with the answer in a collapsed
+  `<details>` block; optional parts go last, marked "(optional)". Finishing is "You're done when"
+  (one checkable line about the student's own work), then Questions (each with a collapsed answer
+  or a pointer to its step), then Submit (or nothing). Going further (optional) and a "Next on the
+  Course path" line come after it.
 - `docs/reference/`: lookup pages (tables, short entries).
 - `labs/`: runnable HDL, Python and data. Each `labs/<id>/README.md` links to its writeup and
   lists how to run it, its make targets and its files, without repeating the writeup's teaching.
