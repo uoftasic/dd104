@@ -26,8 +26,8 @@ Two consequences, and they cover almost everything a real program does:
 1. The first `ORI` after a reset is always right. R0 is 0, and `0 | imm` is
    `0 + imm` for every immediate.
 2. Building a constant out of disjoint bit groups is always right. `ORI 8`
-   then `ORI 3` — the natural way to assemble a value in a machine with a 5-bit
-   immediate — never overlaps, so it never diverges. Measured: 11 on both cores.
+   then `ORI 3`, the natural way to assemble a value in a machine with a 5-bit
+   immediate, never overlaps, so it never diverges. Measured: 11 on both cores.
 
 The bug only appears when an immediate sets a bit that R0 already has. T02 exists
 to force exactly that.
@@ -39,8 +39,8 @@ naturally pick. This is the hardest class of bug to find by inspection *and* by
 random stimulus, because the disagreement set is a thin slice of the input space
 and programmers avoid it without meaning to.
 
-Getting a student to construct the failing case from the property — "when do OR
-and ADD differ?" — rather than by trial and error is the point of the exercise.
+Getting a student to construct the failing case from the property ("when do OR
+and ADD differ?") rather than by trial and error is the point of the exercise.
 
 ## The fix
 

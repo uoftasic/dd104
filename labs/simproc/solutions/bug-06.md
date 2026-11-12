@@ -22,7 +22,7 @@ its low bit reaches the ALU, so 2 collapses to 0 and 3 collapses to 1.
 
 ## Why it hides
 
-Shift by 0 and shift by 1 are both correct — and shift by 1 is what almost
+Shift by 0 and shift by 1 are both correct, and shift by 1 is what almost
 everyone writes. Only amounts 2 and 3 are wrong, in both directions.
 
 ## What it teaches
@@ -35,7 +35,7 @@ finishing.
 
 The unit test that cannot find it. Put this variant next to bug-01, bug-02
 and bug-03 in the same course. Those three are found by the ALU sweep in 19
-seconds. This one is *not* — the ALU sweep is 0/393,216 clean, because the ALU
+seconds. This one is not: the ALU sweep is 0/393,216 clean, because the ALU
 shifts perfectly well by whatever amount it is handed, and the wrong amount is
 being handed to it from outside. That is the boundary between a unit test and an
 integration test, drawn by measurement instead of by definition, and it is the

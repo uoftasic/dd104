@@ -37,7 +37,7 @@ The clean core is `0xAA` and 6/6 at all seven.
 ## Why it hides
 
 Set the labs' bus-functional model to `uio_in = 8` (`clk_per_bit = 32`) and this
-core is indistinguishable from a correct one — not "mostly fine", but
+core is indistinguishable from a correct one. Not "mostly fine", but
 10/10 on the full systematic suite, every program, every value.
 
 The drift is one clock per bit against a bit period of 32 clocks; eight clocks of

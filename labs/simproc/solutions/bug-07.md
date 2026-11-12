@@ -21,20 +21,20 @@ exact.
 | Suite | 9/10 — caught by T10, and nothing else |
 | Symptom demo | `LOAD r0,r1` with R1 = 40 and `mem[40] = 90` gives R0 = 6 |
 
-6 is the byte at address 0 — the first instruction of the program, read as data,
+6 is the byte at address 0: the first instruction of the program, read as data,
 because R0 held 0.
 
 ## Why it hides
 
-It is invisible whenever `rA == rB`. And `LOAD rX, rX` — load through a pointer,
-into the register that held the pointer — is not a contrived case, it is a real
+It is invisible whenever `rA == rB`. And `LOAD rX, rX` (load through a pointer
+into the register that held the pointer) is not a contrived case. It is a real
 idiom: you have finished with the address and you want the value.
 
 ## Ship the story, not just the bug
 
 The first `LOAD`/`STORE` test written for this core, T06, used `LOAD r1,r1`. It
 passes on this variant. The bug was found by injecting it and discovering that
-the test suite did not move, and T10 was written specifically to catch it —
+the test suite did not move, and T10 was written specifically to catch it:
 "LOAD and STORE where the pointer register and the data register differ."
 
 That is a better lesson than the bug. The person writing the testbench had a
