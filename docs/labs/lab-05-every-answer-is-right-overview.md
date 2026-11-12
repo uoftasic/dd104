@@ -36,7 +36,11 @@ cd labs/lab-05-every-answer-is-right
 
 ## Part 1: The architectural suite against both cores
 
-1. Run Lab 04's finished suite against both cores in this lab's pool:
+Does a suite that checks every architectural result catch these two cores?
+
+1. Lab 04's finished suite compares every register, flag and byte of memory with the golden model.
+   Before you run it against this lab's two cores, write down whether you expect it to catch
+   either. Then run:
 
    ```bash
    make blind
@@ -65,13 +69,24 @@ cd labs/lab-05-every-answer-is-right
 PC, both flags and every byte of memory with the golden model after every instruction of a mixed
 program, plus every shift amount in both directions, all sixteen branch displacements, a compare
 followed by two branches, and `LOAD` and `STORE` through pointers in a different register from the
-data. It catches every bug in Labs 03 and 04. Nothing is wrong with it; it reads architectural
-state, and neither of these bugs is in architectural state. More vectors, programs or register
-assertions will not reach them. A different kind of check will.
+data. It catches every bug in Labs 03 and 04.
+
+2. Would more vectors, programs or register assertions help it catch these two?
+
+   <details>
+   <summary>Answer</summary>
+
+   No. Nothing is wrong with the suite; it reads architectural state, and neither of these bugs is
+   in architectural state. More vectors, programs or register assertions will not reach them. A
+   different kind of check will.
+
+   </details>
 
 Check: three green rows, two of them on broken cores.
 
 ## Part 2: Count the pulses
+
+How many clock cycles should this lab's program take, and how many `done` pulses?
 
 1. Run the shipped `test_lab05.py` against the golden core:
 
@@ -88,14 +103,18 @@ Check: three green rows, two of them on broken cores.
 
    `37` and `9` are exact.
 
-2. Work out the 37 yourself. Every test in this lab uses the same nine-instruction program, one of
-   them a `STORE`, and its cost is arithmetic:
+2. Work out the 37 yourself from the instruction costs in the table at the top of this page. Every
+   test in this lab uses the same nine-instruction program, one of them a `STORE`. Write the sum
+   down; you will assert it in Part 6.
+
+   <details>
+   <summary>Answer</summary>
 
    ```
    SUB 4 + ORI 5 + SHL 4 + SUB 4 + ADD 4 + SUB 4 + ORI 5 + ADD 4 + STORE 3 = 37
    ```
 
-   Write that sum down; you will assert it in Part 6.
+   </details>
 
 The shipped `t02` reports the pulse count and asserts almost nothing about it, only that at least
 one instruction retired. That is deliberate, as the next part shows.
@@ -104,7 +123,10 @@ Check: `37 clock cycles` and `9 comparisons` in the log.
 
 ## Part 3: The shipped file against `B08`
 
-1. Run the shipped file against `B08`:
+What happens to a scoreboard triggered by `done` on a core that drops a `done` pulse?
+
+1. Before you run, predict whether the shipped file, which only asserts that at least one
+   instruction retired, will catch `B08`. Then run it:
 
    ```bash
    make check BUG=B08
@@ -114,18 +136,27 @@ Check: `37 clock cycles` and `9 comparisons` in the log.
 
 2. Find the same log line from the broken run. It says `8 comparisons for a 9-instruction program`.
 
-Nothing went red and no assertion failed. A scoreboard triggered by `done` would have compared
-eight machine states with the model, found all eight correct (they are), and reported a clean run.
-The ninth instruction executed and wrote the right byte to the right address. It never signalled
-that it had finished, so nothing outside the core noticed it. Nine instructions retired with eight
-pulses, and that is the entire observable defect.
+3. Nothing went red and no assertion failed. What would a scoreboard triggered by `done` have
+   reported on this core, and why is that worse than a failure?
 
-A missing trigger does not fail your test; it stops part of your test from running, and nothing
-on the screen tells you. That is worse than a failure, which at least shows up.
+   <details>
+   <summary>Answer</summary>
+
+   It would have compared eight machine states with the model, found all eight correct (they
+   are), and reported a clean run. The ninth instruction executed and wrote the right byte to the
+   right address. It never signalled that it had finished, so nothing outside the core noticed it.
+   Nine instructions retired with eight pulses, and that is the entire observable defect.
+
+   A missing trigger does not fail your test; it stops part of your test from running, and nothing
+   on the screen tells you. A failure at least shows up.
+
+   </details>
 
 Check: the broken run says 8 comparisons.
 
 ## Part 4: Assert the number
+
+Can you make the pulse count fail loudly, with a message that points at the culprit?
 
 1. Do the first TODO in `test_lab05.py`: replace `assert pulses > 0` with the exact count, and put
    the count in the message.
@@ -150,6 +181,8 @@ Check: `caught` on `B08`.
 
 ## Part 5: Watch `halt`
 
+Is `halt` ever high while the core is running?
+
 1. Write the second TODO: use `await sp.count_halt_cycles(n)`, which runs the loaded program for
    `n` cycles of execution and returns how many of them had `halt` high. Assert that it is zero.
 
@@ -173,31 +206,51 @@ This is the cheapest useful assertion in the course: one number, one expected va
 and zero is the only correct answer, because while `RUN` is asserted the core is not supposed to
 visit `IDLE` at all.
 
-`B13` drops the core into `IDLE` for one cycle after every `STORE` and then restarts it at once,
-because `RUN` is still asserted. Every value it produces is correct, in the right order and the
-right place. Its only symptoms are one wasted cycle and a one-cycle blip on a pin. On a real chip
-that is a performance bug (one store in a tight loop, run a million times, is a million wasted
-cycles) and a glitch any debugger can see, because anything watching `halt` sees the processor stop
-and start. "Functionally equivalent" is a claim about outputs, made by someone who has already
-decided which outputs count, so it does not mean "correct".
+3. Every value `B13` produces is correct, in the right order and the right place. Is it a real bug?
+   Decide before you open the answer, which also says what `B13` changes; skip it if you want to
+   find that yourself in Part 8.
+
+   <details>
+   <summary>Answer</summary>
+
+   `B13` drops the core into `IDLE` for one cycle after every `STORE` and then restarts it at once,
+   because `RUN` is still asserted. Its only symptoms are one wasted cycle and a one-cycle blip on a
+   pin. On a real chip that is a performance bug (one store in a tight loop, run a million times,
+   is a million wasted cycles) and a glitch any debugger can see, because anything watching `halt`
+   sees the processor stop and start. "Functionally equivalent" is a claim about outputs, made by
+   someone who has already decided which outputs count, so it does not mean "correct".
+
+   </details>
 
 Check: `caught` on `B13`, with `halt` high on 1 cycle.
 
 ## Part 6: Assert the clock
+
+Does the program take exactly as many cycles as the instruction costs say?
 
 1. Do the third TODO: assert `cycles == 37`, with the sum from Part 2 in the failure message.
 
 2. Run `make check BUG=B13` again. You should see the second failure from Part 5,
    `the program took 38 clock cycles, expected 37.`
 
-$38 - 37 = 1$, and the program has exactly one `STORE`: one extra cycle, once per store. Had the
-number been 42 with five stores, the same division would point at the same instruction. This check
-turns "the answer is right and arrived late" into a red row with a number attached, and it costs one
-addition done once from the instruction costs in [the ISA reference](reference/simproc-instruction-set.md).
+3. What does $38 - 37$ tell you about where to look?
+
+   <details>
+   <summary>Answer</summary>
+
+   $38 - 37 = 1$, and the program has exactly one `STORE`: one extra cycle, once per store. Had the
+   number been 42 with five stores, the same division would point at the same instruction. This
+   check turns "the answer is right and arrived late" into a red row with a number attached, and it
+   costs one addition done once from the instruction costs in
+   [the ISA reference](reference/simproc-instruction-set.md).
+
+   </details>
 
 Check: both `B13` failures appear.
 
 ## Part 7: The UART receiver's busy time
+
+What happens to a serial command when the sender doesn't wait for the receiver to finish?
 
 1. In `labs/common`, run the handshake-timing tests:
 
@@ -218,10 +271,21 @@ Check: both `B13` failures appear.
    the core fetched its first instruction 57 clock cycles BEFORE uart_cmd(RUN) returned
    ```
 
-2. Explain `0x86` from `0x0C` using one rule. [Handshakes and timing](guide/the-handshake-is-the-contract.md#sending-without-the-gap)
-   has the answer.
+2. Explain `0x86` from `0x0C` using one rule.
 
-3. Change the command bytes and run it again:
+   <details>
+   <summary>Answer</summary>
+
+   Every bit after the first frame was sampled one bit period late, so bit *i* of the received
+   byte is bit *i+1* of the sent one, and the top bit comes from the stop bit, which is always 1:
+   `(0x0C >> 1) | 0x80 = 0x86`. `0x00` becomes `0x80` by the same rule.
+   [Handshakes and timing](guide/the-handshake-is-the-contract.md#sending-without-the-gap) has the
+   full explanation.
+
+   </details>
+
+3. Change the command bytes. Before you run, use your rule to predict what `0x34, 0x12` will
+   arrive as. Then run it:
 
    ```bash
    sed 's/^COMMAND = (CMD_SET_PC, 12, 0)/COMMAND = (CMD_SET_PC, 0x34, 0x12)/' \
@@ -240,9 +304,21 @@ Check: both `B13` failures appear.
 
    The prediction and the measurement agree.
 
-4. Repeat step 3 with `0x0F, 0x33` and with `0x55, 0xFF` in place of `0x34, 0x12`. Compare your
-   results with the table in [Other bytes](guide/the-handshake-is-the-contract.md#other-bytes). Which
-   one does not follow the one-bit-period rule, and why does `0x55, 0xFF` deliver only two bytes?
+4. Repeat step 3 with `0x0F, 0x33` and with `0x55, 0xFF` in place of `0x34, 0x12`. Which one
+   delivers three bytes but doesn't follow the one-bit-period rule, and why does `0x55, 0xFF`
+   deliver only two bytes?
+
+   <details>
+   <summary>Answer</summary>
+
+   `0x0F, 0x33` arrives as `0x99 0x87 0xE6`: the second frame slips cleanly,
+   then the receiver resynchronises onto a different edge and the third byte is neither what you
+   sent nor what a uniform slip would give (`0x99`). `0x55, 0xFF` arrives as `0x99 0xAA`, two bytes
+   only: after its start bit, `0xFF` is a solid run of ones with no falling edge for the receiver to
+   latch onto, so the third frame never happens and the PC stays 0. The table in
+   [Other bytes](guide/the-handshake-is-the-contract.md#other-bytes) has all four runs.
+
+   </details>
 
 5. Delete your copy and go back to the lab directory:
 
@@ -254,6 +330,8 @@ Check: both `B13` failures appear.
 Check: you can explain the received bytes for at least the first two commands.
 
 ## Part 8: Hunt them properly
+
+Can you find and fix both bugs with your new checks?
 
 1. Hunt both bugs in the pool, one at a time:
 
@@ -275,10 +353,7 @@ Check: you can explain the received bytes for at least the first two commands.
 
 Check: `make verdict` passes on both bugs.
 
-## Finishing
-
-You are done when `make verdict` says `VERDICT: PASS` on the core you were dealt, and ideally on
-both, since there are only two. There is nothing to submit; keep `test_lab05.py` for Lab 06.
+## Expected results
 
 The complete difference between a working processor and these two:
 
@@ -289,7 +364,7 @@ The complete difference between a working processor and these two:
 | Clock cycles, `sp.run()` | 37 | 37 | 38 |
 | Every register, flag, byte of memory, PC | Correct | Correct | Correct |
 
-All twelve figures are exact. Three of them are wrong and nine are not.
+All twelve figures are exact, and three of them differ from the golden core's.
 
 | Check | Expected | |
 |---|---|---|
@@ -299,16 +374,37 @@ All twelve figures are exact. Three of them are wrong and nine are not.
 | `make sim TB=test_handshake_timing` in `labs/common` | `TESTS=4 PASS=4`, `90910.00` ns | exact |
 | `make verdict`, when done | three green rows, on both bugs | |
 
-Two questions to settle before Lab 06:
+## Finishing
 
-- `test_architecture.py` is Lab 04's suite with one assertion removed: the exact cycle count in
-  `t04_a_loop`. With it left in, Lab 04's suite catches `B13` by accident and `make blind` does not
-  work. So was Lab 04's cycle assertion a protocol test living in an architectural suite? It was,
-  and it is a good test that belongs in Lab 04. "Architectural" and "protocol" are useful because
-  they tell you what kinds of check you are missing, not because every test fits in exactly one box.
-- If you take one habit from this lab: a scoreboard must assert how many times it fired, not just
-  that every comparison it made agreed. One counter and two lines turn the worst failure mode in
-  verification into an ordinary red row.
+You're done when `make verdict` shows three green rows and `VERDICT: PASS` on both `B08` and
+`B13`, with row 2 caught by your checks from Parts 4–6.
 
-Next: read [Writing the bug report](guide/writing-the-bug-report.md), then do
-[Lab 06](labs/lab-06-capstone-overview.md).
+Questions:
+
+1. `test_architecture.py` is Lab 04's suite with one assertion removed: the exact cycle count in
+   `t04_a_loop`. With it left in, Lab 04's suite catches `B13` by accident and `make blind` does not
+   work. So was Lab 04's cycle assertion a protocol test living in an architectural suite?
+
+   <details>
+   <summary>Answer</summary>
+
+   It was, and it is a good test that belongs in Lab 04. "Architectural" and "protocol" are useful
+   because they tell you what kinds of check you are missing, not because every test fits in
+   exactly one box.
+
+   </details>
+
+2. What would have made any scoreboard catch `B08`, however it was triggered?
+
+   <details>
+   <summary>Answer</summary>
+
+   Asserting how many times it fired, not just that every comparison it made agreed. One counter
+   and two lines turn the worst failure mode in verification into an ordinary red row.
+
+   </details>
+
+Submit: nothing for this lab. Keep `test_lab05.py`; you'll bring it into Lab 06.
+
+Next on the Course path: read [Writing the bug report](guide/writing-the-bug-report.md), then do
+[Lab 06: Capstone](labs/lab-06-capstone-overview.md).
