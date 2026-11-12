@@ -1,114 +1,51 @@
-# Lab 03 — Three blocks before the processor
+# Lab 03: Three blocks before the processor
 
 Writeup: [`docs/labs/lab-03-three-blocks-before-the-processor-overview.md`](../../docs/labs/lab-03-three-blocks-before-the-processor-overview.md)
-· live: <https://uoftasic.com/dd104/#/labs/lab-03-three-blocks-before-the-processor>
+· live: <https://uoftasic.com/dd104/#/labs/lab-03-three-blocks-before-the-processor-overview>
 
-SimProc is 1,178 lines. Three of its modules are 16, 31 and 34 lines, and cocotb can elaborate
-any one of them on its own as the top level. Two of the three can be *finished* — tested until
-there is no behaviour left in them that is untested — and the third can be driven
-exhaustively, all 393,216 vectors, in about twenty seconds.
+Unit tests for three SimProc modules, each elaborated on its own as the simulation top level:
+`program_counter` (16 lines of RTL), `register_file` (31) and `ALU` (34, driven with all 393,216
+legal vectors).
 
 ```bash
 cd labs/lab-03-three-blocks-before-the-processor
 make
 ```
 
-Inside the workbench container (`hpretl/iic-osic-tools:2026.08` — cocotb 2.0.1, Icarus
-Verilog 14.0). No environment setup. Includes `../common/lab.mk`'s sibling `sim.mk`, so you
-need the repository, not just this directory.
+Runs in the workbench container (`hpretl/iic-osic-tools:2026.08`: cocotb 2.0.1, Icarus Verilog
+14.0) with no environment setup. It uses `../common/sim.mk` and the RTL in `../common/rtl/`, so
+you need the whole repository, not just this directory.
 
 ## Targets
 
-| | | wall clock |
+| Target | What it does | Wall clock |
 |---|---|---|
 | `make` | `pc`, `rf`, `alu`, then the verdict | ~60 s |
-| `make pc` | `test_pc.py` against `program_counter` (16 lines of RTL) | ~3 s |
-| `make rf` | `test_rf.py` against `register_file` (31 lines) | ~1.5 s |
-| `make alu` | `test_alu.py` against `ALU` (34 lines, 393,216 vectors) | ~23 s |
-| `make check` | the verdict: `test_alu` passes the golden ALU, FAILS on `BUG` (default `B01`) | ~45 s |
-| `make check BUG=B03` | pick a different broken ALU | |
+| `make pc` | `test_pc.py` against `program_counter` | ~3 s |
+| `make rf` | `test_rf.py` against `register_file` | ~1.5 s |
+| `make alu` | `test_alu.py` against `ALU`, all 393,216 vectors | ~23 s |
+| `make check` | the verdict: `test_alu` passes the golden ALU and FAILS on `BUG` (default `B01`) | ~45 s |
+| `make check BUG=B03` | the same, against a different broken ALU | |
 | `make check-alu-bugs` | all three ALU bugs at once | ~90 s |
 | `make clean` | remove `build/` | |
 
-`TB_PC`, `TB_RF` and `TB_ALU` override which module runs against which block.
+`TB_PC`, `TB_RF` and `TB_ALU` choose which module runs against which block.
 
 ## Files
 
-| | |
+| File | What it is |
 |---|---|
-| `test_pc.py` | **ships complete.** Four tests, and after them `program_counter` has no untested behaviour. Read it as the model for the other two. |
-| `test_rf.py` | **ships with two tests and three TODOs.** t03 finds an architectural fact you will use in every later lab. |
-| `test_alu.py` | **ships with three tests and one TODO.** t02 is exhaustive on values; the TODO is the flags. |
-| `check.py` | the unit-level verdict. Imports the same bug catalogue the processor-level labs use. |
-| `solutions/` | reference solutions for `test_alu.py` and `test_rf.py`. Not before your own run. |
+| `test_pc.py` | ships complete: four tests, after which `program_counter` has no untested behaviour |
+| `test_rf.py` | ships with two tests and three TODOs |
+| `test_alu.py` | ships with three tests and one TODO (the flags) |
+| `check.py` | the unit-level verdict; it uses the same bug catalogue as the processor-level labs |
+| `solutions/` | reference `test_alu.py` and `test_rf.py`; open them after your own run passes |
 
-The RTL is `../common/rtl/simproc_system.sv` — the whole 1,178-line file, compiled every time.
-cocotb elaborates one module from it as the top level and the other 1,100 lines are simply not
-connected to anything.
+The RTL is the whole 1,178-line `../common/rtl/simproc_system.sv`, compiled every time; cocotb
+elaborates one module from it as the top level.
 
-## Golden numbers
+## Done
 
-`make alu` on the clean ALU:
-
-```
-393216 vectors checked, 0 value mismatches
-** test_alu.t02_every_vector_the_alu_can_be_given   PASS      393216.00 **
-** TESTS=3 PASS=3 FAIL=0 SKIP=0                               393224.00 **
-```
-
-**393,216 vectors, 0 mismatches, 393,224.00 ns** — all golden. Six operations × 256 × 256.
-About 20 s of wall clock, which is BALLPARK.
-
-`make check-alu-bugs` on the shipped `test_alu.py`:
-
-```
-  caught  B01_sub_operands_swapped           3 tests, 2 FAILED
-  caught  B02_nand_is_nor                    3 tests, 2 FAILED
-  MISSED  B03_zero_flag_low_nibble           3 tests, all passed
-------------------------------------------------------------------------
- 2 of 3 ALU bugs caught.
-```
-
-and once the flag TODO is done, `3 of 3`. The counts each bug produces are golden and each one
-factors into a sentence about the bug:
-
-| | value mismatches | flag mismatches |
-|---|---|---|
-| B01 | `{'SUB': 65024}` | 0 |
-| B02 | `{'NAND': 65280}` | 0 |
-| B03 | **0** | `{'ADD': 3840, 'SUB': 3840, 'OR': 255, 'NAND': 255, 'SHL': 14400, 'SHR': 3136}` — 25,726 total |
-
-## `NO COUNT` — and why it is not `2 of 3`
-
-There is one more thing `make check-alu-bugs` can print, and it is deliberately not a number:
-
-```
-  BROKEN  B01_sub_operands_swapped           3 tests, 1 BLEW UP, 1 FAILED
-  BROKEN  B02_nand_is_nor                    3 tests, 1 BLEW UP, 1 FAILED
-  BROKEN  B03_zero_flag_low_nibble           3 tests, 1 BLEW UP
-------------------------------------------------------------------------
- NO COUNT. 3 of the 3 runs did not finish:
-   B01_sub_operands_swapped: t02_every_vector_the_alu_can_be_given BLEW UP
-      NameError: name 'value_per_op' is not defined
-```
-
-That is the shape of the worst bug this course has had. A misspelled variable in the code that
-builds the *failure message* never runs while everything is correct — so the testbench passes
-the golden ALU and raises `NameError` on all three broken ones. cocotb records `NameError` and
-`AssertionError` in `results.xml` the same way, as `<failure>`, so the old `check.py` counted
-the three crashes as three catches and printed:
-
-```
- 3 of 3 ALU bugs caught.
- Every bug the catalogue puts inside the ALU.
-```
-
-A crash is not a catch. It compared nothing, so it says nothing about the ALU — and it would
-crash identically on a perfectly correct one. [`../common/verdict.py`](../common/verdict.py) is
-the one place in DD104 that tells `the assertion fired` apart from `the test blew up`, and
-`cd ../common && make selftest` is what keeps it that way.
-
-## Definition of done
-
-`make check-alu-bugs` says `3 of 3 ALU bugs caught`, and `make rf` runs five tests instead of
-two.
+`make check-alu-bugs` says `3 of 3 ALU bugs caught`, and `make rf` runs five tests instead of two.
+If it says `NO COUNT` instead, one of your tests crashed rather than caught anything; the writeup's
+Part 6 covers it.
