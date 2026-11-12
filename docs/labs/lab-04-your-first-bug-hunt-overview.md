@@ -4,7 +4,7 @@ You'll be dealt a processor with one line changed, without being told which line
 tests until one goes red, narrow the bug down, fix the line, and prove the fix. The deliverable is
 the failing test, not the fix, and the grader checks that specifically.
 
-This lab takes about 2 hours 30 minutes.
+This lab takes about 2 hours 30 minutes, plus whatever time you give the optional Part 8.
 
 Package: [`labs/lab-04-your-first-bug-hunt/`](https://github.com/uoftasic/dd104/tree/main/labs/lab-04-your-first-bug-hunt)
 
@@ -42,6 +42,8 @@ cd labs/lab-04-your-first-bug-hunt
 
 ## Part 1: Take delivery
 
+Which bugs could your core have, and what can you already rule out?
+
 1. Deal a mystery core:
 
    ```bash
@@ -77,6 +79,8 @@ Check: `core/` exists and the banner lists five candidates.
 
 ## Part 2: Start from what you have
 
+What does the shipped suite never drive?
+
 1. Run the shipped suite against your core:
 
    ```bash
@@ -96,12 +100,23 @@ Check: `core/` exists and the banner lists five candidates.
 
 2. Read the three questions at the top of `test_lab04.py`, then read `t02` and `t03` against them.
    Both were written with a blind spot on purpose. The shipped tests already assert the right
-   things about what they drive. What they don't do is shift by 2, branch backwards, or run an
-   instruction where `rA` and `rB` are different registers. Which of those does each test avoid?
+   things about what they drive. What does each of `t02` and `t03` never drive?
+
+   <details>
+   <summary>Answer</summary>
+
+   `t02` only ever shifts by 1, so the two-bit amount field is sampled at one value (question 1).
+   `t03` loads with `LOAD r1, r1`, so the pointer and the destination are the same register
+   (question 2). Neither branches; the one backward branch in the file is the loop in
+   `t04_a_loop`.
+
+   </details>
 
 Check: you can name the blind spot in `t02` and in `t03`.
 
 ## Part 3: Narrow it down
+
+Which region of the design is your bug in?
 
 `make hunt` prints a one-line summary and discards the simulator's output, so the loop stays
 quick. To see what a probe program prints, use `make probe`, which is the same run with nothing
@@ -161,9 +176,17 @@ discarded.
 A five-minute debug and a two-hour one rarely differ in insight. They differ in whether you spent
 the first ten minutes narrowing or reading.
 
+If you have spent a real hour on one core and are stuck, `make reveal` tells you the bug's name and
+what it hides behind, but not the line. You still have to write the test that catches it, because
+knowing a bug's name and owning a test for it are different things, and only the test stays with
+the project. Using it after a genuine hour is a reasonable engineering decision. Take the hint,
+write the test, and move on.
+
 Check: your list of candidates has shrunk to one region of the design.
 
 ## Part 4: Let the model find the first disagreement
+
+Where does your core first disagree with the golden model?
 
 1. Add a golden-model trace to a test:
 
@@ -185,13 +208,22 @@ Check: your list of candidates has shrunk to one region of the design.
    and both flags after every instruction, and they take less code than the directed tests around
    them.
 
-3. Write down the model's limit next to the test: `golden.py` models architectural state only, and
-   has no idea `done` or `halt` exist. A core that gets every answer right and its handshake wrong
-   passes it. That is [Lab 05](labs/lab-05-every-answer-is-right-overview.md).
+3. What can this trace not see? Write the answer down next to the test.
+
+   <details>
+   <summary>Answer</summary>
+
+   `golden.py` models architectural state only, and has no idea `done` or `halt` exist. A core
+   that gets every answer right and its handshake wrong passes it. That is
+   [Lab 05](labs/lab-05-every-answer-is-right-overview.md).
+
+   </details>
 
 Check: you have a trace test, and you know what it cannot see.
 
 ## Part 5: The bugs one test catches
+
+Which bugs does only a test written on purpose catch?
 
 1. Whatever you were dealt, add these two tests to `test_lab04.py`:
 
@@ -221,17 +253,26 @@ Check: you have a trace test, and you know what it cannot see.
    Two of the five are caught by exactly one test each, and in both cases it is a test that had to
    be written on purpose after everything else had passed.
 
-The shipped `t03` tests `LOAD` as `LOAD r1, r1`, loading through a pointer into itself. That is a
-real idiom, used when you are walking a list and no longer need the address. It is also correct on
-a core that reads the address from the wrong register field, because on that instruction both
-fields name the same register. A golden-model comparison over 27 instructions missed it too.
-Nothing about `LOAD r1, r1` says it is insufficient. The habit that fixes it: make every operand
-distinct on purpose, and check the register that should not have moved as well as the one that
-should.
+4. The shipped `t03` tests `LOAD` as `LOAD r1, r1`. Why does it pass on `B07`, which reads the
+   load address from the wrong register field?
+
+   <details>
+   <summary>Answer</summary>
+
+   On `LOAD r1, r1` both fields name the same register, so reading the address from the wrong
+   field gives the right address. `LOAD r1, r1` is a real idiom, used when you are walking a list
+   and no longer need the address, and nothing about it says it is insufficient. A golden-model
+   comparison over 27 instructions missed `B07` too. The habit that fixes it: make every operand
+   distinct on purpose, and check the register that should not have moved as well as the one that
+   should.
+
+   </details>
 
 Check: `make check BUG=B07` and `make check BUG=B09` both say `caught`.
 
 ## Part 6: What random stimulus reaches
+
+What can random stimulus reach, and what can it never reach?
 
 `labs/common/test_reference.py` catches all thirteen bugs in eleven tests, and one of them, `R10`,
 runs eight random programs and compares the registers with the golden model after each.
@@ -251,7 +292,17 @@ runs eight random programs and compares the registers with the golden model afte
 2. Read the docstring of `random_program` in `test_reference.py`. Why does it never emit a `LOAD`,
    a `STORE` or a backward branch?
 
-3. Run the reference suite against `B03`:
+   <details>
+   <summary>Answer</summary>
+
+   A random register value is a random address, and half of them are outside the 64-byte RAM. A
+   random backward branch is an infinite loop. Both are worth testing, with stimulus you designed
+   rather than stimulus you rolled.
+
+   </details>
+
+3. `gap` shows the random programs entering `B03`'s window. Before you run, predict whether `R10`
+   catches `B03`. Then run the reference suite against it:
 
    ```bash
    make check TB=test_reference BUG=B03
@@ -267,15 +318,23 @@ runs eight random programs and compares the registers with the golden model afte
                AssertionError: after r1 = 16 (0b00010000) the Z flag is 1.
    ```
 
-   One test catches it, and it is not `R10`, even though `gap` shows the random programs entered
-   `B03`'s window. `R10` compares registers only. The same is true of `B07`: exactly one test
-   (`R06_load_store_distinct_registers`) catches it, and it is not the random one.
+   One test catches it, and it is not `R10`. Why not?
 
-Random stimulus with no coverage model samples; it does not replace thinking about the input.
+   <details>
+   <summary>Answer</summary>
+
+   `R10` compares registers only, so a wrong `Z` flag passes it even in a program that reaches the
+   window. The same is true of `B07`: exactly one test (`R06_load_store_distinct_registers`)
+   catches it, and it is not the random one, which never emits a `LOAD`. Random stimulus with no
+   coverage model samples; it does not replace thinking about the input.
+
+   </details>
 
 Check: you can say why `R10` misses `B03` and can never reach `B07`.
 
 ## Part 7: Fix it and get the third row
+
+Can you fix the line and prove the fix with a test?
 
 1. Once you have a test that fails on your core, find and edit the line in `core/simproc_system.sv`.
 
@@ -316,7 +375,9 @@ to a patch with no test.
 
 Check: `make verdict` says `VERDICT: PASS`.
 
-## Part 8: Do it again
+## Part 8: Do it again (optional)
+
+Can you find the next one faster?
 
 1. Deal another core with `make new`. There are five in the pool, and they get quicker. To practise
    a particular shape rather than be surprised, pick one:
@@ -330,17 +391,7 @@ Check: `make verdict` says `VERDICT: PASS`.
 The first hunt teaches you the harness. The third teaches you the question list, which is the part
 that transfers.
 
-If you have spent a real hour on one core and are stuck, `make reveal` tells you the bug's name and
-what it hides behind, but not the line. You still have to write the test that catches it, because
-knowing a bug's name and owning a test for it are different things, and only the test stays with
-the project. Using it after a genuine hour is a reasonable engineering decision. Take the hint,
-write the test, and move on.
-
-## Finishing
-
-You are done when `make verdict` says `VERDICT: PASS`, three green rows, on the core you were
-dealt. There is nothing to submit; keep `test_lab04.py`, because you will bring it into Lab 05 and
-Lab 06.
+## Expected results
 
 | Check | Expected | |
 |---|---|---|
@@ -355,5 +406,12 @@ Lab 06.
 The `sorry:` notes, and `make: *** [...] Error 1` under a FAIL verdict, are still normal. See
 [Output that is not an error](reference/output-that-is-not-an-error.md).
 
-Next: read [Handshakes and timing](guide/the-handshake-is-the-contract.md), then
-do [Lab 05](labs/lab-05-every-answer-is-right-overview.md).
+## Finishing
+
+You're done when `make verdict` on the core you were dealt shows three green rows and
+`VERDICT: PASS`, with row 2 caught by a test you wrote.
+
+Submit: nothing for this lab. Keep `test_lab04.py`; you'll bring it into Lab 05 and Lab 06.
+
+Next on the Course path: read [Handshakes and timing](guide/the-handshake-is-the-contract.md), then
+do [Lab 05: Every answer is right](labs/lab-05-every-answer-is-right-overview.md).
