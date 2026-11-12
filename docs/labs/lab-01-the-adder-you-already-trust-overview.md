@@ -60,7 +60,7 @@ Package: [`labs/lab-01-the-adder-you-already-trust/`](https://github.com/uoftasi
    mod dd104          # every time after that
    ```
 
-   You should see:
+   Between them, the two commands print:
 
    ```
    Cloning https://github.com/uoftasic/dd104.git
@@ -75,10 +75,10 @@ Package: [`labs/lab-01-the-adder-you-already-trust/`](https://github.com/uoftasi
 
    | What you see | What it means |
    |---|---|
-   | `bash: /foss/designs/common/.designinit: No such file or directory` | The workspace is not mounted. `ls /foss/designs/` should list `common/` and `modules/`. If it is empty, relaunch `start_vnc.sh` from your `workspace` clone (see [IC101](https://uoftasic.com/ic101/)). You can still run every lab, because `make` alone needs none of this. |
+   | `bash: /foss/designs/common/.designinit: No such file or directory` | The workspace is not mounted. `ls /foss/designs/` should list `common/` and `modules/`. If it is empty, relaunch `start_vnc.sh` from your `workspace` clone (see [IC101](https://uoftasic.com/ic101/)). You can still run every lab from any clone of this repo, because `make` alone needs none of this. |
    | `bash: mod: command not found` | You did not run step 2 in this terminal. Every new tab starts clean. |
    | `mod: no such module: dd104` | You ran `mod dd104` before `mod add dd104`. |
-   | `fatal: could not read Username for 'https://github.com'` | git could not read the repo anonymously and is asking you to log in. Check the spelling. If it is right, ask in [Discord](https://discord.gg/hrJnP5UsGz). Do not type your password. |
+   | `fatal: could not read Username for 'https://github.com'` | git could not read the repo anonymously and is asking you to log in. Check that you typed `dd104`. If you did, ask in [Discord](https://discord.gg/hrJnP5UsGz). Do not type your password. |
 
 4. Check your tool versions:
 
@@ -100,7 +100,8 @@ Package: [`labs/lab-01-the-adder-you-already-trust/`](https://github.com/uoftasi
 
    If `cocotb-config --version` prints anything starting with `1.`, you are not in the workbench.
 
-   Don't use `gtkwave --version` as a check. Without a display attached it fails with
+   Don't use `gtkwave --version` as a check. Without a display attached (in a terminal that is not
+   on the noVNC desktop) it fails with
    `Could not initialize GTK!  Is DISPLAY env var/xhost set?`, which does not mean the install is
    broken. Run GTKWave from a terminal on the noVNC desktop and it works.
 
@@ -109,7 +110,7 @@ Check: `cocotb-config --version` prints `2.0.1` and you are in `/foss/designs/mo
 ## Part 2: Run the shipped testbench
 
 1. Before you run anything, write down two answers. First: will the two shipped tests in
-   `test_adder.py` catch `broken/ripple4.sv`? Second: if you ran every input the adder has, how
+   `test_adder.py` (in the lab folder you `cd` into in step 2) catch `broken/ripple4.sv`? Second: if you ran every input the adder has, how
    many would come out wrong? Give a number. Committing to a prediction is what makes being wrong
    useful.
 
@@ -126,8 +127,11 @@ Check: `cocotb-config --version` prints `2.0.1` and you are in `/foss/designs/mo
 3. Read the `make sim` half. You should see this summary table:
 
    ```
+   ** TEST                                STATUS  SIM TIME (ns)  REAL TIME (s)  RATIO (ns/s) **
+   ********************************************************************************************
    ** test_adder.t01_the_obvious_six       PASS           6.00           0.00       7527.92  **
    ** test_adder.t02_every_a_and_every_b   PASS         256.00           0.01      21811.16  **
+   ********************************************************************************************
    ** TESTS=2 PASS=2 FAIL=0 SKIP=0                      262.00           0.01      19078.99  **
    ```
 
@@ -154,7 +158,8 @@ Check: `cocotb-config --version` prints `2.0.1` and you are in `/foss/designs/mo
    ========================================================================
    ```
 
-   followed by `make: *** [Makefile:49: check] Error 1`. That error line is the verdict exiting
+   The `262` counts `t01`'s six vectors as well as `t02`'s 256; the six are repeated inside the
+   256. The output is followed by `make: *** [Makefile:49: check] Error 1`. That error line is the verdict exiting
    non-zero on purpose ([Getting started](guide/getting-started.md#reading-a-labs-output)
    explains why). It disappears when the verdict passes.
 
@@ -195,11 +200,12 @@ Check: the verdict says `MISSED` on `broken/` and `VERDICT: FAIL`.
     VERDICT: PASS
    ```
 
-   The test name in that block is whatever you called your test; the reference solution renames
-   `t02` to `t02_exhaustive`.
+   The test name in that block is whatever you called your test; the reference solution in
+   `solutions/` renames `t02` to `t02_exhaustive`. The `AssertionError` line is cut off on purpose:
+   `make check` truncates long messages to fit its table.
 
 If the verdict is still FAIL, read its message. `check.py` measures how many vectors each run
-drove and tells you which half of the TODO is missing. Doing only the sweep turns `broken/` red,
+drove and tells you which half of the TODO is missing. Doing only the sweep makes `broken/` fail,
 but the run stops at the first wrong vector, so the failure is one anecdote instead of a count:
 
 ```
@@ -241,7 +247,8 @@ are wrong`.
    bug to one wire without opening the RTL.
 
 3. Compare with the first-bad-vector version from Part 3. Asserting on the first bad vector stops
-   the run at vector 256 and reports one wrong answer. Collecting reports `256 of 512`. Only the
+   the run at the first wrong one (index 256, the first vector with `cin = 1`) and reports one wrong
+   answer. Collecting reports `256 of 512`. Only the
    second is a diagnosis.
 
 The count is data on every design, not just adders. You'll meet these in Lab 03:
@@ -256,7 +263,7 @@ Check: you can name the signal the 256 failures track.
 
 ## Part 5: Ask a coverage tool
 
-1. Run the coverage add-on:
+1. Run the coverage add-on, a small package in the lab's `coverage/` folder:
 
    ```bash
    cd coverage
@@ -264,7 +271,8 @@ Check: you can name the signal the 256 failures track.
    ```
 
    It takes about twelve seconds because it builds the design twice with Verilator. Both runs use
-   the correct adder in `../src/`.
+   the correct adder in `../src/` and the add-on's own stimulus files, `cov_six.sv` (the six
+   hand-picked cases) and `cov_all.sv` (all 512), not your `test_adder.py`.
 
 2. In the six-case block, you should see `design toggle points : 48`, `never toggled : 5` and
    these five points:
@@ -294,7 +302,8 @@ Check: six cases leave 5 points cold, including both `cin` transitions; all 512 
 
 ## Finishing
 
-You are done when `make check` says `VERDICT: PASS`. There is nothing to submit.
+You are done when `make check` says `VERDICT: PASS` and you have read the coverage report in
+Part 5. There is nothing to submit.
 
 | Check | Expected | |
 |---|---|---|
