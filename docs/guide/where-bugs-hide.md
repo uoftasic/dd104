@@ -53,8 +53,8 @@ $A - B \equiv 128$. Each has 256 solutions, 512 in total, and $65{,}536 - 512 = 
 the number the sweep printed.
 
 Now look at what is in that set. SimProc has four registers and no `MOV` or `CLR`, so `SUB rX, rX`
-is how you zero a register, and it is in nearly every program on this machine. It is one of the
-512. The bug is invisible on the most common way anyone writes the instruction it breaks.
+is how you zero a register, and it is in nearly every program on this machine. It is one of
+the 512. The bug is invisible on the most common way anyone writes the instruction it breaks.
 
 That is the pattern. A bug survives review when its disagreement set misses the idioms, and the
 idioms are what a reviewer's eye is trained on.
