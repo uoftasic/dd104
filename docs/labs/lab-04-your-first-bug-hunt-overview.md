@@ -295,8 +295,9 @@ runs eight random programs and compares the registers with the golden model afte
    <details>
    <summary>Answer</summary>
 
-   A random register value is a random address, and half of them are outside the 64-byte RAM. A
-   random backward branch is an infinite loop. Both are worth testing, with stimulus you designed
+   A random register value is a random address, and most of them are outside the 64-byte RAM:
+   addresses 64 to 255 are three quarters of the 256 an 8-bit register can hold. (The docstring
+   says half.) A random backward branch is an infinite loop. Both are worth testing, with stimulus you designed
    rather than stimulus you rolled.
 
    </details>
