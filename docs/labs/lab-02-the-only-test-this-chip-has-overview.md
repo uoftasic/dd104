@@ -508,7 +508,7 @@ Check: you have the `check-all` output saved.
 You're done when `make check` says `ok` on the golden core, `caught` on `B01` and
 `VERDICT: PASS`, with your new test asserting both `r1` and the flags.
 
-Submit: nothing for this lab. Keep your `check-all` output; it is the baseline for your scoreboard.
+Submit: nothing for this lab. Keep the `check-all` output you saved in Part 8.
 
 ## Going further (optional)
 
@@ -521,11 +521,20 @@ make clean && make sim SIM=verilator && ccache -s | grep Hits
 ```
 
 Both simulators give `TESTS=6 PASS=6 FAIL=0 SKIP=0` and `512010.01` ns, with Verilator's real time
-(the next column) about half of Icarus's. End to end, the first Verilator run takes about 16 s
-against about 6 s for Icarus, because it builds a C++ program first. In a fresh container the
-`ccache` line reads `Hits: 0 / 6` after the first build and `Hits: 6 / 12 (50.00%)` after the
-second, which takes a few seconds. [Two simulators](guide/two-simulators-two-jobs.md#the-build-cost)
-explains the numbers.
+(the next column) about half of Icarus's.
+
+The `ccache` line counts hits across everything compiled in this container, and each Verilator
+build compiles six C++ files. The cache lives inside the container: it survives `make clean` and
+is lost when the container stops. So what you see depends on what you have already built:
+
+- In a fresh container, the first Verilator build takes about 16 s end to end, against about 6 s
+  for Icarus, because it builds a C++ program first, and the line reads `Hits: 0 / 6`. The second
+  takes a few seconds, and the hits go up by six, to `Hits: 6 / 12 (50.00%)`.
+- If you did Part 5 in this container, its two Verilator builds have already filled the cache.
+  Both builds here are the fast kind, and the line reads `Hits: 12 / 18` and then
+  `Hits: 18 / 24`.
+
+[Two simulators](guide/two-simulators-two-jobs.md#the-build-cost) explains the numbers.
 
 Next on the Course path: read [Flags as architectural state](guide/flags-are-state.md), then do
 [Lab 03: Three blocks before the processor](labs/lab-03-three-blocks-before-the-processor-overview.md).
