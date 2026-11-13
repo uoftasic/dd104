@@ -97,8 +97,9 @@ Why does a good testbench miss an `ORI` that adds instead of ORs?
    `ORing in bits that were not already set — ADD agrees`. Six tests and a 29-instruction model
    comparison, and none of those instructions ORed in a bit that was already set.
 
-2. Before writing a test, work out why this is hard: when do OR and ADD give the same answer, and
-   how often does a real program hit that case? Try `5 | 3` against `5 + 3`.
+2. The hint says when `ADD` agrees with `OR`. Before writing a test, work out why that makes this
+   bug hard to catch: try `5 | 3` against `5 + 3`, then think about how a program on this machine
+   builds a constant, and how often it ORs a bit into a register that already has it.
 
    <details>
    <summary>Answer</summary>
