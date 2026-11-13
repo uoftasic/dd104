@@ -244,7 +244,8 @@ Can you predict a program's exact cycle count from the instruction costs?
    mem[0x20] = 15   (all 28 instructions executed)
    ```
 
-2. Derive the 109 by hand from the cycle-count table in
+2. Derive the 109 by hand, using the program listing that `make model` prints above those three
+   lines and the cycle-count table in
    [SimProc in one page](guide/simproc-in-one-page.md#cycle-counts): seven setup instructions, a
    three-instruction loop run five times, and six to finish. `t05_a_loop_and_its_cycle_count` in
    `test_example.py` asserts the same number on the simulated hardware.
@@ -520,20 +521,16 @@ make clean && make sim SIM=verilator && ccache -s | grep Hits
 make clean && make sim SIM=verilator && ccache -s | grep Hits
 ```
 
-Both simulators give `TESTS=6 PASS=6 FAIL=0 SKIP=0` and `512010.01` ns, with Verilator's real time
-(the next column) about half of Icarus's.
+Both simulators give `TESTS=6 PASS=6 FAIL=0 SKIP=0` and `512010.01` ns, with Verilator's
+`REAL TIME` (the column after the simulated time) about half of Icarus's.
 
 The `ccache` line counts hits across everything compiled in this container, and each Verilator
-build compiles six C++ files. The cache lives inside the container: it survives `make clean` and
-is lost when the container stops. So what you see depends on what you have already built:
-
-- In a fresh container, the first Verilator build takes about 16 s end to end, against about 6 s
-  for Icarus, because it builds a C++ program first, and the line reads `Hits: 0 / 6`. The second
-  takes a few seconds, and the hits go up by six, to `Hits: 6 / 12 (50.00%)`.
-- If you did Part 5 in this container, its two Verilator builds have already filled the cache.
-  Both builds here are the fast kind, and the line reads `Hits: 12 / 18` and then
-  `Hits: 18 / 24`.
-
+build compiles six C++ files, so what you see depends on what you have already built. In a fresh
+container the first Verilator build takes about 16 s end to end, against about 6 s for Icarus,
+because it builds a C++ program first, and the line reads `Hits: 0 / 6`; the second takes a few
+seconds, and the hits go up by six, to `Hits: 6 / 12 (50.00%)`. If you did Part 5 in this
+container, its Verilator builds have already filled the cache: both builds here are fast, and the
+line reads `Hits: 12 / 18`, then `Hits: 18 / 24`.
 [Two simulators](guide/two-simulators-two-jobs.md#the-build-cost) explains the numbers.
 
 Next on the Course path: read [Flags as architectural state](guide/flags-are-state.md), then do
