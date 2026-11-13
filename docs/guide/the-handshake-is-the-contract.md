@@ -122,8 +122,8 @@ Each number comes from the RTL:
 | `RECEIVE` | 288 | 9 × 32: eight data bits and the parity bit |
 | `DONE` | 32 | One more bit period, holding the byte, before it looks at the line again |
 
-16 + 288 + 32 = 336. The frame on the wire was 10 bit periods (start, eight data, stop), which is
-320. The receiver is busy for exactly half a bit period longer than the frame it just received,
+16 + 288 + 32 = 336. The frame on the wire was 10 bit periods (start, eight data, stop), which
+is 320. The receiver is busy for exactly half a bit period longer than the frame it just received,
 every time. The chip is not ready when your frame ends; it is ready 16 clocks later, and 16 is
 `clk_per_bit / 2`.
 

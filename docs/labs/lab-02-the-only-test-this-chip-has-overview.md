@@ -394,9 +394,9 @@ Can you write a test that passes on the golden core and fails on the core whose 
    <details>
    <summary>Answer</summary>
 
-   512. They agree for every pair with `A == B` (256 pairs, `SUB rX, rX` among them), and for every
-   pair whose difference is 128, because 128 is its own negation in eight bits (256 more). That is
-   0.78 % of the input space, and the most natural subtraction test lands inside it.
+   For 512 of them. They agree for every pair with `A == B` (256 pairs, `SUB rX, rX` among them),
+   and for every pair whose difference is 128, because 128 is its own negation in eight bits (256
+   more). That is 0.78 % of the input space, and the most natural subtraction test lands inside it.
 
    </details>
 
@@ -417,7 +417,8 @@ Can you write a test that passes on the golden core and fails on the core whose 
    <details>
    <summary>Answer</summary>
 
-   116. A swapped subtractor computes $60 - 200 = -140$, and $-140$ in eight bits is $116$.
+   `r1` ends up at 116. A swapped subtractor computes $60 - 200 = -140$, and $-140$ in eight bits
+   is $116$.
 
    </details>
 

@@ -134,8 +134,8 @@ Does the shipped testbench catch the broken adder?
    ========================================================================
    ```
 
-   The `262` counts `t01`'s six vectors as well as `t02`'s 256; the six are repeated inside the
-   256. The output is followed by `make: *** [Makefile:49: check] Error 1`. That error line is the
+   The `262` counts `t01`'s six vectors as well as `t02`'s 256; the six are repeated inside
+   the 256. The output is followed by `make: *** [Makefile:49: check] Error 1`. That error line is the
    verdict exiting non-zero on purpose ([Getting started](guide/getting-started.md#reading-a-labs-output)
    explains why). It disappears when the verdict passes.
 
