@@ -71,7 +71,7 @@ If you haven't set up the workbench yet, do
 
 | If you see | Do this |
 |---|---|
-| `bash: /foss/designs/common/.designinit: No such file or directory` | The workspace isn't mounted: relaunch `start_vnc` from your `workspace` clone. Meanwhile every lab also runs from a plain `git clone` of `github.com/uoftasic/dd104` inside the workbench image, because `make` needs neither `.designinit` nor `mod`; the repository's README has the `docker run` line. |
+| `bash: /foss/designs/common/.designinit: No such file or directory` | The workspace isn't mounted: relaunch `start_vnc` from your `workspace` clone. Meanwhile every lab also runs from a plain `git clone` of `github.com/uoftasic/dd104` inside the workbench image, because `make` needs neither `.designinit` nor `mod`; the `docker run` line is in [DD104's README](https://github.com/uoftasic/dd104). |
 | `bash: mod: command not found` | You didn't load `.designinit` in this terminal (the first line of step 2). Every new tab starts clean. |
 | `mod: no such module: dd104` | You ran `mod dd104` before `mod add dd104`. |
 | `fatal: could not read Username for 'https://github.com'` | git couldn't read the repo anonymously and is asking you to log in. Check that you typed `dd104`; if you did, ask in [Discord](https://discord.gg/hrJnP5UsGz). Don't type your password. |

@@ -167,7 +167,7 @@ Check: `TESTS=3 PASS=3` and `35610.00` ns.
 
 ## Part 3: The example testbench
 
-How can six tests catch one bug in four different ways?
+In how many different ways can a testbench catch one bug?
 
 The harness directory, `labs/common`, ships six worked tests in `test_example.py`. Copying that
 file is how you are meant to start your own testbenches.
@@ -282,8 +282,8 @@ Still in `labs/common`.
    <details>
    <summary>Answer</summary>
 
-   `dp_ram` has 64 entries and the address bus is 8 bits, so addresses 64–255 are off the end of
-   the array. Verilator found that by reading the file, before simulating anything.
+   The RAM, module `dp_ram` in `simproc_system.sv`, has 64 entries and the address bus is 8 bits,
+   so addresses 64–255 are off the end of the array. Verilator found that by reading the file, before simulating anything.
 
    </details>
 
@@ -304,7 +304,8 @@ Still in `labs/common`.
    <summary>Answer</summary>
 
    Verilator is 2-state, so it truncates the address to the six bits the array has:
-   `100 & 63 = 36`, and you get the byte at address 36, the `0x5A` the test put there. Icarus is
+   `100 & 63 = 36`, and you get the byte at address 36, the `0x5A` the test wrote there before
+   reading. Icarus is
    4-state, so reading past the end gives `x`, and eight `X` characters come off the pin.
 
    </details>
@@ -525,14 +526,15 @@ make clean && make sim SIM=verilator && ccache -s | grep Hits
 Both simulators give `TESTS=6 PASS=6 FAIL=0 SKIP=0` and `512010.01` ns, with Verilator's
 `REAL TIME` (the column after the simulated time) about half of Icarus's.
 
-The `ccache` line counts hits across everything compiled in this container, and each Verilator
-build compiles six C++ files, so what you see depends on what you have already built. In a fresh
-container the first Verilator build takes about 16 s end to end, against about 6 s for Icarus,
-because it builds a C++ program first, and the line reads `Hits: 0 / 6`; the second takes a few
-seconds, and the hits go up by six, to `Hits: 6 / 12 (50.00%)`. If you did Part 5 in this
-container, its Verilator builds have already filled the cache: both builds here are fast, and the
-line reads `Hits: 12 / 18`, then `Hits: 18 / 24`.
-[Two simulators](guide/two-simulators-two-jobs.md#the-build-cost) explains the numbers.
+`ccache` keeps the compiled C++ files, and its `Hits` line counts across everything compiled in
+this container. Each Verilator build compiles six files. If you did Part 5 in this container, its
+Verilator builds have already filled the cache: both builds here are fast, and the line reads
+`Hits: 12 / 18`, then `Hits: 18 / 24`. The cache is lost when the container stops, so to see the
+cold build, run these commands first thing after a restart. Then the first Verilator build takes
+about 16 s end to end, against about 6 s for Icarus, because it builds a C++ program first, and
+the line reads `Hits: 0 / 6`; the second takes a few seconds, and the hits go up by six, to
+`Hits: 6 / 12 (50.00%)`. [Two simulators](guide/two-simulators-two-jobs.md#the-build-cost)
+explains the numbers.
 
 Next on the Course path: read [Flags as architectural state](guide/flags-are-state.md), then do
 [Lab 03: Three blocks before the processor](labs/lab-03-three-blocks-before-the-processor-overview.md).
