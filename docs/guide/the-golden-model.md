@@ -61,15 +61,19 @@ the registers you weren't thinking about.
 ```python
 await sp.load(prog)
 model = Golden(prog + [PARK])
-steps, problem = await trace(sp, len(prog), model=model)
+steps, problem = await trace(sp, 29, model=model)
 assert problem is None, f"{problem}\n\n{listing(prog)}"
 ```
 
 `trace()` single-steps the real design, steps the model alongside it, and compares the full
-snapshot after every instruction. So those four lines check all four registers, the PC and both
-flags, twenty-nine times over, and that includes everything you didn't think to check.
+snapshot after every instruction. The program here is the one in `test_example.t06`: thirty
+instructions, of which 29 execute, because a taken branch skips one. So those four lines check
+all four registers, the PC and both flags, twenty-nine times over, and that includes everything
+you didn't think to check.
 
-When it passes, this one line is all it reports:
+`trace()` doesn't look at memory, so the shipped test follows those four lines with one call to
+`compare_memory(model, sp)`, which compares all 64 bytes. When both pass, this one line is all it
+reports:
 
 ```
 29 instructions, every register / PC / flag / byte of memory agreed with golden.py
