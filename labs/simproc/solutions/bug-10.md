@@ -19,9 +19,8 @@ Catalogue B10. Tier 5, Lab 06 (the hard end).
 
 ## Why it hides
 
-`OR` and `ADD` agree exactly when the operands share no set bits.
-
-Two consequences, and they cover almost everything a real program does:
+`OR` and `ADD` agree exactly when the operands share no set bits. That has two
+consequences, and between them they cover almost everything a real program does:
 
 1. The first `ORI` after a reset is always right. R0 is 0, and `0 | imm` is
    `0 + imm` for every immediate.
@@ -34,8 +33,8 @@ to force exactly that.
 
 ## What it teaches
 
-The wrong operator that agrees with the right one on every value you would
-naturally pick. This is the hardest class of bug to find by inspection *and* by
+This is a wrong operator that agrees with the right one on every value you would
+naturally pick. It is the hardest class of bug to find by inspection *and* by
 random stimulus, because the disagreement set is a thin slice of the input space
 and programmers avoid it without meaning to.
 

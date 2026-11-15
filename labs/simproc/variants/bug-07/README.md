@@ -47,5 +47,5 @@ It passes.
 A warning about this one, from someone who wrote the test suite it hides from:
 the first `LOAD` test written for this core used the same register as pointer and
 destination, because that is a real and common idiom. That test passes on this
-core. Nine of ten tests in the suite pass on this core. Six hundred random
-instructions pass on this core.
+core, and so do nine of the ten tests in the suite and six hundred random
+instructions.

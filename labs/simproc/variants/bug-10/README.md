@@ -16,10 +16,8 @@ ORI 3            R0 = R0 | 3
 | should be | 7 — 5 is `0b00101`, 3 is `0b00011`, together `0b00111` |
 | this core | 8 |
 
-Eight. Not seven.
-
-Every constant this student built before today came out right, and they were
-building them the same way: `ORI` a few bits in, `ORI` a few more.
+Every constant this student built before today came out right, and they built
+them all the same way: `ORI` a few bits in, then `ORI` a few more.
 
 ## What you have
 

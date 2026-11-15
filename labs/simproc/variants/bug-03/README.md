@@ -17,11 +17,9 @@ ORI 1            R0 = 17      -- this must run; 16 is not zero
 | should be | 17 — the branch is not taken, the `ORI 1` runs |
 | this core | 16 — the branch was taken and skipped it |
 
-The value in R0 after `ORI 16` really is 16. Read it back and it is 16. The
-machine still decided that 16 was zero.
-
-Something is right in one place and wrong in another, at the same instant, about
-the same number.
+The value in R0 after `ORI 16` really is 16, and if you read it back you get 16,
+yet the machine still decided that 16 was zero. So at the same instant, about the
+same number, something is right in one place and wrong in another.
 
 ## What you have
 

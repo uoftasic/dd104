@@ -4,14 +4,14 @@ This is the reference copy: SimProc as its authors wrote it, forked at
 `1d97772`, with no bugs injected. See `../FORKED-FROM` for the commit, the blob
 hashes, and the only two lines this fork changed (both comments).
 
-This is not a lab package. A core with a bug in it comes from `apply.sh bug-NN`.
+It isn't a lab package; a core with a bug in it comes from `apply.sh bug-NN`.
 
 ```bash
 cd test && make -B          # the testbench that shipped with the chip
 ```
 
-That run passes. It also passes on all thirteen deliberately broken versions of
-this core, which is why DD104 exists.
+That run passes, and it also passes on all thirteen deliberately broken versions
+of this core, which is the reason DD104 exists.
 
 ## The pin map
 

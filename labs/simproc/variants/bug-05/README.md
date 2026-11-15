@@ -54,6 +54,6 @@ It passes.
 2. The one-line fix.
 3. That same test passing.
 
-The displacement field is four bits. There are exactly sixteen branch targets a
+The displacement field is four bits, so there are exactly sixteen branch targets a
 program can ask for. Sixteen is a small enough number to try all of them, and a
-test that tries all of them is not a clever test — it is just the obvious one.
+test that does is the obvious test rather than a clever one.

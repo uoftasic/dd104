@@ -30,7 +30,7 @@ ORI 5            R0 = R0 | 5
 | should be | 5 |
 | this core | 0 |
 
-The value 5 is not lost. It exists in the machine. It is just not in R0.
+The value 5 isn't lost; it exists somewhere in the machine, just not in R0.
 
 Nothing else in the program misbehaves: the `SUB`s clear what they are told to
 clear, `ADD` adds, `LOAD` and `STORE` are exact.
@@ -52,7 +52,7 @@ It passes.
 2. The one-line fix.
 3. That same test passing.
 
-`ORI` is the only instruction in this machine with no register field in it — the
-opcode is three bits and all five remaining bits are the immediate. So the
-register it works on is not in the instruction. It is in the hardware, and it has
-to be named in two separate places.
+`ORI` is the only instruction in this machine with no register field in it: the
+opcode is three bits and all five remaining bits are the immediate. The register
+it works on therefore isn't in the instruction at all. It's in the hardware, and
+the hardware has to name it in two separate places.

@@ -24,8 +24,7 @@ ORI 8            R0 = 8
 The first branch does the right thing. The second branch, reading the same
 comparison, does the opposite of the right thing.
 
-Nothing between them writes a register. Nothing between them does any arithmetic
-you asked for.
+Nothing between them writes a register or does any arithmetic you asked for.
 
 ## What you have
 

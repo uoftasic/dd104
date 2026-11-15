@@ -6,7 +6,7 @@
 
 ## What was seen
 
-The chip has a `done` pin — `uo_out[2]` — that pulses high for exactly one cycle
+The chip has a `done` pin, `uo_out[2]`, that pulses high for exactly one cycle
 each time an instruction retires. A scoreboard that samples architectural state
 on that pulse is the normal way to check a core instruction by instruction.
 
@@ -24,8 +24,8 @@ STORE r1,r2 ; ADD r1,r0 ; STORE r1,r2 ; ADD r1,r0 ; STORE r1,r2
 | this core | 14 | 11 |
 
 `mem[32]` ends at 21 and R1 ends at 21, both correct. The core executes all
-fourteen instructions and the fourteenth one finishes. Three pulses are simply
-not there.
+fourteen instructions and the fourteenth one finishes, but three of the pulses
+are simply missing.
 
 ## What you have
 

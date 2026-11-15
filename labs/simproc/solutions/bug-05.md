@@ -41,10 +41,10 @@ to branch backwards.
 
 ## What it teaches
 
-Sign extension is a silent half of the number line. More generally: when a field
-is signed, the test that sweeps it must cross zero, and 16 values is a small
-enough space to sweep exhaustively. T04 does exactly that, and it is not a clever
-test, it is the obvious one.
+A missing sign extension silently breaks half the number line. More generally,
+when a field is signed, the test that sweeps it must cross zero, and 16 values is
+a small enough space to sweep exhaustively. T04 does exactly that, and it's the
+obvious test rather than a clever one.
 
 ## The fix
 

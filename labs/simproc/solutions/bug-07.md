@@ -1,6 +1,6 @@
 # bug-07 — `LOAD` addresses memory with `rA`
 
-Catalogue B07. Tier 2, Lab 04. The set piece of the whole catalogue.
+Catalogue B07. Tier 2, Lab 04. This is the set piece of the whole catalogue.
 
 ```diff
 --- a/src/simproc_system.sv     line 589, CYCLE_3, the LOAD clause
@@ -26,9 +26,9 @@ because R0 held 0.
 
 ## Why it hides
 
-It is invisible whenever `rA == rB`. And `LOAD rX, rX` (load through a pointer
-into the register that held the pointer) is not a contrived case. It is a real
-idiom: you have finished with the address and you want the value.
+It is invisible whenever `rA == rB`, and `LOAD rX, rX` (load through a pointer
+into the register that held the pointer) is a real idiom rather than a contrived
+case: you have finished with the address and you want the value.
 
 ## Ship the story, not just the bug
 

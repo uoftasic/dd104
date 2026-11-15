@@ -53,7 +53,7 @@ Check the state you did not change. A scoreboard that compares all four register
 after every instruction catches this immediately; one that checks "the register
 the instruction names" never does.
 
-And: when a spec is ambiguous, the ambiguity itself is a hazard. Two lines
+It also shows that when a spec is ambiguous, the ambiguity itself is a hazard. Two lines
 implementing one decision must be edited together, and the way to find out
 whether they were is to test the second instruction, not the first.
 

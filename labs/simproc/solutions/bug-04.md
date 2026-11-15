@@ -26,15 +26,15 @@ full of that: `SUB rX,rX` to clear, `NAND rX,rX` to invert, `ADD rX,rX` to doubl
 A program written entirely from those runs correctly on this core.
 
 Only the ALU write-back is patched. The `LOAD` write-back three clauses down
-(line 662) is left correct, so `LOAD` puts values exactly where it is told —
+(line 662) is left correct, so `LOAD` puts values exactly where it is told,
 which sends a student who has noticed "registers get the wrong values" straight
 past the actual code.
 
 ## What it teaches
 
-Two nearly identical code paths, one of them wrong. This is the most common
-real-world RTL bug in the whole catalogue: a block was copied, the copy was
-edited, and the original was not — or the other way round. Finding it means
+There are two nearly identical code paths, and one of them is wrong. This is the
+most common real-world RTL bug in the whole catalogue: a block was copied, the copy
+was edited, and the original was not (or the other way round). Finding it means
 noticing that `LOAD` and `ADD` disagree about something they should agree about.
 
 Three suite tests pass on it. Ask students to work out which three and why

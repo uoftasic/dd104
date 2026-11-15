@@ -26,8 +26,8 @@ NAND r1,r0       R1 = NAND(0x33, 0x0F)
 
 `~(0x33 & 0x0F)` is `~0x03` = `0xFC`. The core returned `0xC0`.
 
-The shifts and the ORIs on the way in are all correct — check them if you want,
-they are.
+The shifts and the ORIs on the way in are all correct, and you can check them if
+you want to.
 
 ## What you have
 

@@ -3,8 +3,8 @@
 This is DD104's copy of SimProc, an 8-bit processor a student team designed and taped
 out, forked at a pinned commit, plus thirteen deliberate bugs that hide inside it.
 
-This directory is not a lab; it is where lab cores are made. A lab package is one buggy
-core, produced from here by `apply.sh`, with nothing in it that gives the answer away.
+This directory isn't a lab itself; it's where the lab cores are made. A lab package is one
+buggy core, produced from here by `apply.sh`, with nothing in it that gives the answer away.
 
 ```bash
 ./apply.sh bug-07 /tmp/lab2-core      # one buggy core, ready to simulate
@@ -27,12 +27,13 @@ core, produced from here by `apply.sh`, with nothing in it that gives the answer
 stamp. It never copies `golden/`, the patch, `solutions/` or `verify/`, so a directory
 built by `apply.sh` can be handed to a student as-is.
 
-> This is about what a package contains, not what is on a student's disk.
-> `uoftasic/dd104` is a public repository, so `golden/`, `variants/*/bug.patch`,
-> `solutions/` and `labs/common/bugs.py` are in every clone. The course says so (see
-> *Requests to avoid* in
-> [Getting started](https://uoftasic.com/dd104/guide/getting-started.html)) and asks students
-> not to read them. Nothing here is secret; it is an honour system with the files named.
+> That covers what a package contains, which is not the same as what is on a student's
+> disk. `uoftasic/dd104` is a public repository, so `golden/`, `variants/*/bug.patch`,
+> `solutions/` and `labs/common/bugs.py` are in every clone. The course tells students so
+> (see *Requests to avoid* in
+> [Getting started](https://uoftasic.com/dd104/guide/getting-started.html)) and asks them
+> not to read those files. None of it is secret, so it works as an honour system, with the
+> files named.
 
 ## The bugs
 
@@ -61,15 +62,14 @@ it, and `verify/README.md` explains how to reproduce it. (T01–T10 are the test
 
 ## All thirteen pass the shipped test
 
-The only test SimProc has ever had passes on a processor whose `SUB` is backwards.
-
-`golden/test/test.py` is the untouched TinyTapeout template. It sets `ui_in=1`,
-waits 100 clocks, and asserts `uo_out == 3`. Decoded through the pin map that is
-`uart_tx=1` (line idle), `halt=1` (core in IDLE) and `done=0`: it asserts that the
-processor is not running. It sends no command, loads no program and executes no
+The only test SimProc has ever had is `golden/test/test.py`, and it passes on a processor
+whose `SUB` is backwards. It is the untouched TinyTapeout template: it sets `ui_in=1`,
+waits 100 clocks, and asserts `uo_out == 3`. Decoded through the pin map, that is
+`uart_tx=1` (line idle), `halt=1` (core in IDLE) and `done=0`, so what it asserts is that
+the processor is not running. It sends no command, loads no program and executes no
 instruction.
 
-All 13 variants pass it, checked on every release.
+All 13 variants pass it, and that is checked on every release.
 
 ## Verifying the whole set
 
@@ -92,7 +92,7 @@ questions without reading the source:
 3. Does a real test catch it? The 10-test systematic suite at the lab's
    default `clk_per_bit`, the same suite at `clk_per_bit = 8`, and a baud sweep.
 
-Roughly 28 s per variant, about 6.5 minutes for the set.
+It takes roughly 28 s per variant, or about 6.5 minutes for the whole set.
 
 ## Adding a bug
 
@@ -105,7 +105,7 @@ Roughly 28 s per variant, about 6.5 minutes for the set.
    or the cause.
 4. Write `solutions/bug-NN.md`: everything else.
 5. Re-run the verification. If nothing catches the bug, or if the boilerplate
-   test catches it, drop the bug. Both failures mean it is not teaching what you
+   test catches it, drop the bug. Either result means it isn't teaching what you
    think it is.
 
 ## Licence

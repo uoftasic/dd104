@@ -9,10 +9,10 @@ per-variant table is `../verify/results.json`.
 
 Two numbers appear in most files:
 
-- suite — how the 10-test systematic suite (`../verify/test_suite.py`) scores
-  on that variant at the lab default `clk_per_bit = 32`. The clean core is 10/10.
-- ALU sweep — 393,216 vectors, 6 ops × 256 × 256, against a spec model
-  (`../verify/test_alu.py`, about 19 s). The clean core is 0 mismatches.
+- suite: how the 10-test systematic suite (`../verify/test_suite.py`) scores
+  on that variant at the lab default `clk_per_bit = 32`. The clean core scores 10/10.
+- ALU sweep: 393,216 vectors, 6 ops × 256 × 256, against a spec model
+  (`../verify/test_alu.py`, about 19 s). The clean core has 0 mismatches.
 
-And one fact is true of all thirteen: the TinyTapeout boilerplate test that
-shipped with this chip passes on every one of them.
+One fact is true of all thirteen: the TinyTapeout boilerplate test that shipped
+with this chip passes on every one of them.

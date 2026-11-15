@@ -29,17 +29,16 @@ combinationally in the same cycle the branch decides, so the *first* branch sees
 the correct flags and does the correct thing. It is only the *second* branch off
 the same comparison that reads garbage.
 
-`BZ … ; BNZ …` — one compare, two tests — is an idiom students write on day one,
+`BZ … ; BNZ …` (one compare, two tests) is an idiom students write on day one,
 and it is the only thing this bug breaks.
 
 ## What it teaches
 
-That "the comparison is still valid" is an assumption, and assumptions get
-tests. In a machine with no explicit compare instruction, where `SUB` doubles as
+"The comparison is still valid" is an assumption, and assumptions get tests. In a machine with no explicit compare instruction, where `SUB` doubles as
 the comparison, the lifetime of the flags is load-bearing and completely
 invisible in the source.
 
-Also, as a code-review lesson: this is one added line, in the right style, in the
+It is also a code-review lesson: this is one added line, in the right style, in the
 right place, that looks like it belongs. Injected bugs do not have to be typos.
 
 ## The fix
