@@ -48,7 +48,7 @@ Guide pages teach, writeups direct the doing, and packages execute. Do not paste
 
 1. Add kebab-case Markdown under `docs/guide/` (e.g. `yosys-synth.md`). Keep it to reading: if the page needs the student to run something, put that step in the matching lab writeup and leave a one-line pointer.
 2. Add it to a Read row of the Course path in `docs/index.md`, and add it to the sidebar in `docs/_quarto.yml` and the chapters in `docs/_quarto-pdf.yml` in the same order.
-3. Images under `docs/assets/img/` with paths relative to `docs/`.
+3. Images under `docs/assets/img/`, linked with paths relative to the page you are writing in (`../assets/img/x.png` from a guide or lab page).
 4. Link between pages with paths relative to the page you are writing in (`../guide/x.md` from a lab), because that is how Quarto resolves them. Use GitHub URLs for `labs/` and `scripts/`.
 
 ## Pedagogy checklist (use when authoring)
