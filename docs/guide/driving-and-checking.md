@@ -55,7 +55,7 @@ has six tests, and their names say what they are for:
 | `load_wins_over_enable` | Priority between two controls asserted together | No |
 | `terminal_count_needs_enable` | `tc` at `q = 0xFF` with `en` low | Yes, every time |
 | `the_wrap_is_where_the_bugs_live` | The exact cycle 255 → 0, as `(q, tc)` pairs | No |
-| `against_a_reference_model` | 600 random clocks against six lines of Python | No |
+| `against_a_reference_model` | 600 random clocks against three lines of Python | No |
 
 Five of the six pass on the broken counter, and one of those five is the 600-clock random test.
 
@@ -172,7 +172,7 @@ vectors it ran. Running a lot of vectors is not the same as covering the cases t
 
 ## Reference models
 
-The model in `against_a_reference_model` is six lines:
+The model in `against_a_reference_model` is three lines:
 
 ```python
 if load:      model_q = d
