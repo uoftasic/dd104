@@ -1,6 +1,6 @@
 # bug-13 — `STORE` drops to IDLE for one cycle
 
-Catalogue B13. Tier 4, Lab 05.
+Catalogue **B13**. Tier 4, Lab 05.
 
 ```diff
 --- a/src/simproc_system.sv     line 603, CYCLE_3, the STORE clause

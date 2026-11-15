@@ -1,6 +1,6 @@
 # bug-04 — ALU write-back uses the `rB` field
 
-Catalogue B04. Tier 2, Lab 04 (decode and the register file).
+Catalogue **B04**. Tier 2, Lab 04 (decode and the register file).
 
 ```diff
 --- a/src/simproc_system.sv     line 648, CYCLE_4, the ADD/SUB/NAND/SHIFT write-back

@@ -1,6 +1,6 @@
 # bug-11 — `ORI` reads R0 and writes R1
 
-Catalogue B11. Tier 5, Lab 06. This one has history; read it before using it.
+Catalogue **B11**. Tier 5, Lab 06. This one has history; read it before using it.
 
 ```diff
 --- a/src/simproc_system.sv     line 689, CYCLE_5, the ORI write-back
