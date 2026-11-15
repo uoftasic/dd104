@@ -3,15 +3,16 @@
 This page answers: *I copied a cocotb example off the internet and it does not work, or it works
 but prints warnings. Which of us is wrong?*
 
-Neither. The example is right for cocotb 1.x. This course runs cocotb 2.0.1, and 2.0 renamed
-and removed a lot.
+Neither of you. The example is right for cocotb 1.x, but this course runs cocotb 2.0.1, and the
+2.0 release renamed and removed a lot of the 1.x interface.
 
 Almost every cocotb tutorial, blog post, Stack Overflow answer, chatbot completion and university
-lab handout was written against 1.x. Some of them still run on 2.0.1, and those are the dangerous
-ones, so this page starts with them.
+lab handout was written against 1.x. Some of those examples still run on 2.0.1, and they are the
+dangerous ones, because they give you no reason to suspect them. That's why this page starts with
+them.
 
-Everything below was run in the workbench and the output is pasted unedited. The four
-demonstration files ship in
+We ran everything below in the workbench and pasted the output unedited. The four demonstration
+files ship in
 [`labs/cocotb-intro/oldapi/`](https://github.com/uoftasic/dd104/tree/main/labs/cocotb-intro/oldapi),
 and you'll run them in [cocotb on a counter, Part 3](../labs/cocotb-intro-overview.md#part-3-the-1x-traps).
 
@@ -19,7 +20,7 @@ and you'll run them in [cocotb on a counter, Part 3](../labs/cocotb-intro-overvi
 
 ### `units=` instead of `unit=`
 
-This is the most common 1.x form, and cocotb 2.0.1 accepts it.
+`units=` is the 1.x form you'll come across most often, and cocotb 2.0.1 still accepts it:
 
 ```python
 cocotb.start_soon(Clock(dut.clk, 10, units="ns").start())
@@ -34,13 +35,14 @@ await Timer(20, units="ns")
 ** TESTS=1 PASS=1 FAIL=0 SKIP=0                              41.00           0.00      19633.12  **
 ```
 
-It passes. The warning is one `WARNING` line among the INFO lines, it scrolls past, and nothing
-in the run tells you this code will stop working. Write `unit=`. A deprecation means the old
-spelling will be removed in a later release.
+The test passes. The warning is a single `WARNING` line among the INFO lines, so it scrolls past,
+and nothing else in the run tells you that this code will stop working. A deprecation means the
+old spelling is going to be removed in a later release, so write `unit=`.
 
 ### `.integer`, `.binstr`, `.signed_integer`, `.buff`
 
-Same story: they work, they warn, and each warning names its replacement.
+These value getters behave the same way: they still work and they warn, and each warning names
+the replacement to use.
 
 ```
     41.00ns WARNING  py.warnings   DeprecationWarning: `logic_array.integer` getter is deprecated. Use `logic_array.to_unsigned()` instead.
@@ -56,8 +58,8 @@ Same story: they work, they warn, and each warning names its replacement.
 | `sig.value.signed_integer` | `sig.value.to_signed()` |
 | `sig.value.buff` | `sig.value.to_bytes(byteorder="big")` |
 
-`sig.value.is_resolvable` is not deprecated. It is the right way to ask whether a value contains
-any `X` before you convert it.
+`sig.value.is_resolvable` is not deprecated, and it's the right way to ask whether a value
+contains any `X` before you convert it.
 
 ### `MODULE` and `TOPLEVEL` in the Makefile
 
@@ -68,7 +70,7 @@ TOPLEVEL = counter
 MODULE   = test_tiny
 ```
 
-Under 2.0.1's `Makefile.sim` these still work and warn once:
+Under 2.0.1's `Makefile.sim` these still work, with one warning:
 
 ```
 /usr/local/lib/python3.12/dist-packages/cocotb_tools/makefiles/simulators/Makefile.icarus:66: Using MODULE is deprecated, please use COCOTB_TEST_MODULES instead.
@@ -76,15 +78,18 @@ Under 2.0.1's `Makefile.sim` these still work and warn once:
 ** TESTS=1 PASS=1 FAIL=0 SKIP=0                  1.00           0.00       1178.18  **
 ```
 
-The 2.x names are `COCOTB_TOPLEVEL` and `COCOTB_TEST_MODULES`. Use those; DD104's `sim.mk` does.
+The 2.x names are `COCOTB_TOPLEVEL` and `COCOTB_TEST_MODULES`. Use those, as DD104's `sim.mk`
+does.
 
-> The mapping from old names to new lives in cocotb's makefiles, not in cocotb itself. If you
-> drive a simulation without them (the Python runner, `pytest`, a hand-written `vvp` command
-> line), only `COCOTB_TEST_MODULES` is read and `MODULE` is silently ignored.
+> The translation from the old names to the new ones is done by cocotb's makefiles, not by cocotb
+> itself. If you drive a simulation without the makefiles (with the Python runner, `pytest` or a
+> hand-written `vvp` command line), only `COCOTB_TEST_MODULES` is read, and `MODULE` is ignored
+> without any warning.
 
 ### `COCOTB_TESTCASE`
 
-Deprecated in favour of `COCOTB_TEST_FILTER`, which takes a regular expression:
+`COCOTB_TESTCASE` is deprecated in favour of `COCOTB_TEST_FILTER`, which takes a regular
+expression:
 
 ```
      0.00ns WARNING  py.warnings   DeprecationWarning: COCOTB_TESTCASE is deprecated in favor of COCOTB_TEST_FILTER
@@ -94,8 +99,8 @@ Read [A filter that runs nothing](#a-filter-that-runs-nothing) before you use ei
 
 ## Forms that fail loudly
 
-These produce a traceback with a line number. Once you have seen each one, you will fix it in
-seconds.
+These produce a traceback with a line number, so once you have seen each one you'll be able to
+fix it in seconds.
 
 ### `cocotb.fork` → `cocotb.start_soon`
 
@@ -112,12 +117,13 @@ cocotb.fork(Clock(dut.clk, 10, unit="ns").start())
                                                         AttributeError: module 'cocotb' has no attribute 'fork'
 ```
 
-The replacement is `cocotb.start_soon(...)`, with the same argument. (`cocotb.start(...)` also
-exists: it is the `await`able version that lets the new task run before you continue.)
+The replacement is `cocotb.start_soon(...)`, with the same argument. (There is also
+`cocotb.start(...)`, which is the version you `await`; it lets the new task run before your code
+continues.)
 
 ### `dut.sig <= value` → `dut.sig.value = value`
 
-1.x let you assign with `<=`, mimicking Verilog:
+1.x let you assign to a signal with `<=`, the way you would in Verilog:
 
 ```python
 dut.rst_n <= 1
@@ -132,8 +138,9 @@ dut.rst_n <= 1
                                                         TypeError: '<=' not supported between instances of 'LogicObject' and 'int'
 ```
 
-A `TypeError` about `<=` reads like a comparison bug, because to Python the line is a comparison.
-It is an assignment form that was removed.
+A `TypeError` about `<=` reads like a bug in a comparison, because to Python the line is a
+comparison. It means that the author used the old assignment form, which 2.0
+removed.
 
 ### `cocotb.binary` and `cocotb.result`
 
@@ -156,8 +163,8 @@ Traceback (most recent call last):
 ModuleNotFoundError: No module named 'cocotb.binary'
 ```
 
-`cocotb.result` is subtler. The module still exists but is now empty, so the error is about a
-name, which reads like a typo:
+`cocotb.result` is harder to spot. The module still exists but is now empty, so the error is
+about a missing name rather than a missing module, and it reads like a typo:
 
 ```
 AttributeError: module 'cocotb.result' has no attribute 'TestFailure'
@@ -187,15 +194,16 @@ AttributeError: 'RegressionManager' object has no attribute '_running_test'
      0.00ns ERROR    gpi   Passing event to upper layer failed
 ```
 
-Ignore it. That is cocotb's error handler falling over while reporting your error, because there
-was no running test to abort. The real problem is the traceback above it. `RegressionManager`,
-`_running_test`, `gpi` and `_sim_event` are not names from your code, which is how you can tell.
+You can ignore this one. It's cocotb's own error handler failing while it reports your error,
+because there was no running test for it to abort. The real problem is in the traceback above it.
+You can tell the two apart because `RegressionManager`, `_running_test`, `gpi` and `_sim_event`
+are not names from your code.
 
 ## A filter that runs nothing
 
-None of the forms above will cost you a day. This one can.
+None of the forms above will cost you a day, but this one can.
 
-`make nothing` in `labs/cocotb-intro` runs the real six-test suite with one letter transposed in
+`make nothing` in `labs/cocotb-intro` runs the real six-test suite with two letters swapped in
 the test filter:
 
 ```make
@@ -211,10 +219,10 @@ COCOTB_TESTCASE = chekcing
    exit status 0, no FAIL anywhere, and zero tests ran.
 ```
 
-Look at what is missing: there is no results table, no `TESTS=`, no `PASS=`, no `FAIL=`. The whole
-run is three INFO lines, one WARNING and a clean exit. In CI that is a green tick.
+There is no results table, so there's no `TESTS=`, no `PASS=` and no `FAIL=`. The whole run is
+three INFO lines, one WARNING and a clean exit, which in CI shows up as a green tick.
 
-`results.xml` records what happened, if anyone reads it:
+`results.xml` does record what happened, if anyone reads it:
 
 ```xml
 <testcase name="load_then_count" classname="test_03_checking" ... >
@@ -222,16 +230,17 @@ run is three INFO lines, one WARNING and a clean exit. In CI that is a green tic
 </testcase>
 ```
 
-Six tests, six `<skipped/>`, none run.
+All six tests are marked `<skipped/>`, and none of them ran.
 
-This is the habit to adopt from this page: after every cocotb run, read the `TESTS=` line and
-check that the count is the number of tests you wrote. Not the colour, not the exit code, the
-count. A cocotb run that tested nothing looks like one that tested everything, except for a line
-that is missing.
+If you take one habit from this page, make it this one: after every cocotb run, read the `TESTS=`
+line and check that the count matches the number of tests you wrote. The colour of the output and
+the exit code won't tell you; only the count will. A cocotb run that tested nothing looks just
+like one that tested everything, apart from one missing line.
 
-It is DD104's argument in miniature. SimProc shipped with one test that passes on thirteen broken
-processors; a filter typo passes on all of them and on the good one too. "My tests pass" is not a
-result. "Six tests ran, they passed on the good core, and this one fails on the broken core" is.
+This is DD104's argument on a small scale. SimProc shipped with one test that passes on thirteen
+broken processors, and a filter typo passes on all thirteen and on the good one too. That's why
+"My tests pass" doesn't count as a result here, while
+"Six tests ran, they passed on the good core, and this one fails on the broken core" does.
 
 ## Conversion table
 
@@ -256,8 +265,9 @@ result. "Six tests ran, they passed on the good core, and this one fails on the 
 
 ## Ask the installed cocotb
 
-The installed version's own signatures are the only reference guaranteed to match what you are
-running. `inspect.signature(cocotb.test)` prints the keywords the decorator accepts:
+The installed version's own function signatures are the only reference that is guaranteed to
+match the cocotb you are running. `inspect.signature(cocotb.test)`, for example, prints the
+keywords that the `@cocotb.test` decorator accepts:
 
 ```
 (obj: Union[Callable[..., Coroutine[cocotb._base_triggers.Trigger, NoneType, NoneType]],
@@ -267,8 +277,8 @@ running. `inspect.signature(cocotb.test)` prints the keywords the decorator acce
  ...]] = (), skip: bool = False, stage: int = 0, name: Optional[str] = None) -> ...
 ```
 
-(Wrapped here to fit; it comes out as one long line.) If a keyword you read about is not in that
-list, it is from 1.x. You'll run this in the lab.
+(We wrapped it here to fit the page; it comes out as one long line.) If a keyword you read about
+somewhere isn't in that list, it's from 1.x. You'll run this check yourself in the lab.
 
 ## Check yourself
 
