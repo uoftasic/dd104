@@ -6,6 +6,7 @@ Utilities for DD104 — Pre-Silicon Verification under the UofT ASIC org (`uofta
 
 | Script | Purpose |
 |--------|---------|
+| `check_site.py` | Check every local link and `#anchor` in the rendered Quarto site; `.github/workflows/site.yml` runs it as `python3 scripts/check_site.py docs/_site` |
 | `hello.py` | Smoke-check that Python runs in this clone |
 | `init-template.py` | Fill `dd104` / title / description after using the template |
 
