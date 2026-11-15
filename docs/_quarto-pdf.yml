@@ -1,0 +1,63 @@
+# The whole course as one PDF:
+#   quarto render docs --profile pdf --to typst      # writes docs/_book/*.pdf
+# Chapter order follows the sidebar in _quarto.yml.
+
+project:
+  type: book
+  output-dir: _book
+
+book:
+  title: "DD104 — Pre-Silicon Verification"
+  subtitle: "Verilator and cocotb: find the bugs hiding in a real 8-bit core."
+  author: "UofT ASIC Team"
+  output-file: dd104-course
+  chapters:
+    - index.md
+    - part: "1. Testbenches"
+      chapters:
+        - guide/getting-started.md
+        - guide/it-works-is-not-a-result.md
+        - guide/what-a-testbench-is.md
+        - guide/your-first-cocotb-test.md
+        - guide/the-lazy-testbench.md
+        - guide/coverage-is-a-question.md
+        - labs/lab-01-the-adder-you-already-trust-overview.md
+    - part: "2. cocotb"
+      chapters:
+        - guide/clocks-resets-and-triggers.md
+        - guide/cocotb-2x-vs-every-tutorial.md
+        - guide/driving-and-checking.md
+        - guide/waveforms.md
+        - labs/cocotb-intro-overview.md
+    - part: "3. SimProc"
+      chapters:
+        - guide/two-simulators-two-jobs.md
+        - guide/simproc-in-one-page.md
+        - labs/lab-02-the-only-test-this-chip-has-overview.md
+    - part: "4. Unit tests"
+      chapters:
+        - guide/flags-are-state.md
+        - labs/lab-03-three-blocks-before-the-processor-overview.md
+    - part: "5. Bug hunting"
+      chapters:
+        - guide/the-golden-model.md
+        - guide/where-bugs-hide.md
+        - guide/directed-random-and-the-gap.md
+        - labs/lab-04-your-first-bug-hunt-overview.md
+    - part: "6. Handshakes"
+      chapters:
+        - guide/the-handshake-is-the-contract.md
+        - labs/lab-05-every-answer-is-right-overview.md
+    - part: "7. Capstone"
+      chapters:
+        - guide/writing-the-bug-report.md
+        - labs/lab-06-capstone-overview.md
+  appendices:
+    - reference/simproc-instruction-set.md
+    - reference/the-harness-api.md
+    - reference/output-that-is-not-an-error.md
+
+format:
+  typst:
+    toc: true
+    toc-depth: 1
