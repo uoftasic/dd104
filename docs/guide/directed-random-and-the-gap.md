@@ -213,7 +213,8 @@ make, and each one fixes a different problem:
    lives. Backward branches come back the same way, as a loop with a counter that the generator
    sets up.
 2. Widen the checker rather than the stimulus. Compare the whole snapshot (registers, PC, `N` and
-   `Z`) instead of only the register tuple. That is a one-character change, and it makes every
+   `Z`) instead of only the register tuple. That is a one-line change, from
+   `model.snapshot()[0] != sp.regs()` to `model.snapshot() != sp.snapshot()`, and it makes every
    flag window the generator already enters count.
 3. Report what you reached. `gap.py` is the smallest possible coverage model: a list of named
    windows, a counter for each one, and a `*` on the ones that stayed cold. Without something like
