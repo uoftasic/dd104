@@ -31,7 +31,7 @@ built by `apply.sh` can be handed to a student as-is.
 > `uoftasic/dd104` is a public repository, so `golden/`, `variants/*/bug.patch`,
 > `solutions/` and `labs/common/bugs.py` are in every clone. The course says so (see
 > *Requests to avoid* in
-> [Getting started](https://uoftasic.com/dd104/#/guide/getting-started)) and asks students
+> [Getting started](https://uoftasic.com/dd104/guide/getting-started.html)) and asks students
 > not to read them. Nothing here is secret; it is an honour system with the files named.
 
 ## The bugs

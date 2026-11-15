@@ -1,7 +1,7 @@
 # Lab 05: Every answer is right
 
 Writeup: [`docs/labs/lab-05-every-answer-is-right-overview.md`](../../docs/labs/lab-05-every-answer-is-right-overview.md)
-· live: <https://uoftasic.com/dd104/#/labs/lab-05-every-answer-is-right-overview>
+· live: <https://uoftasic.com/dd104/labs/lab-05-every-answer-is-right-overview.html>
 
 Two broken processors whose every register, flag, PC value and byte of memory is correct, and the
 checks on `done`, `halt` and the cycle count that catch them.

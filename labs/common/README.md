@@ -3,13 +3,13 @@
 The shared infrastructure every SimProc lab (Labs 02–06) uses: the cocotb harness, the assembler,
 the golden model, the bug catalogue and the verdict machinery.
 
-Reference: [The SimProc harness](https://uoftasic.com/dd104/#/reference/the-harness-api) documents
+Reference: [The SimProc harness](https://uoftasic.com/dd104/reference/the-harness-api.html) documents
 every call, with output from `test_api_tour.py`. The labs that use this directory directly are
-[Lab 02](https://uoftasic.com/dd104/#/labs/lab-02-the-only-test-this-chip-has-overview) (Parts 3–5 and Going further),
-[Lab 03](https://uoftasic.com/dd104/#/labs/lab-03-three-blocks-before-the-processor-overview) (Part 5),
-[Lab 04](https://uoftasic.com/dd104/#/labs/lab-04-your-first-bug-hunt-overview) (Part 6),
-[Lab 05](https://uoftasic.com/dd104/#/labs/lab-05-every-answer-is-right-overview) (Part 7) and
-[Lab 06](https://uoftasic.com/dd104/#/labs/lab-06-capstone-overview) (Parts 2 and 7).
+[Lab 02](https://uoftasic.com/dd104/labs/lab-02-the-only-test-this-chip-has-overview.html) (Parts 3–5 and Going further),
+[Lab 03](https://uoftasic.com/dd104/labs/lab-03-three-blocks-before-the-processor-overview.html) (Part 5),
+[Lab 04](https://uoftasic.com/dd104/labs/lab-04-your-first-bug-hunt-overview.html) (Part 6),
+[Lab 05](https://uoftasic.com/dd104/labs/lab-05-every-answer-is-right-overview.html) (Part 7) and
+[Lab 06](https://uoftasic.com/dd104/labs/lab-06-capstone-overview.html) (Parts 2 and 7).
 
 ```bash
 cd labs/common

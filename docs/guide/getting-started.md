@@ -16,7 +16,7 @@ The setup has three pieces, all of which you have used before:
 
 - the noVNC desktop, started from your `workspace` clone with `./scripts/start_vnc.sh`
   (ports, passwords and blank-page fixes are in
-  [IC101: Launch the noVNC desktop](https://uoftasic.com/ic101/#/guide/launch-novnc));
+  [IC101: Launch the noVNC desktop](https://uoftasic.com/ic101/guide/launch-novnc.html));
 - `. /foss/designs/common/.designinit`, which in DD104 does one thing for you: it defines the
   `mod` command;
 - `mod add dd104`, which clones this repo into `/foss/designs/modules/dd104`. That folder is

@@ -1,7 +1,7 @@
 # Lab 04: Your first bug hunt
 
 Writeup: [`docs/labs/lab-04-your-first-bug-hunt-overview.md`](../../docs/labs/lab-04-your-first-bug-hunt-overview.md)
-· live: <https://uoftasic.com/dd104/#/labs/lab-04-your-first-bug-hunt-overview>
+· live: <https://uoftasic.com/dd104/labs/lab-04-your-first-bug-hunt-overview.html>
 
 A processor with one line changed, a five-bug pool, and a three-row grade that requires a test
 which fails on the core you were dealt.

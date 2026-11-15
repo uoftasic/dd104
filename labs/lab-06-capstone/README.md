@@ -1,7 +1,7 @@
 # Lab 06: Capstone
 
 Writeup: [`docs/labs/lab-06-capstone-overview.md`](../../docs/labs/lab-06-capstone-overview.md)
-· live: <https://uoftasic.com/dd104/#/labs/lab-06-capstone-overview>
+· live: <https://uoftasic.com/dd104/labs/lab-06-capstone-overview.html>
 
 The three tier-5 bugs, the hardest in the catalogue to think of, and the course deliverable: a
 test suite of your own that catches all thirteen, plus a written bug report for one of the three.
