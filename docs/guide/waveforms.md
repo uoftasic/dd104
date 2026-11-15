@@ -3,21 +3,21 @@
 This page answers: *the test says `q is 0x32, expected 0x31`. I have read the RTL four times and
 it looks right. Now what?*
 
-Now you look at the wires.
+The next step is to look at the wires themselves, in a waveform. An assertion tells you that
+something was wrong at one instant, while a waveform shows what everything was doing for the
+whole run. You reach for one when the assertion has stopped narrowing things down, usually
+because the wrong value came from somewhere you weren't watching, or because the value was right
+but arrived at the wrong time.
 
-An assertion tells you that something was wrong at one instant. A waveform shows what everything
-was doing for the whole run. You reach for one when the assertion has stopped narrowing things
-down, usually because the wrong value came from somewhere you were not watching, or arrived at
-the wrong time rather than with the wrong value.
-
-Most bugs in this course are cheaper to find with a better assertion message than with a viewer,
-and opening the waveform first is a habit that costs hours. But some bugs are only visible as a
-picture, and this page is for those. You'll do everything on it in
-[cocotb on a counter, Part 5](../labs/cocotb-intro-overview.md#part-5-waveforms).
+Most bugs in this course are quicker to find by improving the assertion message than by opening a
+viewer, and if you make a habit of opening the waveform first, it will cost you hours. Some bugs,
+though, show up only in the picture, and this page is about those. You'll do everything it
+describes in [cocotb on a counter, Part 5](../labs/cocotb-intro-overview.md#part-5-waveforms).
 
 ## Getting a waveform out
 
-`make waves` in `labs/cocotb-intro` runs `test_04_waves.py` with dumping turned on:
+Running `make waves` in `labs/cocotb-intro` runs `test_04_waves.py` with waveform dumping turned
+on, and prints this:
 
 ```
     11.00ns INFO  cocotb.counter  reset released at t = 11 ns
@@ -34,35 +34,38 @@ FST info: dumpfile /work/labs/cocotb-intro/build/waves/counter.fst opened for ou
    wrote  /work/labs/cocotb-intro/counter.vcd   (1098 bytes)
 ```
 
-The `FST info: dumpfile ... opened for output.` line appears after the results table. That is
-Icarus closing the file at the end of the run. It is not an error, and the test had already
-passed.
+The `FST info: dumpfile ... opened for output.` line appears after the results table because it
+comes from Icarus closing the file at the end of the run. It isn't an error, and by the time it's
+printed the test has already passed.
 
-The mechanism is one make variable, `WAVES=1`, passed to cocotb's makefile. It makes cocotb's
-Icarus makefile generate a dump module for you, so you never write `$dumpfile` or `$dumpvars`:
+All of this comes from one make variable, `WAVES=1`, passed to cocotb's makefile. With it set,
+cocotb's Icarus makefile generates a dump module for you and adds it to the compile, so you never
+have to write `$dumpfile` or `$dumpvars` yourself:
 
 ```
 /foss/tools/bin/iverilog ... -s cocotb_iverilog_dump  rtl/counter.sv build/waves/cocotb_iverilog_dump.v
 ```
 
-The dump lands at `$(SIM_BUILD)/$(COCOTB_TOPLEVEL).fst`, here `build/waves/counter.fst`. The
-package's `make waves` copies it up to `counter.fst` and converts it with `fst2vcd`, so you have
-both formats.
+The dump is written to `$(SIM_BUILD)/$(COCOTB_TOPLEVEL).fst`, which here is
+`build/waves/counter.fst`. The package's `make waves` then copies it up to `counter.fst` and
+converts it with `fst2vcd`, so you end up with both formats.
 
-> When you drive `sim.mk` by hand and change `RTL=`, change `SIM_BUILD=` with it. cocotb's
+> If you drive `sim.mk` by hand and change `RTL=`, change `SIM_BUILD=` along with it. cocotb's
 > makefile relinks only when the sources are newer than `sim_build/sim.vvp`, so a second run
-> against a different design silently reruns the first one: green, and testing something other
-> than what you meant. Every package target passes its own `SIM_BUILD` for that reason.
+> against a different design can quietly rerun the first one. The test goes green, but it has
+> tested something other than what you meant, and that's why every package target passes its
+> own `SIM_BUILD`.
 
-> Searching for "cocotb waveform" will turn up `COCOTB_PLUSARGS=+WAVES` and hand-written
-> `$dumpvars` testbench shells. Both are real techniques. SimProc's `tb.v` uses that approach,
-> because it has a Verilog shell to put it in. For a design cocotb attaches to directly,
-> `WAVES=1` does the job in one word. Write the shell yourself only when you need to dump a
-> subset of a large design.
+> If you search for "cocotb waveform" you'll find `COCOTB_PLUSARGS=+WAVES` and hand-written
+> `$dumpvars` testbench shells, and both are real techniques. SimProc's `tb.v` uses the
+> `$dumpvars` approach, because it already has a Verilog shell to put it in. For a design that
+> cocotb attaches to directly, `WAVES=1` does the same job with one variable, so write the shell
+> yourself only when you need to dump a subset of a large design.
 
 ## FST or VCD
 
-They hold the same information in two encodings. Use FST unless something refuses it.
+The two formats hold the same information in different encodings. Use FST unless some tool
+refuses to read it.
 
 | | This counter | SimProc, `labs/common` → `make waves` |
 |---|---|---|
@@ -70,29 +73,30 @@ They hold the same information in two encodings. Use FST unless something refuse
 | VCD | 1,098 bytes | 3,007,592 bytes |
 | FST | 699 bytes | 12,152 bytes |
 
-The SimProc run is 247 times smaller as FST. VCD is text and writes every value change out in
-ASCII; FST is compressed and indexed, so viewers can seek in it without reading the whole file.
-`fst2vcd` and `vcd2fst`, both on the workbench `PATH`, convert either way.
+As FST, the SimProc dump is 247 times smaller. VCD is plain text, with every value change written
+out in ASCII, while FST is compressed and indexed, so a viewer can seek to any point in it without
+reading the whole file. `fst2vcd` and `vcd2fst`, both on the workbench `PATH`, convert in either
+direction.
 
-VCD is still worth knowing: everything reads it, and you can open it with `less` when you suspect
-the viewer rather than the data.
+VCD is still worth knowing, because everything reads it, and because when you suspect the viewer
+rather than the data you can open a VCD file with `less` and look at it directly.
 
 ## Opening a viewer
 
-Start Surfer and GTKWave by typing their names in a terminal on the noVNC desktop, never from a
-desktop icon. Both write their real complaints to the terminal they were started from. Started
-from a menu there is no such terminal, and a viewer that cannot open your file just sits there
-looking normal.
+Start Surfer and GTKWave by typing their names in a terminal on the noVNC desktop, never by
+clicking a desktop icon. Both viewers print their real complaints to the terminal they were
+started from. If you start one from a menu there is no such terminal, so a viewer that can't open
+your file tells you nothing and just sits there looking normal.
 
 ## Surfer
 
-Surfer 0.6.0 is on the workbench. This is `counter.fst` open in it:
+The workbench has Surfer 0.6.0. Here is `counter.fst` open in it:
 
 ![Surfer showing the counter's full run](../assets/img/surfer-counter.png)
 
-That is the whole 211 ns run: reset releases, the counter walks `00` to `0a`, `load` pulses and
-`d` puts `ff` in, `en` drops for three clocks while `q` sits at `ff`, then `en` comes back, `tc`
-goes high for exactly that one clock, and the count wraps to `00`.
+That's the whole 211 ns run. Reset releases, the counter walks from `00` to `0a`, `load` pulses
+and `d` puts `ff` in, and `en` drops for three clocks while `q` sits at `ff`. Then `en` comes
+back, `tc` goes high for exactly one clock, and the count wraps to `00`.
 
 Using it takes three steps:
 
@@ -102,82 +106,92 @@ Using it takes three steps:
    the command box to add every signal in a scope at once.
 3. Drag on the time ruler to zoom. `Ctrl` + scroll also zooms.
 
-> The time axis is in picoseconds. The ruler in that screenshot reads `20000 ps`, `40000 ps` and
-> so on, because cocotb's default simulation precision is 1 ps. `20000 ps` is 20 ns. Your test
-> logs nanoseconds, so multiply by 1000 before you go looking.
+> The time axis is in picoseconds, because cocotb's default simulation precision is 1 ps. That's
+> why the ruler in the screenshot reads `20000 ps`, `40000 ps` and so on, and `20000 ps` is
+> 20 ns. Your test logs times in nanoseconds, so multiply them by 1000 before you go looking for
+> them on the ruler.
 
-Surfer can also read a command file. That is how the screenshot was made, and it saves re-adding
-the same signals every time: a file containing `module_add counter`, passed with `surfer -c`.
+Surfer can also read a command file, which saves you re-adding the same signals every time. We
+made the screenshot that way, with a file containing `module_add counter` passed to Surfer with
+`surfer -c`.
 
 ## GTKWave
 
-GTKWave (`v4.0.0-prealpha` on the workbench) is the older tool. It reads both formats, printing
-`FSTLOAD | Processing 7 facs. / Built 7 signals and 0 aliases.` for FST and
-`[0] start time. / [211000] end time.` for VCD.
+GTKWave (`v4.0.0-prealpha` on the workbench) is the older of the two. It reads both formats, and
+prints `FSTLOAD | Processing 7 facs. / Built 7 signals and 0 aliases.` when it loads FST and
+`[0] start time. / [211000] end time.` when it loads VCD.
 
-It has one trap you should know before you meet it. GTKWave opens fully zoomed in, at time zero:
+GTKWave has one trap that you should know about before you run into it, which is that it opens
+fully zoomed in, at time zero:
 
 ![GTKWave opening at 0-4 ps, showing nothing](../assets/img/gtkwave-counter.png)
 
-That is a correctly loaded 211-nanosecond waveform; the header even says `To: 211 ns`, and the
-seven signals are listed on the left. The pane looks empty because you are looking at the first
-four picoseconds, during which nothing happens. The first clock edge after `t = 0` is at 10 ns,
-2,500 screens to the right.
+The waveform loaded correctly: the header even says `To: 211 ns`, and the seven signals are
+listed on the left. The wave pane looks empty because it's showing only the first four
+picoseconds of the 211 ns run, before anything has happened. The first clock edge after `t = 0`
+is at 10 ns, which is 2,500 screens to the right.
 
-The fix is Zoom Fit: `View → Zoom → Zoom Best Fit`, or `Ctrl` `Alt` `F`, or the toolbar
-magnifier with the square in it. Do that first, every time, before concluding anything.
+The fix is Zoom Fit, which is under `View → Zoom → Zoom Best Fit`, on `Ctrl` `Alt` `F`, and on
+the toolbar as the magnifier with the square in it. Do it first, every time you open a file,
+before you conclude anything from what's on the screen.
 
-If GTKWave opens with an empty signal list instead, that is the other half of the same trap:
-signals live in the SST tree at the top left, and you have to `Append` them to the wave pane. A
-`.gtkw` save file does it once and remembers.
+If GTKWave opens with an empty signal list instead, that's the other half of the same trap. The
+signals are in the SST tree at the top left, and nothing appears in the wave pane until you
+`Append` them to it. A `.gtkw` save file remembers that choice, so you only have to make it once.
 [`counter.gtkw`](https://github.com/uoftasic/dd104/blob/main/labs/cocotb-intro/counter.gtkw)
-ships with the package; it is a plain-text list of signal names.
+ships with the package, and it's just a plain-text list of signal names.
 
-Use Surfer if you have no reason to prefer otherwise: it opens at a sensible zoom, its keyboard
-handling is better, and it is useful without a save file. Use GTKWave when you want its analogue
-rendering or transaction filters, or when you are following someone else's `.gtkw`.
+Use Surfer unless you have a reason to prefer GTKWave: Surfer opens at a sensible zoom, its
+keyboard handling is better, and it's useful without a save file. GTKWave is the one to use when
+you want its analogue rendering or transaction filters, or when you're following someone else's
+`.gtkw`.
 
 ## What to look at first
 
-A whole processor is a lot of signals; SimProc's dump has 190. Adding all of them is how you end
-up scrolling instead of debugging. Start with four kinds, in this order.
+A whole processor has a lot of signals (SimProc's dump has 190), and if you add all of them
+you'll spend your time scrolling instead of debugging. Start with these four kinds of signal, in
+this order.
 
-1. The clock and the reset. Not because they are interesting, but because they are the first
-   thing wrong when everything is wrong. A clock that never toggles means you forgot
-   `cocotb.start_soon`. A reset that never releases means you drove `rst_n` and never raised it.
-   Both give a screen of flat lines, and both take seconds to fix.
-2. Anything `X` or red. Red in Surfer and GTKWave means an undriven or conflicting signal. An `X`
-   propagates (one undriven input turns a whole datapath red three cycles later), so trace it
-   back to the first signal that is red and fix that one. Everything downstream is a symptom.
-3. The state register. In a design with a control FSM it carries the most information of any
-   signal. For SimProc it is `CPU1.curr_state`, which decodes to `IDLE` and `CYCLE_1` to
-   `CYCLE_5`. Watching it walk `CYCLE_1 → CYCLE_2 → CYCLE_3 → CYCLE_1` tells you a three-cycle
-   instruction retired, before you have looked at any data.
-4. Whatever your assertion named, at the time it named. That is why `test_04_waves.py` logs
-   `loaded 0xFF at t = 121 ns  <-- zoom here`. Knowing the timestamp before you open the viewer
-   is the difference between reading a waveform and scrolling through one.
+1. The clock and the reset. They aren't interesting in themselves, but when everything is wrong,
+   they're usually the first thing that went wrong. A clock that never toggles means you forgot
+   `cocotb.start_soon`, and a reset that never releases means you drove `rst_n` and never raised
+   it. Either one gives you a screen of flat lines, and either takes seconds to fix.
+2. Anything `X` or red. In both Surfer and GTKWave, red means an undriven or conflicting signal.
+   An `X` propagates (one undriven input turns a whole datapath red three cycles later), so trace
+   it back to the first signal that is red and fix that one, because everything downstream of it
+   is only a symptom.
+3. The state register. In a design with a control FSM, it carries more information than any
+   other signal. In SimProc it's `CPU1.curr_state`, which decodes to `IDLE` and `CYCLE_1` to
+   `CYCLE_5`. If you watch it walk `CYCLE_1 → CYCLE_2 → CYCLE_3 → CYCLE_1`, you know that a
+   three-cycle instruction retired, before you've looked at any data.
+4. Whatever your assertion named, at the time it named. That's why `test_04_waves.py` logs
+   `loaded 0xFF at t = 121 ns  <-- zoom here`. If you know the timestamp before you open the
+   viewer, you can go straight to it and read the waveform there, instead of scrolling through
+   the whole run looking for the problem.
 
-Before adding a fifth signal, ask what you expect it to show. If you can't say, you are
-browsing, not debugging; go back to the assertion and make it print more.
+Before you add a fifth signal, ask yourself what you expect it to show. If you can't say, you're
+browsing rather than debugging, and you'd do better to go back to the assertion and make it
+print more.
 
 ## A bug you can only see in the picture
 
-Against the broken counter, `test_04_waves` passes, with a log identical line for line to the
-good run's: same times, same values, same `PASS`. `test_04_waves` never checks `tc`, so
-nothing in the text output tells the two counters apart. The picture does:
+Run against the broken counter (`rtl/counter_broken.sv`, the same file with `en &` deleted from
+`tc`), `test_04_waves` still passes, and its log is identical line for
+line to the good run's, with the same times, the same values and the same `PASS`. That's because
+`test_04_waves` never checks `tc`, so nothing in the text output can tell the two counters apart.
+In the waveform the difference is easy to see:
 
 ![Surfer showing the broken counter: tc high for the whole parked stretch](../assets/img/surfer-counter-broken.png)
 
-Compare the bottom trace with the earlier screenshot. On the good counter `tc` is one narrow
-pulse, one clock wide at t = 152–161 ns: the one clock where `q` is `0xFF` and `en` is high. On
-the broken counter `tc` goes high at t = 121 ns, the instant `q` becomes `0xFF`, and stays high
-for the whole four-clock stretch, including three clocks where the counter is not moving.
+Compare the bottom trace with the earlier screenshot. On the good counter, `tc` is one narrow
+pulse, one clock wide, at t = 152–161 ns: the one clock where `q` is `0xFF` and `en` is high. On
+the broken counter, `tc` goes high at t = 121 ns, the instant `q` becomes `0xFF`, and stays high
+for the whole four-clock stretch, including the three clocks where the counter isn't moving.
 
-Everything else on the screen is pixel-identical.
-
-The only difference between the two runs is one trace being four times too wide, and it is
-invisible in the log. Some bugs have the shape of a waveform, and learning to recognise them is
-why you learn the viewer before you need it, not during the hour you need it.
+Everything else on the screen is pixel-identical, so the only difference between the two runs is
+one trace that is four times too wide, and the log doesn't show it at all. Some bugs have the
+shape of a waveform, and recognising those shapes is the reason to learn the viewer before you
+need it rather than during the hour you need it.
 
 ## Check yourself
 
