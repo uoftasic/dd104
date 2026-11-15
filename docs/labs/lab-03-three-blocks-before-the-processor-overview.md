@@ -1,9 +1,10 @@
 # Lab 03: Three blocks before the processor
 
-SimProc is 1,178 lines and you cannot test all of it. Three of its modules are 16, 31 and 34
-lines, and you can test those completely. You'll finish the program counter, find out something
-about the register file, drive all 393,216 legal vectors through the ALU, and watch a sweep of the
-entire input space miss a bug until you check the flags.
+SimProc is 1,178 lines long and you can't test all of it, but three of its modules are only 16,
+31 and 34 lines, and those you can test completely. In this lab you'll finish the tests for the
+program counter, find out how the register file treats `r0`, drive all 393,216 legal vectors
+through the ALU, and watch a sweep of the entire input space miss a bug until you start checking
+the flags as well as the values.
 
 This lab takes about 2 hours.
 
@@ -17,10 +18,11 @@ Package: [`labs/lab-03-three-blocks-before-the-processor/`](https://github.com/u
 - Keep [SimProc in one page](../guide/simproc-in-one-page.md) open in another tab.
 
 You don't need the chip around a module to test it. cocotb hands the simulator a list of source
-files and the name of one module to elaborate as the top level. Give it `simproc_system.sv` and
-`TOPLEVEL=ALU`, and Icarus compiles all 1,178 lines and builds a design containing only the ALU.
-The other 1,100 lines are compiled and not connected to anything: no processor, no clock, no
-memory, just three input ports and three output ports. That changes the arithmetic:
+files and the name of one module to elaborate as the top level, so if you give it
+`simproc_system.sv` and `TOPLEVEL=ALU`, Icarus compiles all 1,178 lines but builds a design that
+contains only the ALU. The other 1,100 lines are compiled and left unconnected, so the design has
+no processor, no clock and no memory, just three input ports and three output ports. That makes
+the number of cases you have to cover very different from one block to the next:
 
 | | Inputs | Possible vectors | Exhaustive? |
 |---|---|---|---|
@@ -29,17 +31,18 @@ memory, just three input ports and three output ports. That changes the arithmet
 | `ALU` | `ALUop[2:0]`, `A[7:0]`, `B[7:0]`, no state | $2^{19} = 524{,}288$, of which 393,216 are legal | Yes, by brute force |
 | `simproc` | All of the above plus 64 bytes of RAM and a PC | Far too many | No |
 
-A small block can be finished and a processor cannot. Once the small blocks are finished, any
-failure in the processor is somewhere other than those blocks. Much of verification is shrinking
-the region a bug could be hiding in.
+You can finish testing a small block, which you can't do for a processor, and once the small blocks
+are finished you know that any failure in the processor lies somewhere outside them. Much of
+verification is this kind of work: shrinking the region a bug could be hiding in.
 
 ```bash
 mod dd104     # in a new terminal, load .designinit first (Lab 01, Part 1)
 cd labs/lab-03-three-blocks-before-the-processor
 ```
 
-`make` runs `pc`, `rf`, `alu` and then `check` (against `B01`) in about a minute. You don't need to run it now: the
-individual targets below are faster, and they are the ones you will use.
+A bare `make` runs `pc`, `rf`, `alu` and then `check` (against `B01`), which takes about a minute.
+You don't need to run it now, because the individual targets below are faster and they're the ones
+you'll use.
 
 ## Part 1: The program counter
 
@@ -61,14 +64,15 @@ What does a complete unit test of a small block look like?
    ** TESTS=4 PASS=4 FAIL=0 SKIP=0                  2674.00 **
    ```
 
-   All five simulated times are exact. The same 28 Icarus `sorry:` notes you saw in Lab 02 appear
-   on these unit-level compiles; see [Output that is not an error](../reference/output-that-is-not-an-error.md).
+   All five simulated times are exact. The same 28 Icarus `sorry:` notes you saw in Lab 02 also
+   appear on these unit-level compiles, and [Output that is not an error](../reference/output-that-is-not-an-error.md)
+   explains them.
 
-2. Read `test_pc.py`. It is 120 lines including comments, and it is the model for everything you
-   write in this lab: drive on one edge, sample after the other, and never let your stimulus race
-   the DUT's clock. `program_counter` is an 8-bit register with a synchronous reset and a load
-   enable, and it can be asked to do exactly four things: reset, load, hold, and reset while
-   loading. All four are tested.
+2. Read `test_pc.py`. It's 120 lines including comments, and it's the model for everything you
+   write in this lab: drive on one clock edge, sample after the other, and never let your stimulus
+   race the DUT's clock. `program_counter` is an 8-bit register with a synchronous reset and a load
+   enable, so there are exactly four things you can ask it to do: reset, load, hold, and reset while
+   loading. The file tests all four.
 
 3. `t03_hold_when_not_pc_wr` and `t04_reset_beats_load` are the two tests people usually skip.
    What could go wrong in the RTL that each one catches and `t02` does not?
@@ -76,10 +80,11 @@ What does a complete unit test of a small block look like?
    <details>
    <summary>Answer</summary>
 
-   `t03` drives junk on `pc_in` with `pc_wr` low and checks nothing moved; a PC that loads
-   correctly and never holds would pass `t02` perfectly. `t04` raises `rst` and `pc_wr` together.
-   Priority between two control inputs is a decision somebody made, it is invisible from the port
-   list, and the next person to touch the file can reverse it by swapping two branches.
+   `t03` drives junk on `pc_in` with `pc_wr` low and checks that the PC didn't change. A PC that
+   loads correctly but never holds its value would pass `t02` perfectly. `t04` raises `rst` and
+   `pc_wr` together, because the priority between two control inputs is a decision somebody made.
+   You can't see that decision from the port list, and the next person to touch the file can
+   reverse it just by swapping two branches.
 
    </details>
 
@@ -97,30 +102,30 @@ Is `r0` hardwired to zero, as it is on RISC-V and MIPS?
 
    You should see `TESTS=2 PASS=2` and `51.00` ns total, both exact.
 
-2. Each TODO is a comment describing a test; write it as a new `@cocotb.test()` function, like
-   `t01` and `t02`. Do `t03` first. Most small processors hardwire register 0 to zero: RISC-V's `x0`
-   reads as zero and discards writes, and so does MIPS's `$zero`. Write down whether you expect
-   the same here. Then check it: write `0xFF` into `r0` and read it back, then write a different
-   value and read it again. One write landing is not proof, because a register that latched the
-   first write and then stuck would also pass. The file's `write()` and `read()` helpers do one
-   write and one read; `t01` and `t02` show them in use. `make rf` runs against the correct
-   register file, so if your assertion fails, your expectation was wrong: fix the test, not the
-   RTL.
+2. Each TODO is a comment describing a test, and you write it as a new `@cocotb.test()` function,
+   the way `t01` and `t02` are written. Do `t03` first. Most small processors hardwire register 0
+   to zero: RISC-V's `x0` reads as zero and discards writes, and so does MIPS's `$zero`. Write down
+   whether you expect the same here, then check it: write `0xFF` into `r0` and read it back, then
+   write a different value and read it again. One write that lands doesn't prove anything, because
+   a register that latched the first write and then stuck would pass too. The file's `write()` and
+   `read()` helpers each do one write or one read, and `t01` and `t02` show them in use. `make rf`
+   runs against the correct register file, so if your assertion fails it was your expectation that
+   was wrong, and you should fix the test rather than the RTL.
 
-3. Do `t04` and `t05`. They are two shapes you'll see everywhere: one write moves one register,
-   and an enable that is not enabled writes nothing. Run `t05` for several cycles rather than one.
-   "It did not write on the first edge" and "it does not write" are different claims, and only the
-   second is the requirement.
+3. Do `t04` and `t05`. They test two properties you'll see everywhere: one write changes one
+   register, and an enable that isn't asserted writes nothing. Run `t05` for several cycles rather
+   than one, because "it didn't write on the first edge" and "it doesn't write" are different
+   claims, and only the second is the requirement.
 
 4. Run `make rf` again. Was your prediction about `r0` right?
 
    <details>
    <summary>Answer</summary>
 
-   `r0` is an ordinary register here. It holds whatever you last put in it, and `ORI`, the only
-   instruction that can introduce a constant, writes `r0` and nothing else. That changes how you
-   read every `ORI` in this course. Better to learn it now than at 1 a.m. in
-   [Lab 06](../labs/lab-06-capstone-overview.md).
+   `r0` is an ordinary register here, and it holds whatever you last put in it. `ORI`, the only
+   instruction that can bring a constant into a register, writes `r0` and nothing else, so every
+   `ORI` in this course overwrites whatever `r0` was holding. It's better to learn that now than
+   at 1 a.m. in [Lab 06](../labs/lab-06-capstone-overview.md).
 
    </details>
 
@@ -130,7 +135,7 @@ Check: `make rf` runs five tests, all passing, and you know whether `r0` is hard
 
 Is the ALU right on every vector it can be given?
 
-This is the ALU's whole logic, from
+This is all of the ALU's logic, from
 [`labs/common/rtl/simproc_system.sv`](https://github.com/uoftasic/dd104/blob/main/labs/common/rtl/simproc_system.sv),
 module `ALU`, lines 790–823 (port list and `aluop_t` enum omitted):
 
@@ -150,14 +155,14 @@ assign N = ALUout[7];
 assign Z = ~(|ALUout);
 ```
 
-The shifts use only `B[1:0]`, so the shift amount is 0–3. `N` and `Z` are functions of the result:
-`N` is bit 7 of the output and `Z` is "the output is all zeroes". There is no carry or overflow
-flag.
+The shifts use only `B[1:0]`, so the shift amount is 0–3. `N` and `Z` depend only on the result:
+`N` is bit 7 of the output, and `Z` is set when the output is all zeroes. There is no carry or
+overflow flag.
 
-> Write your specification model from the ISA, not from the Verilog. A model written by reading
-> the RTL agrees with the design about everything, including its bugs. That is the most common way
+> Write your specification model from the ISA, not from the Verilog. A model you write by reading
+> the RTL agrees with the design about everything, bugs included, and that is the most common way
 > a verification effort wastes six months. `spec()` in `test_alu.py` is written from the ISA in
-> exactly this sense, and it is the model every check in this lab uses.
+> exactly this sense, and every check in this lab uses it as the model.
 
 1. Run the ALU tests:
 
@@ -177,12 +182,12 @@ flag.
 
    `393216`, `0 value mismatches` and `393224.00` are exact.
 
-That is six operations × 256 × 256, every legal vector the module can be given, checked against a
-specification model. No corner of the input space is left unexplored (Part 5 shows what checking
-only the value misses). Exhaustive testing is
-usually not available: a pair of 8-bit operands is 65,536 vectors and fine, an 8-bit ALU with a
-3-bit opcode is 524,288 and fine, and a 32-bit adder is $2^{65}$ and never happening. When a block
-is small enough, brute force beats cleverness.
+That is six operations × 256 × 256, every legal vector the module can be given, each checked
+against a specification model, so no corner of the input space is left unexplored (although
+Part 5 shows what checking only the value misses). Usually you can't test exhaustively. A pair of
+8-bit operands is 65,536 vectors, which is fine, and an 8-bit ALU with a 3-bit opcode is 524,288,
+which is also fine, but a 32-bit adder is $2^{65}$, which you'll never get through. When a block is
+small enough, though, brute force beats cleverness.
 
 Check: `393216 vectors checked, 0 value mismatches`.
 
@@ -209,11 +214,12 @@ What does the number of wrong vectors tell you about a bug?
    ```
 
    `65024`, `65280` and the per-operation dictionaries are exact. No other operation appears in
-   either dictionary, which is part of the diagnosis: an operation with no mismatches is not the
-   broken one.
+   either dictionary, and that's part of the diagnosis, because it tells you which operations
+   aren't broken.
 
-2. Derive both counts by hand. The counts from the run are only the check; the derivation is the
-   exercise. `B01` swaps the operands of `SUB`. Which `SUB` vectors survive it?
+2. Derive both counts by hand. The exercise is the derivation, and the counts from the run are only
+   there for you to check it against. `B01` swaps the operands of `SUB`. Which `SUB` vectors
+   survive it?
 
    <details>
    <summary>Answer</summary>
@@ -240,11 +246,12 @@ What does the number of wrong vectors tell you about a bug?
    <details>
    <summary>Answer</summary>
 
-   Each contains the most idiomatic use of the instruction. `SUB rX, rX`, the idiom for clearing a
-   register that appears in nearly every program on this machine, is one of `B01`'s 512. In a
-   four-register machine with no `NOT`, `NAND rX, rX` is how you write `NOT`, which makes it the
-   most common `NAND` anyone writes, and it is exactly the case where `B02` is invisible. That is
-   what lets a bug survive review, and it is why they are in the bug catalogue.
+   Each contains the most idiomatic use of the instruction. `SUB rX, rX` is the idiom for clearing
+   a register, it appears in nearly every program on this machine, and it is one of `B01`'s 512
+   survivors. On a four-register machine with no `NOT`, `NAND rX, rX` is how you write `NOT`, which
+   makes it the most common `NAND` anyone writes, and it is exactly the case where `B02` is
+   invisible. A bug that hides in the commonest use of an instruction can survive review, which is
+   why these two are in the bug catalogue.
 
    </details>
 
@@ -254,8 +261,9 @@ Check: your derivations give 65,024 and 65,280.
 
 Can a testbench that checks only values see a bug in the `Z` flag?
 
-1. `B03` breaks the zero flag. Before you run, write down whether the shipped `test_alu.py`, which
-   checks `ALUout` on all 393,216 vectors and ignores the flags, will catch it. Then run:
+1. `B03` breaks the zero flag. The shipped `test_alu.py` checks `ALUout` on all 393,216 vectors
+   and ignores the flags. Before you run it, write down whether you think it will catch `B03`. Then
+   run:
 
    ```bash
    make check BUG=B03
@@ -271,20 +279,21 @@ Can a testbench that checks only values see a bug in the `Z` flag?
       That bug hides behind: every test that checks results and not flags
    ```
 
-   All 393,216 vectors were driven and every value was correct, on a broken ALU. Would adding more
-   vectors help?
+   The testbench drove all 393,216 vectors and every value was correct, even though the ALU is
+   broken. Would adding more vectors help?
 
    <details>
    <summary>Answer</summary>
 
-   No. A value-only testbench cannot see this bug however many vectors you add, because the values
-   are not what is wrong. A different kind of check is needed.
+   No. A value-only testbench can't see this bug however many vectors you add, because the values
+   aren't what's wrong. To catch it you need a different kind of check, one that looks at the
+   flags.
 
    </details>
 
-2. See the same blind spot on the whole processor. In `labs/common`, run `test_values_only.py`, a
-   thorough testbench that checks only values, and then `test_example.py`, the six-test example
-   from Lab 02, against `B03`:
+2. The whole processor has the same blind spot, and you can see it there too. In `labs/common`, run
+   two testbenches against `B03`: first `test_values_only.py`, a thorough testbench that checks
+   only values, and then `test_example.py`, the six-test example from Lab 02:
 
    ```bash
    cd ../common
@@ -305,7 +314,7 @@ Check: `MISSED` on `B03` from both value-only testbenches, and `caught` from `te
 
 What does a sweep that checks the flags report on `B03`, and can you account for every count?
 
-1. Do the TODO in `t02` of `test_alu.py`. `spec()` already returns `(out, N, Z)`. Compare all
+1. Do the TODO in `t02` of `test_alu.py`. `spec()` already returns `(out, N, Z)`, so compare all
    three, and keep value mismatches and flag mismatches in separate counts.
 
 2. Run all three ALU bugs at once:
@@ -314,23 +323,23 @@ What does a sweep that checks the flags report on `B03`, and can you account for
    make check-alu-bugs
    ```
 
-   It takes about 90 seconds: four full builds and four exhaustive sweeps. You should see
-   `3 of 3 ALU bugs caught`, and `B03` failing with:
+   It takes about 90 seconds, because it does four full builds and four exhaustive sweeps. You
+   should see `3 of 3 ALU bugs caught`, and `B03` failing with:
 
    ```
    393216 vectors checked -- 0 value mismatches , 25726 flag mismatches
    {'ADD': 3840, 'SUB': 3840, 'OR': 255, 'NAND': 255, 'SHL': 14400, 'SHR': 3136}
    ```
 
-   All the numbers are exact. Your message can be worded differently and needn't break the count
-   down by operation, but the totals should match. What does "0 value mismatches, 25,726 flag mismatches" tell you
-   that a single combined count of 25,726 would not?
+   All the numbers are exact. Your message can be worded differently, and it doesn't have to break
+   the count down by operation, but the totals should match. What does "0 value mismatches, 25,726
+   flag mismatches" tell you that a single combined count of 25,726 would not?
 
    <details>
    <summary>Answer</summary>
 
-   That the arithmetic is fine and the flag logic is not, before anyone opens a waveform. That is
-   why you keep two counts.
+   It tells you that the arithmetic is fine and the flag logic is broken, before anyone has opened
+   a waveform. That's the reason for keeping two counts.
 
    </details>
 
@@ -342,13 +351,14 @@ What does a sweep that checks the flags report on `B03`, and can you account for
          NameError: name 'value_per_op' is not defined
    ```
 
-   The code that builds your two-count report only runs when something is wrong, which is the one
-   condition you never test it under. A student's `t02` once crashed like this on all three broken
-   ALUs, and an older `check.py` counted the three crashes as three catches. Fix the name and rerun.
+   The code that builds your two-count report only runs when something is wrong, and that's the one
+   condition you never test it under, since against the correct ALU it never runs. A student's `t02`
+   once crashed like this on all three broken ALUs, and an older `check.py` counted the three
+   crashes as three catches. Fix the name and run it again.
 
-4. Close the counts by hand. The bug makes `Z` wrong exactly when the result is non-zero but its
-   low four bits are zero: 15 possible results, `0x10`, `0x20`, … `0xF0`. Start with `ADD`
-   (3,840) and `OR` (255).
+4. Account for the counts by hand. The bug makes `Z` wrong exactly when the result is non-zero but
+   its low four bits are zero, which is true of 15 possible results: `0x10`, `0x20`, … `0xF0`.
+   Start with `ADD` (3,840) and `OR` (255).
 
    <details>
    <summary>Answer: ADD</summary>
@@ -362,19 +372,20 @@ What does a sweep that checks the flags report on `B03`, and can you account for
    <summary>Answer: OR</summary>
 
    $A \vee B$ has a zero low nibble only when $A[3{:}0] = B[3{:}0] = 0$, which is
-   $16 \times 16 = 256$ pairs. One of those, $A = B = 0$, gives a genuinely zero result, which a
-   low-nibble detector gets right by accident. $256 - 1 = 255$.
+   $16 \times 16 = 256$ pairs. One of those, $A = B = 0$, gives a genuinely zero result, and a
+   low-nibble detector gets that one right by accident, so the count is $256 - 1 = 255$.
 
    </details>
 
-5. Do `NAND` yourself; it is the same argument as `OR` with `0xF` in place of `0`. `SHL` (14,400)
-   and `SHR` (3,136) each need one sum over the four shift amounts and are worth ten minutes.
+5. Do `NAND` yourself; it's the same argument as `OR`, with `0xF` in place of `0`. `SHL` (14,400)
+   and `SHR` (3,136) each need one sum over the four shift amounts, and they're worth ten minutes.
 
    <details>
    <summary>Answer: NAND</summary>
 
    $\lnot(A \wedge B)$ has a zero low nibble only when `A[3:0]` and `B[3:0]` are both `0xF`, which
-   is 256 pairs. One of those, `A = B = 0xFF`, gives a genuinely zero result. $256 - 1 = 255$.
+   is 256 pairs. One of those, `A = B = 0xFF`, gives a genuinely zero result, so the count is
+   $256 - 1 = 255$.
 
    </details>
 
@@ -384,8 +395,8 @@ What does a sweep that checks the flags report on `B03`, and can you account for
    Only `B[1:0]` matters, so each shift amount $s$ covers 64 values of `B`. Count the values of `A`
    whose shifted result is non-zero with a zero low nibble, for $s = 0, 1, 2, 3$:
 
-   - `SHL`: 15, 30, 60, 120. Total $64 \times 225 = 14{,}400$.
-   - `SHR`: 15, 14, 12, 8. Total $64 \times 49 = 3{,}136$.
+   - `SHL`: 15, 30, 60 and 120, for a total of $64 \times 225 = 14{,}400$.
+   - `SHR`: 15, 14, 12 and 8, for a total of $64 \times 49 = 3{,}136$.
 
    </details>
 
@@ -398,20 +409,21 @@ Why keep a test for behaviour that no specification requires?
 1. Read `t03_the_undefined_opcodes` in `test_alu.py`, which ships passing. It checks that `ALUop`
    6 and 7 both return `0x00`, with `N=0` and `Z=1`.
 
-2. Is that behaviour correct? Those two opcodes are not in the enum. Write down your answer, and
-   what `t03` is for.
+2. Is that behaviour correct? Those two opcodes aren't in the enum. Write down your answer, and
+   what you think `t03` is for.
 
    <details>
    <summary>Answer</summary>
 
-   The `case` has `default: ALUout = 8'h00;`, so they return zero, which also sets `Z`. A zero
-   result with `Z` set looks like an ordinary answer, and nothing downstream can tell "the answer
-   was zero" from "that was not an instruction". The behaviour is defined but not specified
-   anywhere; it is what the RTL happens to do.
+   The `case` has `default: ALUout = 8'h00;`, so both opcodes return zero, which also sets `Z`. A
+   zero result with `Z` set looks like an ordinary answer, and nothing downstream can tell "the
+   answer was zero" from "that wasn't an instruction". The behaviour is defined, but no
+   specification asks for it; it's simply what the RTL happens to do.
 
-   `t03` pins it so that if somebody changes it (to X, to a trap, to a passthrough) a test goes red
-   and a person decides whether that was intended. A test can record a decision as well as check a
-   requirement, and the comment above it tells the next reader which it is.
+   `t03` pins that behaviour down, so that if somebody changes it (to X, to a trap, to a
+   passthrough) a test goes red and a person has to decide whether the change was intended. A test
+   can record a decision as well as check a requirement, and the comment above it tells the next
+   reader which of the two it's doing.
 
    </details>
 
@@ -447,9 +459,9 @@ Questions:
    <summary>Answer</summary>
 
    The other ten are in the control path around the ALU (decode, write-back, branching, the
-   handshake), and `make check-alu-bugs` says so in its closing line. Finishing a block proves the
-   block is right. It says nothing about whether the right block is used, with the right operands,
-   at the right time. That is Lab 04.
+   handshake), and `make check-alu-bugs` says so in its closing line. Finishing a block proves that
+   the block is right, but it says nothing about whether the processor uses the right block, with
+   the right operands, at the right time. Testing that is the subject of Lab 04.
 
    </details>
 
