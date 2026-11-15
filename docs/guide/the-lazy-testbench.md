@@ -166,8 +166,9 @@ wrong one and reports the total, which here is exactly half.
 
 Exactly half is an unlikely count for a random mistake; a scrambled carry chain or a bad XOR would
 give you some awkward fraction instead. A count of exactly 256 out of 512 tells you that the
-failures track a signal that's high exactly half the time, and in a space of
-$16 \times 16 \times 2$ the only input with that shape is `cin`.
+failures track a signal that's high exactly half the time. In a space of $16 \times 16 \times 2$,
+`cin` has that shape, but so does each bit of `a` and `b`, so the count narrows the search, and
+the wrong vectors themselves do the rest.
 
 The reference solution's failure message lists the first few wrong vectors and then states the
 pattern outright, because it was written to:

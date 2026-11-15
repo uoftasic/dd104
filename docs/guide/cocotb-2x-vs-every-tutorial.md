@@ -219,8 +219,9 @@ COCOTB_TESTCASE = chekcing
    exit status 0, no FAIL anywhere, and zero tests ran.
 ```
 
-There is no results table, so there's no `TESTS=`, no `PASS=` and no `FAIL=`. The whole run is
-three INFO lines, one WARNING and a clean exit, which in CI shows up as a green tick.
+There is no results table, so there's no `TESTS=`, no `PASS=` and no `FAIL=`. The whole run,
+including the lines not shown above, is six INFO lines, two WARNINGs and a clean exit, which in CI
+shows up as a green tick.
 
 `results.xml` does record what happened, if anyone reads it:
 

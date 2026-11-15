@@ -301,8 +301,8 @@ waveform?
 
    You should see the log lines from `reset released at t = 11 ns` to
    `finished at t = 211 ns with q = 0x05`, including `loaded 0xFF at t = 121 ns  <-- zoom here`,
-   then `FST info: dumpfile ... opened for output.` after the results table (which is normal), and two
-   `wrote` lines for `counter.fst` and `counter.vcd`.
+   then `FST info: dumpfile ... opened for output.` after the results table (which is normal),
+   and two `wrote` lines for `counter.fst` and `counter.vcd`.
 
 2. Open it in Surfer, from this terminal:
 

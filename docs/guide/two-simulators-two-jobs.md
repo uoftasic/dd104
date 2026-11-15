@@ -163,11 +163,11 @@ characters come out of the chip. That's an obvious and correct result, as long a
 happens to read address 100.
 
 Verilator is a 2-state simulator, so every bit is either 0 or 1. It truncated the address to the
-six bits the array has, `100 & 63 = 36`, and you got the byte at address 36, which is the same
-`0x5A` you wrote there. That answer looks plausible, and Verilator gives no sign that it's wrong.
+six bits the array has, `100 & 63 = 36` (the same as 100 − 64), and you got the byte at address
+36, which is the same `0x5A` you wrote there. That answer looks plausible, and Verilator gives no
+sign that it's wrong.
 
-Neither tool is broken; they're answering different questions. The arithmetic also checks out
-exactly, since 100 − 64 = 36.
+Neither tool is broken; they're answering different questions.
 
 This tells you when to trust a passing run. A design that reads uninitialised state, indexes past
 the end of an array or leaves a signal undriven will often work perfectly under Verilator and

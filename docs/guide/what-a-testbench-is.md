@@ -63,8 +63,8 @@ That's why the DD104 verdict has two sides, one for the golden core and one for 
 | On the golden core | PASS | You are testing the wrong thing, or your expectations are wrong |
 | On a known-broken core | FAIL | You are not testing anything |
 
-Neither half means anything on its own, so `make check` measures both, and it won't give you a
-passing verdict until your testbench meets both.
+Neither half means anything on its own, which is why `make check` measures both and, as the
+previous page said, won't give you a passing verdict until your testbench meets both.
 
 ## Four ways to catch one bug
 
@@ -148,9 +148,9 @@ The wrong number is also a clue in its own right. `t03` runs three instructions 
 
 The number you're shown, `199`, comes out two instructions after the bug. If you work backwards
 from it, the middle row gives the bug away: `200 + 56 = 256`, so once you allow for the wrap, the
-two `SUB` results are exact negations of each other. Swapping the operands of a subtraction does
-exactly that, and nothing else does. Reading a wrong number this way is a skill you can practise
-on every failure you cause.
+two `SUB` results are exact negations of each other, which is what you get when a subtraction
+has its operands swapped, so the wrong number points straight at that bug. Reading a wrong
+number this way is a skill you can practise on every failure you cause.
 
 ## The second circuit in cocotb
 
@@ -180,7 +180,8 @@ shows what they print.
 
 ## The shortest complete DD104 test
 
-This is a complete test file. It comes from the harness's six worked tests in
+This is a complete test file. It comes from the comment at the top of `labs/common/simproc.py`,
+the SimProc test harness that every lab imports. The harness also ships six worked tests in
 [`labs/common/test_example.py`](https://github.com/uoftasic/dd104/blob/main/labs/common/test_example.py),
 and copying that file is how you are meant to start every SimProc lab.
 

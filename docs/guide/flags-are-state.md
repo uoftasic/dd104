@@ -9,8 +9,8 @@ are as much a result of an instruction as the byte that lands in a register, and
 they are the only thing a branch can see.
 
 > It's natural to assume that if the numbers are right, the machine is right. On this processor
-> you can get every number right, in every register and every byte of memory, on every instruction, and
-> still ship a chip that takes the wrong branch.
+> you can get every number right, in every register and every byte of memory, on every
+> instruction, and still ship a chip that takes the wrong branch.
 
 ## A one-character bug
 
@@ -22,12 +22,12 @@ broken:  assign Z = ~(|ALUout[3:0]);
 ```
 
 The zero detector now looks at the bottom four bits of the result instead of all eight, so the
-broken core says "that was zero" for 16, 32, 64, 128 and 240, and for every other non-zero byte whose
-low nibble happens to be zero.
+broken core says "that was zero" for 16, 32, 64, 128 and 240, and for every other non-zero byte
+whose low nibble happens to be zero.
 
 Every value the broken core computes is still correct: `ALUout` is untouched, the register and
-memory get the right byte, the program counter is right, and so is `N`. The only thing wrong is one
-bit, and only for some results.
+memory get the right byte, the program counter is right, and so is `N`. The only thing wrong is
+one bit, and only for some results.
 
 ## The exhaustive sweep
 
@@ -93,8 +93,8 @@ between a bug report a designer can act on and one that says "the ALU is broken"
 
 [`labs/common/test_values_only.py`](https://github.com/uoftasic/dd104/blob/main/labs/common/test_values_only.py)
 is a reasonable testbench, not a strawman. It has three tests: `ADD` and `SUB` over twelve operand
-pairs each (zero, one, the halves of the byte, the wrap); `NAND` over the same twelve plus twenty shifts; and a
-sixteen-instruction program checked for both its answer and its exact cycle count.
+pairs each (zero, one, the halves of the byte, the wrap); `NAND` over the same twelve plus twenty
+shifts; and a sixteen-instruction program checked for both its answer and its exact cycle count.
 
 ```python
 @cocotb.test()
@@ -126,8 +126,8 @@ it gives:
 The testbench reports `MISSED`, and more luck or more vectors wouldn't have helped, because it
 cannot see the bug at all. Every value this processor computes is visible in a register or in
 memory, but `N` and `Z` show up in neither. A test that only reads registers and memory is
-testing a smaller machine than the one on the die, so you could run it for a week and it would still miss `B03`. You'll run it
-yourself in Lab 03, Part 5.
+testing a smaller machine than the one on the die, so you could run it for a week and it would
+still miss `B03`. You'll run it yourself in Lab 03, Part 5.
 
 So the rule is: for every instruction that writes a flag, assert the flag, and for every
 instruction that must not write one, assert that it did not move. Treat it as a per-instruction

@@ -10,7 +10,7 @@ the argument. Read it for the shape, then write yours.
 
 ## 1. The smallest program that reproduces it
 
-The program is three instructions of setup and one `SUB`. It ships complete as test `t01` in
+The program is two `set_reg` calls (twelve instructions of setup) and one `SUB`. It ships complete as test `t01` in
 [`../common/test_b01_repro.py`](../common/test_b01_repro.py):
 
 ```python

@@ -46,7 +46,7 @@ might expect:
 - Most 1.x forms still run on 2.0.1 and only print a `DeprecationWarning`: `units=` instead of
   `unit=`, `MODULE=` in a Makefile, and `sig.value.integer`. You should still write the new
   spellings, but if your run is red, these aren't the reason.
-- Three 1.x forms are hard errors: `cocotb.fork` (use `cocotb.start_soon`),
+- Some 1.x forms are hard errors, among them `cocotb.fork` (use `cocotb.start_soon`),
   `@cocotb.coroutine` (use a plain `async def`), and `dut.sig <= 1` (use
   `dut.sig.value = 1`). None of their error messages mentions a version number, so they
   won't tell you that the problem is an old example.
@@ -65,8 +65,8 @@ with a line like this:
 make: *** [Makefile:49: check] Error 1
 ```
 
-That line is `make` reporting the failed verdict, and it doesn't mean the Makefile is broken.
-The lab prints two lines just above it that say this. You will see it often, and it goes away
+That line is `make` reporting the failed verdict, and it doesn't mean the Makefile is broken;
+the lab prints three lines just above it to say so. You will see it often, and it goes away
 once the verdict passes.
 
 Your first run is meant to fail. Lab 01 hands you a testbench that passes on both a good adder
@@ -100,10 +100,10 @@ labs assume you will.
   verification course, much of what looks like your own mistake is really the tool being
   unhelpful, and in this course a lot of it is a design that is supposed to be broken.
 - Quote the exact error and say which core you were running against. "My test fails" and "my
-  test fails on `B07` and passes on the golden core" (`B07` being one of the broken cores) are
-  different questions, and the
-  second is much easier to answer. In a Python traceback, the last line is the actual error, and
-  everything above it is the call stack, most of which is cocotb's own machinery.
+  test fails on `B07` and passes on the golden core" are different questions, and the second is
+  much easier to answer. (`B07` is one of the thirteen broken cores, and the golden core is the
+  correct one.) In a Python traceback, the last line is the actual error, and everything above
+  it is the call stack, most of which is cocotb's own machinery.
 - Paste the whole verdict block rather than a screenshot of one line. The block says which core,
   which testbench and which tests fired, and that is most of what someone needs to diagnose the
   problem.

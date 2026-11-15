@@ -20,15 +20,12 @@ Directed testing has one way of failing, which is that the test shares your blin
 choose the stimulus, an input class you never thought of is missing twice over: from the tests, and
 from your own idea of what needs testing.
 
-This repository's history has an example. The first `LOAD`/`STORE` test written for this core used
-`LOAD r1, r1`, which loads through a pointer into the same register that held the pointer (a real
-idiom). That test passes on a core that takes the address from the wrong register field, because
-when both fields name the same register, there is no wrong one to pick. Nobody found out until the
-bug was injected on purpose and the suite stayed green.
-
-[Where bugs hide](../guide/where-bugs-hide.md) describes the habit that prevents this. What matters
-here is that the fix was another directed test, written on purpose once somebody had named the input
-class. You can't generate your way out of a blind spot you haven't named.
+The history of `B07`, told on [Where bugs hide](../guide/where-bugs-hide.md), is an example. The
+first `LOAD`/`STORE` test written for this core used `LOAD r1, r1`, so it passed on a core that
+takes the address from the wrong register field, and nobody found out until the bug was injected
+on purpose and the suite stayed green. That page describes the habit that prevents this. What
+matters here is that the fix was another directed test, written on purpose once somebody had named
+the input class. You can't generate your way out of a blind spot you haven't named.
 
 ## Random tests
 
@@ -120,8 +117,8 @@ branch uses it and changes the control flow, and none of those eight programs di
 ### Windows it can never enter
 
 The two rows marked `*` are still at zero after a thousand programs and twenty thousand
-instructions. That isn't bad luck, and more seeds won't change it, because the generator never writes those instructions
-at all. Its docstring says why:
+instructions. That isn't bad luck, and more seeds won't change it, because the generator never
+writes those instructions at all. Its docstring says why:
 
 ```python
 def random_program(seed, n=20):
@@ -199,7 +196,7 @@ machine, the list starts like this:
 | Two branches off one comparison? | Flags are supposed to survive a branch |
 | An `ORI` whose immediate overlaps bits `r0` already has? | `OR` and `ADD` agree until the bits overlap |
 | A second `ORI`, once `r0` is no longer zero? | After reset, several wrong machines look right |
-| `done` counted, `halt` counted, cycle counts asserted? | Three bugs disturb nothing else |
+| `done` counted, `halt` counted, cycle counts asserted? | Two bugs disturb nothing else |
 | `clk_per_bit` swept, not sampled? | One bug does not exist at the default |
 
 You can answer every line today with a `for` loop and a set, without any tool. Writing the list is

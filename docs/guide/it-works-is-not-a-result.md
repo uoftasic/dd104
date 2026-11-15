@@ -73,7 +73,7 @@ program and executes no instruction, and it never looks at a register, a flag or
 memory. This is the real file, it passes, and for a long time it was the only evidence anyone
 had that SimProc worked.
 
-The file even admits as much. In the original, two lines above the assertion, there is this
+The file even admits as much. In the original, the two lines just above the assertion are this
 comment:
 
 ```python
@@ -91,8 +91,8 @@ common: almost every first tapeout looks like this.
 
 DD104 ships thirteen deliberately broken versions of SimProc. Each one differs from the real
 core by a one-line edit: `SUB` computes `B - A`, `NAND` is wired as `NOR`, the zero flag looks
-only at the bottom four bits, branches sign-extend the wrong way, `LOAD` reads its address from
-the destination register instead of the pointer, and so on.
+only at the bottom four bits, branches zero-extend their displacement instead of sign-extending
+it, `LOAD` reads its address from the destination register instead of the pointer, and so on.
 
 Here is what the shipped test prints when it runs against the good core and all thirteen broken
 ones, which you'll do yourself in [Lab 02, Part 1](../labs/lab-02-the-only-test-this-chip-has-overview.md#part-1-the-shipped-test):
@@ -141,8 +141,8 @@ You'll see this question on every page of the course:
 
 The mechanical way to answer it is to run your test against a design you know is broken. Every
 lab package does this with `make check`, and it won't give you a passing verdict until your
-testbench has both passed the good design and failed a broken one. A result has those two
-sides, and you need both.
+testbench has both passed the good design and failed a broken one, because a result needs both
+of those sides.
 
 ## Two kinds of red
 

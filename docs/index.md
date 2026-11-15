@@ -31,12 +31,12 @@ you will have written a test suite that catches all thirteen, and a bug report f
 | Total time | About 19 hours, self-paced. The Course path rows below add up to 18 h 55 min. |
 
 Check your cocotb version before you search the web for help: `cocotb-config --version` should
-print `2.0.1`. That matters because most cocotb tutorials online were written for 1.x, and three
-things they use are errors in 2.x:
-`cocotb.fork` (use `cocotb.start_soon`), `@cocotb.coroutine` (use a plain `async def`) and
-`dut.sig <= 1` (use `dut.sig.value = 1`). Most of the rest, such as `units=`, `MODULE=` and
-`.value.integer`, still runs and only prints a deprecation warning.
-[cocotb 2.x and older tutorials](guide/cocotb-2x-vs-every-tutorial.md) has the full list.
+print `2.0.1`. That matters because most cocotb tutorials online were written for 1.x, and some
+of the things they use are errors in 2.x, among them `cocotb.fork` (use `cocotb.start_soon`),
+`@cocotb.coroutine` (use a plain `async def`) and `dut.sig <= 1` (use `dut.sig.value = 1`).
+Most of the rest, such as `units=`, `MODULE=` and `.value.integer`, still runs and only prints a
+deprecation warning. [cocotb 2.x and older tutorials](guide/cocotb-2x-vs-every-tutorial.md) has
+the full list.
 
 ## Course path
 
