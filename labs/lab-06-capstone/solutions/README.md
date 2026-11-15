@@ -7,18 +7,19 @@ cp solutions/test_capstone.py test_solution.py
 make check-all TB=test_solution
 ```
 
-Sixteen tests: ten from Lab 04, three from Lab 05 and three new. On the golden core, 16 of 16 in
-2,118,170.02 ns. `make check-all` takes about 4 min 35 s and reports `13 of 13 caught`.
+The suite has sixteen tests: ten from Lab 04, three from Lab 05 and three new ones. On the golden
+core all 16 pass in 2,118,170.02 ns. `make check-all` takes about 4 min 35 s and reports
+`13 of 13 caught`.
 
-Thirteen tests you already had and three that took the longest: that is what a capstone usually
-looks like.
+That split, thirteen tests you already had and three that took the longest to write, is what a
+capstone usually looks like.
 
 ## The three new tests
 
 `c01_ori_over_bits_already_set` runs three `ORI`s whose immediates overlap. `5 | 3 = 7` and
 `5 + 3 = 8`; then `7 | 24 = 31` and `8 + 24 = 32`. OR and ADD agree on every pair of operands that
 share no set bits, which covers every constant anyone builds on purpose, including the one `set_reg`
-builds. You have to OR a bit into a register that already has it.
+builds. To tell them apart, you have to OR a bit into a register that already has it.
 
 `c02_ori_writes_r0_and_only_r0` runs `ORI 5; SHL r0, 3; ORI 3` and then checks all four registers.
 The `SHL` is what makes it work: it takes `r0` out of the window where reset has made every register
@@ -30,7 +31,7 @@ a fixed pattern. `PING` alone is not a link test. `0xF0` already has bit 7 set a
 is a fixed pattern, so a receiver whose bit period is one clock too long gets both exactly right
 while mangling every byte that carries data.
 
-Which speeds work is the diagnosis, not just the result. A slow receiver drifts further off centre
+The set of speeds that work is the diagnosis, and not only the result. A slow receiver drifts further off centre
 with every bit of a frame, so it fails at short bit periods first and is invisible at long ones.
 Every other lab in the course runs at the default `clk_per_bit = 32`, where this bug does not
 exist.

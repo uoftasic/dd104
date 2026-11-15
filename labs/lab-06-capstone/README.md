@@ -3,8 +3,9 @@
 Writeup: [`docs/labs/lab-06-capstone-overview.md`](../../docs/labs/lab-06-capstone-overview.md)
 · live: <https://uoftasic.com/dd104/labs/lab-06-capstone-overview.html>
 
-The three tier-5 bugs, the hardest in the catalogue to think of, and the course deliverable: a
-test suite of your own that catches all thirteen, plus a written bug report for one of the three.
+This lab deals you one of the three tier-5 bugs, which are the hardest in the catalogue to think
+of. It also holds the course deliverable: a test suite of your own that catches all thirteen bugs,
+plus a written bug report for one of the three.
 
 ```bash
 cd labs/lab-06-capstone
@@ -15,8 +16,8 @@ make verdict
 make check-all     # the deliverable: your suite against all thirteen
 ```
 
-Runs in the workbench container (`hpretl/iic-osic-tools:2026.08`: cocotb 2.0.1, Icarus Verilog
-14.0) with no environment setup. The Makefile includes `../common/lab.mk`, so you need the whole
+It runs in the workbench container (`hpretl/iic-osic-tools:2026.08`: cocotb 2.0.1, Icarus Verilog
+14.0) and needs no environment setup. The Makefile includes `../common/lab.mk`, so you need the whole
 repository. `make check-all` takes about 4 min 35 s on the reference suite (fourteen full builds
 and simulations).
 

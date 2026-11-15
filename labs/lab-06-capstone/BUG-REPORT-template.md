@@ -2,8 +2,8 @@
 
 Copy this file to `BUG-REPORT.md` and fill it in for one of the three bugs in this lab's pool.
 
-The deliverable of verification is not a red test. It is a report someone can act on without
-redoing your week. It has five parts, in the order the reader needs them.
+What verification delivers is a report that someone can act on without redoing your week, and a
+red test on its own is not that report. The report has five parts, in the order the reader needs them.
 
 ---
 
@@ -26,8 +26,8 @@ make check TB=<your module> BUG=<bug id>
 
 ## 2. Expected against actual, as numbers, with the arithmetic shown
 
-Not "r1 is wrong". Give the number you expected, the number you got, and the sum that produces
-the expected one.
+Writing "r1 is wrong" is not enough. Give the number you expected, the number you got, and the sum
+that produces the expected one.
 
 | | |
 |---|---|
@@ -46,7 +46,8 @@ description. `0 value mismatches and 25,726 flag mismatches` says the arithmetic
 
 ## 4. Where it is not
 
-What still works. This part makes a report credible, and it narrows down the fix.
+List what still works. This part is what makes a report credible, and it also narrows down where
+the fix has to go.
 
 - Which instructions are unaffected?
 - Which registers, addresses, flags?
@@ -55,8 +56,8 @@ What still works. This part makes a report credible, and it narrows down the fix
 
 ## 5. The habit the suite gained
 
-One line: the rule a person can carry to the next design, and the test that enforces it here,
-by name.
+Write one line: the rule a person can carry to the next design, and the test that enforces it
+here, by name.
 
 > Reflex: *…*
 >
