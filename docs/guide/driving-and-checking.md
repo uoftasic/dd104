@@ -30,7 +30,7 @@ You'll run it in [cocotb on a counter, Part 4](../labs/cocotb-intro-overview.md#
 
 ## The two counters
 
-`rtl/counter_broken.sv` differs from `rtl/counter.sv` by two characters:
+`rtl/counter_broken.sv` differs from `rtl/counter.sv` by one term:
 
 ```systemverilog
 good:    assign tc = en & (q == 8'hFF);

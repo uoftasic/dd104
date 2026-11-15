@@ -1,4 +1,4 @@
-// DD104 — counter.sv with two characters removed, on purpose.
+// DD104 — counter.sv with one term removed, on purpose.
 //
 // This is the same counter as rtl/counter.sv except for line 33, where the
 // `en &` has been deleted from tc:

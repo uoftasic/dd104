@@ -216,7 +216,7 @@ reference model, and the bug is still `MISSED`, because none of those instructio
 in a bit that was already set. You'll run this yourself in
 [Lab 06, Part 2](../labs/lab-06-capstone-overview.md#part-2-b10-the-wrong-operator).
 
-The test that catches it is three lines long, and it works because of its stimulus:
+The test that catches it is two lines long, and it works because of its stimulus:
 
 ```python
 await sp.run([ORI(5), ORI(3), ORI(24)])
