@@ -1,8 +1,9 @@
 # Lab 04: Your first bug hunt
 
-You'll be dealt a processor with one line changed, without being told which line. You'll write
-tests until one goes red, narrow the bug down, fix the line, and prove the fix. The deliverable is
-the failing test, not the fix, and the grader checks that specifically.
+In this lab you're dealt a processor in which one line has been changed, and nobody tells you
+which line. You'll write tests until one of them goes red, narrow the bug down, fix the line, and
+then prove the fix. The deliverable is the failing test rather than the fix, and the grader
+checks for exactly that.
 
 This lab takes about 2 hours 30 minutes, plus whatever time you give the optional Part 8.
 
@@ -10,13 +11,14 @@ Package: [`labs/lab-04-your-first-bug-hunt/`](https://github.com/uoftasic/dd104/
 
 ## Before you start
 
-- Finish [Lab 03](../labs/lab-03-three-blocks-before-the-processor-overview.md): `3 of 3 ALU bugs caught`.
+- Finish [Lab 03](../labs/lab-03-three-blocks-before-the-processor-overview.md), which ends with
+  `3 of 3 ALU bugs caught`.
 - Read [The golden model](../guide/the-golden-model.md), [Where bugs hide](../guide/where-bugs-hide.md)
   and [Directed and random tests](../guide/directed-random-and-the-gap.md).
 - Keep [The SimProc instruction set](../reference/simproc-instruction-set.md) and
   [The SimProc harness](../reference/the-harness-api.md) open in other tabs.
 
-`make verdict` grades you in three rows, in this order:
+At the end, `make verdict` grades your work in three rows, in this order:
 
 ```
       ok  1. the golden core          must PASS      10 tests, all passed       9.4s
@@ -24,16 +26,17 @@ Package: [`labs/lab-04-your-first-bug-hunt/`](https://github.com/uoftasic/dd104/
       ok  3. core/ as it stands now   must PASS      10 tests, all passed       9.3s
 ```
 
-Row 1 comes first because a test that fails on a correct processor is telling you about itself,
-and nothing else means anything until it passes. Row 3 is the fix. Row 2 is the deliverable: a
-patch is something one person did once, and a test that fails on the old core is what stops the bug
-coming back in a year, in a rewrite, done by someone who has never heard of you. Row 2 is rebuilt
-fresh from the bug catalogue on every run, never read from `core/`, so you cannot turn it green by
-editing the file you are testing.
+Row 1 runs your tests on the golden core, and it comes first because a test that fails on a
+correct processor is reporting a bug in the test, not in the processor. Until row 1 passes, the
+other two rows don't tell you anything. Row 3 checks your fix. Row 2 is the deliverable, and it
+matters most because a patch is something one person did once, whereas a test that fails on the
+old core is what stops the bug coming back a year from now, in a rewrite, done by someone who has
+never heard of you. The grader rebuilds the row 2 core fresh from the bug catalogue on every run
+and never reads it from `core/`, so you can't turn row 2 green by editing the file you're testing.
 
-Do not diff `core/` against `../common/rtl/`. It works, it takes four seconds, and it skips the
-whole lab. The skill here is finding a bug in a design you cannot diff against a known-good copy,
-which is every design you will be paid to verify.
+Don't diff `core/` against `../common/rtl/`. It would work, and take four seconds, but it would skip
+the whole lab. The skill you're here to practise is finding a bug in a design you can't diff
+against a known-good copy, and every design you'll ever be paid to verify is like that.
 
 ```bash
 mod dd104     # in a new terminal, load .designinit first (Lab 01, Part 1)
@@ -66,14 +69,15 @@ Which bugs could your core have, and what can you already rule out?
     every vector it can be given is already known to be right.
    ```
 
-   `make new` deletes any `core/` you already have.
+   Be careful running it again later, because `make new` deletes any `core/` you already have.
 
-2. Note what you can already rule out. Lab 03 drove all 393,216 ALU vectors and checked values and
-   flags on every one, so you can stop suspecting the ALU. You start with 34 lines eliminated and a
-   five-way choice.
+2. Note what you can already rule out. Lab 03 drove all 393,216 ALU vectors and checked the value
+   and the flags on every one, so you can stop suspecting the ALU. That eliminates 34 lines before
+   you start, and leaves you choosing between five bugs.
 
-`core/.sealed` holds which bug it was, base64-encoded. Decoding it costs you the lab. It is an
-honour system, and the file says so.
+The name of the bug you were dealt is in `core/.sealed`, base64-encoded. Decoding it would
+throw away the lab, and nothing stops you except the honour system, which the file itself spells
+out.
 
 Check: `core/` exists and the banner lists five candidates.
 
@@ -87,8 +91,8 @@ What does the shipped suite never drive?
    make hunt
    ```
 
-   `test_lab04.py` has four ordinary tests, the kind a competent person writes in twenty minutes.
-   You should see either a red row or this:
+   `test_lab04.py` has four ordinary tests, the kind a competent person would write in twenty
+   minutes. You should see either a red row or this:
 
    ```
       quiet  core/  the mystery                         4 tests, all passed        3.4s
@@ -98,17 +102,18 @@ What does the shipped suite never drive?
     reached it yet. Widen the stimulus, not the assertions.
    ```
 
-2. Read the three questions at the top of `test_lab04.py`, then read `t02` and `t03` against them.
-   Both were written with a blind spot on purpose. The shipped tests already assert the right
-   things about what they drive. What does each of `t02` and `t03` never drive?
+2. Read the three questions at the top of `test_lab04.py`, then read `t02` and `t03` with those
+   questions in mind. We wrote both tests with a blind spot on purpose. The shipped tests already
+   assert the right things about what they drive, so the gap is in what they drive. What does each
+   of `t02` and `t03` never drive?
 
    <details>
    <summary>Answer</summary>
 
-   `t02` only ever shifts by 1, so the two-bit amount field is sampled at one value (question 1).
-   `t03` loads with `LOAD r1, r1`, so the pointer and the destination are the same register
-   (question 2). Neither branches; the one backward branch in the file is the loop in
-   `t04_a_loop`.
+   `t02` only ever shifts by 1, so the two-bit amount field is only ever tried at one value
+   (question 1). `t03` loads with `LOAD r1, r1`, so the pointer and the destination are the same
+   register (question 2). Neither of them branches; the only backward branch in the file is the
+   loop in `t04_a_loop`.
 
    </details>
 
@@ -118,12 +123,12 @@ Check: you can name the blind spot in `t02` and in `t03`.
 
 Which region of the design is your bug in?
 
-`make hunt` prints a one-line summary and discards the simulator's output, so the loop stays
-quick. To see what a probe program prints, use `make probe`, which is the same run with nothing
-discarded.
+`make hunt` prints a one-line summary and throws away the simulator's output, which keeps each
+round of the hunt quick. To see what a probe program prints, use `make probe`, which does the same run
+without throwing anything away.
 
-1. Put probe programs in `test_probe.py`, which ships as a starting point and is never graded, so
-   `test_lab04.py` stays a suite. Run them with:
+1. Put your probe programs in `test_probe.py`, which ships as a starting point and is never
+   graded. Keeping them there means `test_lab04.py` stays a proper test suite. Run them with:
 
    ```bash
    make probe TB=test_probe
@@ -151,11 +156,11 @@ discarded.
     33290.00ns INFO     cocotb.tb           PROBE-LOG regs = (60, 4, 60, 0)
    ```
 
-   `make hunt VERBOSE=1` does the same as `make probe`, and `make verdict VERBOSE=1` does it for all
-   three rows of the grade.
+   `make hunt VERBOSE=1` does the same thing as `make probe`, and `make verdict VERBOSE=1` shows the
+   full output for all three rows of the grade.
 
 2. Work down the question list from [Where bugs hide](../guide/where-bugs-hide.md#the-question-list).
-   Each answer is one small program. For example:
+   You can answer each question with one small program, for example:
 
    ```python
    # Q1 -- which classes are wrong?
@@ -170,17 +175,18 @@ discarded.
    ```
 
 3. Keep a written list of what each probe ruled in or out. If arithmetic with `rA == rB` is right
-   and arithmetic with `rA != rB` is wrong, you have answered questions 1, 3 and 4 at once and are
-   looking at four lines of RTL.
+   and arithmetic with `rA != rB` is wrong, for instance, you have answered questions 1, 3 and 4 at
+   once, and you're down to four lines of RTL.
 
-A five-minute debug and a two-hour one rarely differ in insight. They differ in whether you spent
-the first ten minutes narrowing or reading.
+When one debugging session takes five minutes and another takes two hours, the difference is
+rarely insight. Usually it comes down to whether the first ten minutes went on narrowing the
+problem down or on reading the RTL.
 
-If you have spent a real hour on one core and are stuck, `make reveal` tells you the bug's name and
-what it hides behind, but not the line. You still have to write the test that catches it, because
-knowing a bug's name and owning a test for it are different things, and only the test stays with
-the project. Using it after a genuine hour is a reasonable engineering decision. Take the hint,
-write the test, and move on.
+If you've spent a real hour on one core and are stuck, `make reveal` tells you the bug's name and
+what it hides behind, though not the line. You still have to write the test that catches it,
+because knowing a bug's name is not the same as having a test for it, and only the test stays
+with the project. Using `make reveal` after a genuine hour is a reasonable engineering decision,
+so if you get there, take the hint, write the test and move on.
 
 Check: your list of candidates has shrunk to one region of the design.
 
@@ -204,18 +210,19 @@ Where does your core first disagree with the golden model?
    instruction 19, at address 19 (0x66 = SUB   r1, r2), left the machine in a ...
    ```
 
-   It names the first disagreement, not the last. Those four lines check every register, the PC
-   and both flags after every instruction, and they take less code than the directed tests around
-   them.
+   The message names the first instruction at which the core and the model disagree, not the
+   last, so it points you at where things started to go wrong. Those four lines of code check
+   every register, the PC and both flags after every instruction, and they're shorter than the
+   directed tests around them.
 
 3. What can this trace not see? Write the answer down next to the test.
 
    <details>
    <summary>Answer</summary>
 
-   `golden.py` models architectural state only, and has no idea `done` or `halt` exist. A core
-   that gets every answer right and its handshake wrong passes it. That is
-   [Lab 05](../labs/lab-05-every-answer-is-right-overview.md).
+   `golden.py` models architectural state only, and has no idea that `done` or `halt` exist, so a
+   core that gets every answer right but its handshake wrong passes the trace. That kind of bug is
+   the subject of [Lab 05](../labs/lab-05-every-answer-is-right-overview.md).
 
    </details>
 
@@ -225,7 +232,7 @@ Check: you have a trace test, and you know what it cannot see.
 
 Which bugs does only a test written on purpose catch?
 
-1. Whatever you were dealt, add these two tests to `test_lab04.py`:
+1. Whichever bug you were dealt, add these two tests to `test_lab04.py`:
 
    - `LOAD` with the pointer in a different register from the destination, checking the pointer
      afterwards to prove it was not overwritten;
@@ -240,7 +247,8 @@ Which bugs does only a test written on purpose catch?
 
    You should see `caught` on both.
 
-3. Compare with the reference ten-test suite, which gives this scoreboard (all five counts exact):
+3. Compare your results with the reference ten-test suite, which gives this scoreboard (all five
+   counts are exact):
 
    | Bug | Tests that fail, of 10 |
    |---|---|
@@ -250,8 +258,8 @@ Which bugs does only a test written on purpose catch?
    | `B07_load_address_from_ra` | 1 |
    | `B09_branch_clobbers_flags` | 1 |
 
-   Two of the five are caught by exactly one test each, and in both cases it is a test that had to
-   be written on purpose after everything else had passed.
+   Two of the five bugs are caught by exactly one test each, and in both cases that test had to be
+   written on purpose after everything else had already passed.
 
 4. The shipped `t03` tests `LOAD` as `LOAD r1, r1`. Why does it pass on `B07`, which reads the
    load address from the wrong register field?
@@ -259,12 +267,12 @@ Which bugs does only a test written on purpose catch?
    <details>
    <summary>Answer</summary>
 
-   On `LOAD r1, r1` both fields name the same register, so reading the address from the wrong
-   field gives the right address. `LOAD r1, r1` is a real idiom, used when you are walking a list
-   and no longer need the address, and nothing about it says it is insufficient. A golden-model
-   comparison over 27 instructions missed `B07` too. The habit that fixes it: make every operand
-   distinct on purpose, and check the register that should not have moved as well as the one that
-   should.
+   In `LOAD r1, r1` both fields name the same register, so reading the address from the wrong
+   field still gives the right address. `LOAD r1, r1` is a real idiom, used when you're walking a
+   list and no longer need the address, and nothing about it looks like an incomplete test. A
+   golden-model comparison over 27 instructions missed `B07` too. The habit that catches it is to
+   make every operand distinct on purpose, and to check the register that shouldn't have changed
+   as well as the one that should.
 
    </details>
 
@@ -274,8 +282,8 @@ Check: `make check BUG=B07` and `make check BUG=B09` both say `caught`.
 
 What can random stimulus reach, and what can it never reach?
 
-`labs/common/test_reference.py` catches all thirteen bugs in eleven tests, and one of them, `R10`,
-runs eight random programs and compares the registers with the golden model after each.
+`labs/common/test_reference.py` catches all thirteen bugs with eleven tests. One of those tests,
+`R10`, runs eight random programs and compares the registers with the golden model after each one.
 
 1. See which windows its generator enters:
 
@@ -284,7 +292,7 @@ runs eight random programs and compares the registers with the golden model afte
    make gap
    ```
 
-   It takes about a second, with no simulator. You should see the table from
+   It takes about a second, because it doesn't run the simulator. You should see the table from
    [Directed and random tests](../guide/directed-random-and-the-gap.md#what-the-generator-reaches),
    ending `8 programs, 160 instructions written, 2 of 9 windows never entered`, and a second table
    over a thousand seeds in which the same two windows, `B05` and `B07`, are still at zero.
@@ -295,15 +303,16 @@ runs eight random programs and compares the registers with the golden model afte
    <details>
    <summary>Answer</summary>
 
-   A random register value is a random address, and most of them are outside the 64-byte RAM:
-   addresses 64 to 255 are three quarters of the 256 an 8-bit register can hold. (The docstring
-   says half.) A random backward branch is an infinite loop. Both are worth testing, with stimulus you designed
-   rather than stimulus you rolled.
+   A random register value used as a pointer is a random address, and most addresses are outside
+   the 64-byte RAM: addresses 64 to 255 are three quarters of the 256 values an 8-bit register can
+   hold. (The docstring says half.) A random backward branch is an infinite loop. Loads, stores and
+   backward branches are all worth testing, but with stimulus you designed rather than stimulus
+   you rolled.
 
    </details>
 
-3. `gap` shows the random programs entering `B03`'s window. Before you run, predict whether `R10`
-   catches `B03`. Then run the reference suite against it:
+3. `make gap` shows the random programs entering `B03`'s window. Before you run anything, predict
+   whether `R10` catches `B03`. Then run the reference suite against it:
 
    ```bash
    make check TB=test_reference BUG=B03
@@ -319,15 +328,16 @@ runs eight random programs and compares the registers with the golden model afte
                AssertionError: after r1 = 16 (0b00010000) the Z flag is 1.
    ```
 
-   One test catches it, and it is not `R10`. Why not?
+   One test catches it, `R07_zero_and_negative_flags`, rather than `R10`. Why doesn't `R10` catch it?
 
    <details>
    <summary>Answer</summary>
 
-   `R10` compares registers only, so a wrong `Z` flag passes it even in a program that reaches the
-   window. The same is true of `B07`: exactly one test (`R06_load_store_distinct_registers`)
-   catches it, and it is not the random one, which never emits a `LOAD`. Random stimulus with no
-   coverage model samples; it does not replace thinking about the input.
+   `R10` compares only the registers, so a wrong `Z` flag gets past it even in a program that
+   reaches the window. `B07` is similar: exactly one test (`R06_load_store_distinct_registers`)
+   catches it, and that isn't the random one either, because the random generator never emits a
+   `LOAD`. Random stimulus with no coverage model only samples the input space, so it can't
+   replace thinking about which inputs matter.
 
    </details>
 
@@ -371,8 +381,8 @@ and the verdict still says FAIL:
    This is the row that matters and it is the one still open.
 ```
 
-That is the lab refusing to accept a fix nobody can prove, which is what a code review should say
-to a patch with no test.
+The lab won't accept a fix that nobody can prove, and a code review should treat a patch with no
+test the same way.
 
 Check: `make verdict` says `VERDICT: PASS`.
 
@@ -380,8 +390,8 @@ Check: `make verdict` says `VERDICT: PASS`.
 
 Can you find the next one faster?
 
-1. Deal another core with `make new`. There are five in the pool, and they get quicker. To practise
-   a particular shape rather than be surprised, pick one:
+1. Deal another core with `make new`. There are five in the pool, and you'll find each one
+   quicker than the last. To practise a particular kind of bug rather than be surprised, pick one:
 
    ```bash
    make new BUGPICK=B05
@@ -389,8 +399,8 @@ Can you find the next one faster?
 
 2. Hunt it with `make hunt`, `make probe` and `make verdict`, as before.
 
-The first hunt teaches you the harness. The third teaches you the question list, which is the part
-that transfers.
+Your first hunt mostly teaches you the harness. By the third you're learning the question list,
+which you'll carry over to every design you verify after this one.
 
 ## Expected results
 
@@ -404,8 +414,8 @@ that transfers.
 | `make hunt` wall clock | 3–10 s depending on suite size | ballpark |
 | `make probe TB=…`, testbench that calls `print()` | the `print()` appears in the terminal | |
 
-The `sorry:` notes, and `make: *** [...] Error 1` under a FAIL verdict, are still normal. See
-[Output that is not an error](../reference/output-that-is-not-an-error.md).
+As in earlier labs, the `sorry:` notes, and `make: *** [...] Error 1` under a FAIL verdict, are
+normal. [Output that is not an error](../reference/output-that-is-not-an-error.md) explains them.
 
 ## Finishing
 
