@@ -219,7 +219,7 @@ async def the_wrap_is_where_the_bugs_live(dut):
 
 @cocotb.test(timeout_time=5, timeout_unit="ms")
 async def against_a_reference_model(dut):
-    """Six lines of Python that are the counter, checked every single clock.
+    """Three lines of Python that are the counter, checked every single clock.
 
     Directed tests check the cases you thought of.  This one checks the cases
     you did not -- and when it fails it reports the FIRST clock where the two
