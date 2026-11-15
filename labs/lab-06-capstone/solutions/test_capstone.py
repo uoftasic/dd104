@@ -615,9 +615,9 @@ async def c02_ori_writes_r0_and_only_r0(dut):
     The reason this needs saying is that after a reset all four registers hold
     zero, and while that is true, `r0 = 0 | imm` and `r1 = 0 | imm` put the
     same value in the machine. A short readable test program runs entirely
-    inside that window. The value is right, the state is indistinguishable from
-    correct, and the divergence starts at the second ORI -- by which time you
-    have stopped looking.
+    inside that window. The value is right and only its register is wrong, so
+    a test that looks for the value rather than at r0 sees nothing amiss until
+    the second ORI -- by which time you have stopped looking.
 
     So: make r0 non-zero first, and check all four registers, not just the one
     you expected to change."""
@@ -634,8 +634,8 @@ async def c02_ori_writes_r0_and_only_r0(dut):
         f"ORI moved a register other than r0: {sp.regs()}.\n"
         f"  ORI has no register field, so r0 is the only destination it can "
         f"have. If the value you were expecting in r0 turned up in r1 instead, "
-        f"note that the FIRST ORI of this program would have looked perfectly "
-        f"correct: both registers were zero when it ran.")
+        f"note that the FIRST ORI of this program computed the right value: "
+        f"both registers were zero when it ran.")
 
 
 # ─────────────────────────────────────────────────────────────────────────────

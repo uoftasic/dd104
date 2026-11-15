@@ -42,10 +42,12 @@ After a reset every register holds 0. `RF[1] <- RF[0] | imm` and
 first `ORI`, just under a different name. Divergence starts at the second one,
 because the second `ORI` reads R0, which the first one never updated.
 
-A bug that a reset hides is a genuinely hard class: the shortest test you would
-write to check `ORI` (reset, one `ORI`, look at the value) is the one test that
-cannot see it, unless you look at the *whole* register file rather than the
-register you expected.
+A bug that a reset hides is a hard class to think of, but this one is easy to
+trip over on SimProc. `ORI` is the only way to get a constant into the machine,
+and a test that runs one `ORI` from reset and checks `R0` sees 0 (the last row
+of the Measured table); Lab 02's `t03` does exactly that. What the reset hides
+is the value: a test that only asks whether 5 turned up somewhere in the
+machine passes, and the cores diverge in value only at the second `ORI`.
 
 ## What it teaches
 

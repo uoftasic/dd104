@@ -53,7 +53,7 @@ catalogue names `B01` to `B13`: `bug-07` is `B07`.
 | Tier 4 — protocol, not data (Lab 05) | `bug-08` | T09 only | every architectural result is correct |
 | | `bug-13` | T07 only | functionally identical output, one wasted cycle |
 | Tier 5 — the hard end (Lab 06) | `bug-10` | T02, T03, T08 | `0 \| imm == 0 + imm`, so the first ORI after reset is always right |
-| | `bug-11` | 7 of 10 | after reset both registers hold 0, so the first ORI looks correct |
+| | `bug-11` | 7 of 10 | after reset both registers hold 0, so the first ORI's value is right and only its register is wrong |
 | | `bug-12` | the baud sweep only | invisible at the default baud; `PING` still answers `0xAA` over a link that cannot carry data |
 
 The "caught by" column is measured: `verify/results.json` is the run that produced

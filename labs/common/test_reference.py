@@ -75,12 +75,13 @@ async def R02_ori_overlapping_immediates(dut):
     """Three ORIs into a register that is not zero.
 
     The first ORI after reset is `0 | imm`, and `0 | imm == 0 + imm`, so it is
-    correct even on a core whose ORI adds instead of ORs.  It is also correct
-    on a core that writes the answer to the wrong register, because after reset
-    every register holds the same thing: zero.
+    correct even on a core whose ORI adds instead of ORs.  On a core that
+    writes the answer to the wrong register it is the right value in the wrong
+    place, because after reset every register holds the same thing: zero.
 
-    You have to OR a bit that is already set before either of those shows up.
-    5 | 3 is 7.  5 + 3 is 8."""
+    You have to OR a bit that is already set before the adding core shows up,
+    and you have to look at r0 itself, not just at the value, to see the other
+    one.  5 | 3 is 7.  5 + 3 is 8."""
     sp = SimProc(dut)
     await sp.start()
 
