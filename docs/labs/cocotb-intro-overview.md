@@ -1,10 +1,10 @@
 # Lab: cocotb on a counter
 
-You'll run every cocotb example from the guide pages on an 8-bit counter: your first test, the
-clock-edge race, the triggers, the 1.x forms that warn and the ones that fail, a two-sided
-verdict, and the counter's waveforms in Surfer and GTKWave. Nothing here is graded. It is
-practice with the tools before the processor arrives in Lab 02, and twice you'll break something
-on purpose and check that the right tests notice.
+In this lab you run every cocotb example from the guide pages on an 8-bit counter: your first
+test, the clock-edge race, the triggers, the 1.x forms that warn and the ones that fail, a
+two-sided verdict, and the counter's waveforms in Surfer and GTKWave. Nothing here is graded; the
+lab is practice with the tools before the processor arrives in Lab 02. Twice along the way you'll
+break something on purpose and check that the right tests notice.
 
 This lab takes about 75 minutes.
 
@@ -26,9 +26,10 @@ Package: [`labs/cocotb-intro/`](https://github.com/uoftasic/dd104/tree/main/labs
   cd labs/cocotb-intro
   ```
 
-The design is `rtl/counter.sv`: an 8-bit counter with an enable, a parallel load that beats the
-enable, and an active-low synchronous reset. `tc` is high on the cycle before the count wraps.
-`rtl/counter_broken.sv` is the same file with `en &` deleted from `tc`.
+The design is `rtl/counter.sv`: an 8-bit counter with an enable, a parallel load that takes
+priority over the enable, and an active-low synchronous reset. Its `tc` output is high on the
+cycle before the count wraps. `rtl/counter_broken.sv` is the same file with `en &` deleted from
+the expression for `tc`.
 
 ## Part 1: Your first test
 
@@ -51,11 +52,12 @@ What does the smallest cocotb test print, and what goes wrong if it reads `q` at
    python3 -m pytest test_01_hello.py; echo "exit=$?"
    ```
 
-   The first prints nothing and `exit=0`. The second prints `collected 0 items` and
-   `no tests ran`, and `exit=5`. Neither started a simulator, so neither ran a test. Only `make`
-   does that here.
+   The first prints nothing and `exit=0`, and the second prints `collected 0 items` and
+   `no tests ran`, with `exit=5`. Neither of them started a simulator, so neither ran a test; in
+   this package, only `make` starts one.
 
-3. Make the clock-edge race happen. Copy the test and delete its `Timer` line:
+3. Next, make the clock-edge race happen by copying the test and deleting its `Timer` line. Start
+   with the copy:
 
    ```bash
    cp test_01_hello.py test_norace.py
@@ -126,8 +128,8 @@ How long does each trigger really wait, and is the counter's reset synchronous?
 
    </details>
 
-4. The reset lines answer a question about the design: is the reset synchronous or asynchronous?
-   Write down which, and which line tells you.
+4. The two reset lines also tell you something about the design: whether the counter's reset is
+   synchronous or asynchronous. Write down which it is, and which line tells you.
 
    <details>
    <summary>Answer</summary>
@@ -165,8 +167,8 @@ Which cocotb 1.x forms still run on cocotb 2.0.1, and which fail?
    <details>
    <summary>Answer</summary>
 
-   `units=`, the one that passed. Old code that still runs gives no sign that it will break in a
-   later release; the deprecation warning is one line that scrolls past.
+   `units=`, the one that passed. Old code that still runs gives you no sign that it will break
+   in a later release, and the only hint is a one-line deprecation warning that scrolls past.
 
    </details>
 
@@ -209,8 +211,9 @@ break yourself?
    make
    ```
 
-   This runs `hello`, `triggers`, `sim` and `broken`: four simulator runs and nineteen tests, 0.3 s
-   of simulation. Wall clock is 8–14 s depending on how busy the machine is. You should see:
+   This runs `hello`, `triggers`, `sim` and `broken`, which comes to four simulator runs and
+   nineteen tests, with 0.3 s of simulation. The whole command takes 8–14 s of wall-clock time,
+   depending on how busy the machine is. You should see:
 
    ```
    ------------------------------------------------------------------------
@@ -220,8 +223,8 @@ break yourself?
       test_03_checking.py FAILED on rtl/counter_broken.sv
    ```
 
-2. Scroll up to the `make broken` section. One test fails and five pass. Find the failing test's
-   message, starting `q is 0xFF and en is 0, so the count is NOT about to wrap, but tc is 1.`
+2. Scroll up to the `make broken` section, where one test fails and five pass. Find the failing
+   test's message, which starts `q is 0xFF and en is 0, so the count is NOT about to wrap, but tc is 1.`
    Which line of RTL does it send you to?
 
    <details>
@@ -245,7 +248,7 @@ break yourself?
 
    </details>
 
-4. Break the good counter. Open `rtl/counter.sv` and change
+4. Now break the good counter yourself. Open `rtl/counter.sv` and change
 
    ```systemverilog
    else if (en)     q <= q + 8'd1;
@@ -268,15 +271,16 @@ break yourself?
 
    The `assert 50 == 49` line under it is pytest's assertion rewriting showing the same numbers in
    decimal. `the_wrap_is_where_the_bugs_live` shows the whole trajectory,
-   `[(255, 1), (1, 0), (3, 0), (5, 0), (7, 0)]`: the counter stepping by two.
+   `[(255, 1), (1, 0), (3, 0), (5, 0), (7, 0)]`, which is the counter stepping by two.
 
 5. What do `a difference of +1` and the `q=0x32 ... at t=31 ns` in the full message tell you?
 
    <details>
    <summary>Answer</summary>
 
-   The `+1` is the diagnosis: one counted edge moved `q` one further than it should have.
-   `t=31 ns` says it went wrong on the first counted edge rather than drifting in later.
+   The `+1` tells you what went wrong: one counted edge moved `q` one step further than it should
+   have. The `t=31 ns` tells you when, which was on the first counted edge, so the error was there
+   from the start rather than drifting in later.
 
    </details>
 
@@ -286,7 +290,7 @@ Check: `make` prints the verdict above, and `rtl/counter.sv` is back to `q + 8'd
 
 ## Part 5: Waveforms
 
-The broken counter's log is identical to the good one's. What does its bug look like in a
+The broken counter prints the same log as the good one, so what does its bug look like in a
 waveform?
 
 1. Make a waveform:
@@ -297,7 +301,7 @@ waveform?
 
    You should see the log lines from `reset released at t = 11 ns` to
    `finished at t = 211 ns with q = 0x05`, including `loaded 0xFF at t = 121 ns  <-- zoom here`,
-   then `FST info: dumpfile ... opened for output.` after the results table (normal), and two
+   then `FST info: dumpfile ... opened for output.` after the results table (which is normal), and two
    `wrote` lines for `counter.fst` and `counter.vcd`.
 
 2. Open it in Surfer, from this terminal:
@@ -307,12 +311,13 @@ waveform?
    ```
 
    Click `counter` in the Scopes pane, then add `clk`, `rst_n`, `en`, `load`, `q` and `tc` from the
-   Variables pane. Zoom to 121 ns. Remember the ruler is in picoseconds, so look near `121000 ps`.
+   Variables pane. Then zoom to 121 ns; Surfer's ruler is in picoseconds, so look near
+   `121000 ps`.
 
    You should see `q` reach `ff` at 121 ns, hold for three clocks with `en` low, and `tc` go high
    for exactly one clock before `q` wraps to `00`.
 
-3. Save yourself the clicking next time with a command file:
+3. A command file saves you all that clicking next time:
 
    ```bash
    printf 'module_add counter\n' > view.sf
@@ -327,8 +332,9 @@ waveform?
    gtkwave counter.fst counter.gtkw
    ```
 
-   If the wave pane looks empty, you are looking at the first few picoseconds. Use
-   `View → Zoom → Zoom Best Fit` (`Ctrl` `Alt` `F`). You should then see the same 211 ns run.
+   If the wave pane looks empty, that's because it is showing only the first few picoseconds.
+   Use `View → Zoom → Zoom Best Fit` (`Ctrl` `Alt` `F`), and you should then see the same 211 ns
+   run.
 
 5. Make a waveform of the broken counter. Before you open it, sketch what you expect `tc` to do
    from 121 ns, while `q` sits at `0xFF` with `en` low.
@@ -381,9 +387,10 @@ make -f sim.mk sim TB=test_mine SIM_BUILD=build/mine
 make -f sim.mk sim TB=test_mine RTL=rtl/counter_broken.sv SIM_BUILD=build/mine-broken
 ```
 
-You should see `TESTS=6 PASS=6` on the first and `TESTS=6 PASS=5 FAIL=1` on the second. The second
-run failing is the half that shows your testbench can see the bug. (`make sim TB=...` does not
-work here: the package's `sim` target always runs `test_03_checking`.)
+You should see `TESTS=6 PASS=6` on the first and `TESTS=6 PASS=5 FAIL=1` on the second. The failure
+on the second run is the half of the two-sided verdict that shows your testbench can see the bug.
+(`make sim TB=...` won't work for this, because the package's `sim` target always runs
+`test_03_checking`.)
 
 Next on the Course path: read [Two simulators](../guide/two-simulators-two-jobs.md) and
 [SimProc in one page](../guide/simproc-in-one-page.md), then do
