@@ -20,13 +20,13 @@ rather than the file. Here is all of it.
 
 That is the processor's entire architectural state. If two SimProcs agree on those 554 bits after
 every instruction, no program can tell them apart. That is the claim
-[the golden model](guide/the-golden-model.md) is built to check, and the claim
-[Lab 05](labs/lab-05-every-answer-is-right-overview.md) shows is not enough.
+[the golden model](../guide/the-golden-model.md) is built to check, and the claim
+[Lab 05](../labs/lab-05-every-answer-is-right-overview.md) shows is not enough.
 
 > If you have met RISC-V or MIPS, you know that register zero reads as zero and ignores writes.
 > `r0` here is an ordinary register. It holds whatever you last put in it, and `ORI`, the only
 > instruction that can introduce a constant, writes `r0` and nothing else. Assuming otherwise
-> will cost you an evening; [Lab 03](labs/lab-03-three-blocks-before-the-processor-overview.md)
+> will cost you an evening; [Lab 03](../labs/lab-03-three-blocks-before-the-processor-overview.md)
 > has you check it in two lines of test.
 
 Three things the machine does not have shape every program you write:
@@ -52,7 +52,7 @@ In the register form, `rA` is both a source and the destination: `ADD(1, 2)` mea
 `r1 = r1 + r2`. There are no three-operand instructions.
 
 Eleven instructions exist. The full encoding table, with what each does and what it costs, is
-[The SimProc instruction set](reference/simproc-instruction-set.md); keep it open in another tab.
+[The SimProc instruction set](../reference/simproc-instruction-set.md); keep it open in another tab.
 The short version:
 
 | | |
@@ -102,7 +102,7 @@ still asserted. Measured on four filler bytes (`0x0C`):
 
 So the byte the harness fills unwritten memory with is also the one byte that makes `halt` blink
 in the middle of a running program. If you write the assertion "`halt` must stay low while `run`
-is asserted", as [Lab 05](labs/lab-05-every-answer-is-right-overview.md) asks you to, it will
+is asserted", as [Lab 05](../labs/lab-05-every-answer-is-right-overview.md) asks you to, it will
 fire on any program that runs off its own end into filler. That is your test working correctly on
 a machine behaving as designed. Better to meet the distinction here than at midnight.
 
@@ -123,7 +123,7 @@ registers: r0=32 r1=15 r2=1 r3=32
 mem[0x20] = 15   (all 28 instructions executed)
 ```
 
-You'll run it in [Lab 02, Part 4](labs/lab-02-the-only-test-this-chip-has-overview.md#part-4-the-golden-model-on-its-own).
+You'll run it in [Lab 02, Part 4](../labs/lab-02-the-only-test-this-chip-has-overview.md#part-4-the-golden-model-on-its-own).
 109 is exact, and you can derive it instead of trusting it. Seven setup instructions cost
 `4+5+4+4+4+5+4 = 30`; a three-instruction loop body costs `4+4+3 = 11` and runs five times, for
 `55`; the finish costs `4+5+4+4+4+3 = 24`. $30 + 55 + 24 = 109$. The simulated hardware agrees to
@@ -149,7 +149,7 @@ The 64-byte part is a trap. The address bus is 8 bits wide and the array has 64 
 - Verilator's linter reports this by reading the file
   (`Bit extraction of array[63:0] requires 6 bit index, not 8 bits`, four times). Icarus shows it
   at run time, as `X` on a pin. Both are right; only one tells you before you run anything. See
-  [Two simulators](guide/two-simulators-two-jobs.md).
+  [Two simulators](../guide/two-simulators-two-jobs.md).
 
 The harness refuses out-of-range addresses for you, with a message explaining all of the above,
 so you will normally meet this through a program whose pointer register went somewhere you did not
@@ -174,7 +174,7 @@ pin, one serial output pin, two status pins and a baud divider, and that is the 
 
 The chip's only test checks `uo_out`. `uo_out == 3` is `0b0000_0011`: `uart_tx = 1` (an idle
 serial line sits high), `halt = 1` (the core is in `IDLE`), `done = 0`. That value asserts that
-the processor is not running, and [Lab 02](labs/lab-02-the-only-test-this-chip-has-overview.md) is
+the processor is not running, and [Lab 02](../labs/lab-02-the-only-test-this-chip-has-overview.md) is
 where you watch all thirteen broken cores pass it.
 
 ### The debug protocol
@@ -229,7 +229,7 @@ tb
 ```
 
 Three of those modules are 16, 31 and 34 lines, which is why
-[Lab 03](labs/lab-03-three-blocks-before-the-processor-overview.md) can test them completely,
+[Lab 03](../labs/lab-03-three-blocks-before-the-processor-overview.md) can test them completely,
 including all 393,216 ALU vectors, before you reason about the processor as a whole.
 
 `simproc.py` wraps every one of these paths, so you shouldn't need to type them yourself.
@@ -247,12 +247,12 @@ Everything above is background. These five are the ones that turn into a wrong a
    itself. The range is `-8` to `+7`.
 4. Only `ADD`, `SUB`, `NAND`, `SHIFT` and `ORI` set flags. `LOAD`, `STORE` and every branch leave
    `N` and `Z` exactly as they were, which lets you compare once and branch on the result twice.
-   That is also an assumption, and [assumptions get tested](guide/where-bugs-hide.md).
+   That is also an assumption, and [assumptions get tested](../guide/where-bugs-hide.md).
 5. Shift amounts are two bits: 0, 1, 2 or 3. You cannot shift by 4 in one instruction, and the
    assembler refuses rather than silently truncating.
 
 Each of those is a place where a wrong implementation and a right one agree on the inputs you would
-naturally pick. That is the subject of [Where bugs hide](guide/where-bugs-hide.md).
+naturally pick. That is the subject of [Where bugs hide](../guide/where-bugs-hide.md).
 
 ## Check yourself
 
@@ -261,4 +261,4 @@ naturally pick. That is the subject of [Where bugs hide](guide/where-bugs-hide.m
 3. Your test reads address 70 through the UART and gets an exception from `int()`. Is the harness
    broken?
 
-Next: [Lab 02: The only test this chip has](labs/lab-02-the-only-test-this-chip-has-overview.md).
+Next: [Lab 02: The only test this chip has](../labs/lab-02-the-only-test-this-chip-has-overview.md).

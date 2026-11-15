@@ -92,7 +92,7 @@ Against the good adder both tests pass, and the log says how much they covered:
 Against `broken/`, they pass too. `make check` runs the testbench on both adders and passes only
 if the testbench passes the good one (`ok`) and fails the broken one (`caught`); a testbench that
 passes both gets `MISSED` and `VERDICT: FAIL`. This is what it prints, which you'll see for
-yourself in [Lab 01, Part 2](labs/lab-01-the-adder-you-already-trust-overview.md#part-2-run-the-shipped-testbench):
+yourself in [Lab 01, Part 2](../labs/lab-01-the-adder-you-already-trust-overview.md#part-2-run-the-shipped-testbench):
 
 ```
 ========================================================================
@@ -149,7 +149,7 @@ broken adder, so the testbench can tell the two apart and the verdict is PASS:
    a year, on a rewrite, done by somebody who has never met you.
 ```
 
-Making that change is [Lab 01](labs/lab-01-the-adder-you-already-trust-overview.md), and it is
+Making that change is [Lab 01](../labs/lab-01-the-adder-you-already-trust-overview.md), and it is
 four lines.
 
 ## Reading the count
@@ -198,18 +198,18 @@ second of real time. When you are in that situation, take it.
 > better than a `for` loop that tries everything.
 
 SimProc's ALU is still small enough: 6 operations × 256 × 256 = 393,216 vectors. That is
-[Lab 03](labs/lab-03-three-blocks-before-the-processor-overview.md), where three bugs fall out by
+[Lab 03](../labs/lab-03-three-blocks-before-the-processor-overview.md), where three bugs fall out by
 brute force.
 
 The processor around it is not. Four registers, 64 bytes of memory, a program counter, two flags
 and a UART make a state space far too big to walk, and it has sequences, so enumerating states
-would not be enough either. From [Lab 04](labs/lab-04-your-first-bug-hunt-overview.md) on, you
+would not be enough either. From [Lab 04](../labs/lab-04-your-first-bug-hunt-overview.md) on, you
 need the two things that replace exhaustive testing:
 
 - a reference model to compare against instruction by instruction:
-  [The golden model](guide/the-golden-model.md);
+  [The golden model](../guide/the-golden-model.md);
 - a way to ask what your stimulus actually reached, which is not the same as counting how many
-  tests you wrote: [Coverage as a question](guide/coverage-is-a-question.md), next.
+  tests you wrote: [Coverage as a question](../guide/coverage-is-a-question.md), next.
 
 ## Two habits
 
@@ -227,4 +227,4 @@ need the two things that replace exhaustive testing:
 2. A sweep of that module reports exactly half of its vectors wrong. What kind of signal do you
    look for first?
 
-Next: [Coverage as a question](guide/coverage-is-a-question.md).
+Next: [Coverage as a question](../guide/coverage-is-a-question.md).

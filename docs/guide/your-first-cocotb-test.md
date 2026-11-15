@@ -12,7 +12,7 @@ attaches to the running simulation through a standard interface the simulator al
 them back by looking at them.
 
 Every file on this page is in [`labs/cocotb-intro/`](https://github.com/uoftasic/dd104/tree/main/labs/cocotb-intro),
-and you'll run them in [cocotb on a counter](labs/cocotb-intro-overview.md).
+and you'll run them in [cocotb on a counter](../labs/cocotb-intro-overview.md).
 
 ## The design
 
@@ -157,7 +157,7 @@ Three of those lines each have a failure you will meet:
   SystemVerilog.
 - `COCOTB_TEST_MODULES` used to be called `MODULE`, and `COCOTB_TOPLEVEL` used to be
   `TOPLEVEL`. Both old names still work in 2.0.1 and print a warning. See
-  [cocotb 2.x and older tutorials](guide/cocotb-2x-vs-every-tutorial.md).
+  [cocotb 2.x and older tutorials](../guide/cocotb-2x-vs-every-tutorial.md).
 
 ## Two commands that run nothing
 
@@ -203,7 +203,7 @@ Without the `Timer` line, the test reads the counter at the instant of the clock
     assert dut.q.value == 1, f"after one enabled clock q is {dut.q.value}, expected 1"
 ```
 
-You'll try this in [cocotb on a counter, Part 1](labs/cocotb-intro-overview.md#part-1-your-first-test).
+You'll try this in [cocotb on a counter, Part 1](../labs/cocotb-intro-overview.md#part-1-your-first-test).
 Here is what it prints:
 
 ```
@@ -220,7 +220,7 @@ Here is what it prints:
 
 It does not hang or crash. It gives a wrong value, off by exactly one clock. `await
 RisingEdge(clk)` returns at the edge, the same instant the flip-flop is deciding what to become,
-and under Icarus you get the old value. [Clocks, resets and triggers](guide/clocks-resets-and-triggers.md)
+and under Icarus you get the old value. [Clocks, resets and triggers](../guide/clocks-resets-and-triggers.md)
 measures both values side by side and gives three ways to avoid the race.
 
 Two things in that output appear on every failure you will read.
@@ -247,4 +247,4 @@ first testbench reports numbers that are all correct but one cycle late.
 2. You forgot `cocotb.start_soon(...)` on the clock. What does your test do?
 3. Why does the test above need `await Timer(1, unit="ns")` after the rising edge?
 
-Next: [The lazy testbench](guide/the-lazy-testbench.md).
+Next: [The lazy testbench](../guide/the-lazy-testbench.md).

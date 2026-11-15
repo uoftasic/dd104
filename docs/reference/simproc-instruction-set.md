@@ -4,7 +4,7 @@ This page answers: *what does every opcode do, how is it encoded, and how many c
 take?*
 
 Keep it open in a tab while you work. For the machine explained rather than tabulated, see
-[SimProc in one page](guide/simproc-in-one-page.md).
+[SimProc in one page](../guide/simproc-in-one-page.md).
 
 Everything here can be checked against two shipped files, the assembler
 [`labs/common/simproc_asm.py`](https://github.com/uoftasic/dd104/blob/main/labs/common/simproc_asm.py)
@@ -166,7 +166,7 @@ workaround. These are the only way to write each operation, not tricks.
 > Every row in that table is also an entry in the bug catalogue. `SUB rX, rX` is symmetric, so it
 > is correct on a core whose subtract is backwards. `NAND rX, rX` is the one operand pattern where
 > `NAND` and `NOR` agree. The idiom a programmer reaches for first is the one that hides the bug.
-> [Where bugs hide](guide/where-bugs-hide.md) is the long version.
+> [Where bugs hide](../guide/where-bugs-hide.md) is the long version.
 
 The assembler has a helper for building constants, because it is easy to get wrong by hand:
 
@@ -207,10 +207,10 @@ A branch costs 3 cycles whether or not it is taken.
 >
 > The last figure matters. `0x0C` is what `sp.start()` fills unwritten RAM with, so a program that
 > runs off its own end makes the `halt` pin blink, and "`halt` must stay low while `run` is
-> asserted" is an assertion [Lab 05](labs/lab-05-every-answer-is-right-overview.md) asks you to
+> asserted" is an assertion [Lab 05](../labs/lab-05-every-answer-is-right-overview.md) asks you to
 > write. That is your test working correctly on a machine behaving as designed.
 >
-> `golden.py` said three until somebody measured it; [The golden model](guide/the-golden-model.md)
+> `golden.py` said three until somebody measured it; [The golden model](../guide/the-golden-model.md)
 > tells the story.
 
 ## Writing a program
@@ -272,7 +272,7 @@ Each of these has cost somebody an evening.
 
 ## Links
 
-- [SimProc in one page](guide/simproc-in-one-page.md): the machine, the FSM, the pins, the protocol
-- [The SimProc harness](reference/the-harness-api.md): what the test harness gives you
+- [SimProc in one page](../guide/simproc-in-one-page.md): the machine, the FSM, the pins, the protocol
+- [The SimProc harness](../reference/the-harness-api.md): what the test harness gives you
 - [`labs/common/simproc_asm.py`](https://github.com/uoftasic/dd104/blob/main/labs/common/simproc_asm.py): this page as executable code, plus the disassembler
 - [`labs/common/golden.py`](https://github.com/uoftasic/dd104/blob/main/labs/common/golden.py): this page as a reference model

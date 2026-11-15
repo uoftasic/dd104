@@ -2,12 +2,12 @@
 
 This page answers: *the input space is too big to walk. What do I compare against instead?*
 
-In [Lab 03](labs/lab-03-three-blocks-before-the-processor-overview.md) you drove all 393,216 legal
+In [Lab 03](../labs/lab-03-three-blocks-before-the-processor-overview.md) you drove all 393,216 legal
 vectors through SimProc's ALU in about twenty seconds, and afterwards there was no unexplored
 corner left for a bug. That is the best position verification ever puts you in, and you should
 take it whenever a block is small enough.
 
-Now count the processor: [554 bits of architectural state](guide/simproc-in-one-page.md), and a
+Now count the processor: [554 bits of architectural state](../guide/simproc-in-one-page.md), and a
 program is 64 bytes, so the space of programs alone is $256^{64}$. Exhaustive testing is not
 just impractical here; it is out of the question.
 
@@ -21,7 +21,7 @@ same stimulus and compare them after every step. When they disagree, one of them
 
 DD104's is [`labs/common/golden.py`](https://github.com/uoftasic/dd104/blob/main/labs/common/golden.py):
 about 120 lines of plain Python, no imports, no simulator. You ran it on its own in
-[Lab 02, Part 4](labs/lab-02-the-only-test-this-chip-has-overview.md#part-4-the-golden-model-on-its-own):
+[Lab 02, Part 4](../labs/lab-02-the-only-test-this-chip-has-overview.md#part-4-the-golden-model-on-its-own):
 
 ```
 16 instructions in memory, 28 executed, 109 clock cycles
@@ -50,7 +50,7 @@ were not thinking about.
 > This is the most common way a verification effort wastes six months, and it is easy to do by
 > accident, so it is worth writing at the top of the file.
 >
-> `golden.py` is written from [the instruction set](reference/simproc-instruction-set.md). Where
+> `golden.py` is written from [the instruction set](../reference/simproc-instruction-set.md). Where
 > the ISA was ambiguous, somebody had to decide; see the end of this page.
 
 ## Using it in four lines
@@ -135,7 +135,7 @@ back from the end.
 
 You cannot write down the expected final register file for thirty random instructions. The model
 can. That opens up a whole category of test, and its limits are the subject of
-[Directed and random tests](guide/directed-random-and-the-gap.md).
+[Directed and random tests](../guide/directed-random-and-the-gap.md).
 
 ## What a model cannot see
 
@@ -153,7 +153,7 @@ RAM. It has no concept of:
 
 A core that computes every answer correctly and gets its handshake wrong passes a model comparison,
 because those are different kinds of property. Two bugs in the catalogue are exactly that, and
-they are [Lab 05](labs/lab-05-every-answer-is-right-overview.md). More vectors don't help; a
+they are [Lab 05](../labs/lab-05-every-answer-is-right-overview.md). More vectors don't help; a
 different kind of check does.
 
 ## When the model is the one that's wrong
@@ -186,7 +186,7 @@ Three lessons from that:
    trustworthy in one dimension and wrong in another, so know exactly which dimensions yours covers.
 3. It was found by measuring a case nobody tests. `0x0C` is filler, and no program runs it on
    purpose. It is exactly the kind of "obviously nothing happens here" behaviour that never gets an
-   assertion, which is the subject of [Where bugs hide](guide/where-bugs-hide.md), applied to the
+   assertion, which is the subject of [Where bugs hide](../guide/where-bugs-hide.md), applied to the
    testbench instead of the design.
 
 ### When the specification has not decided
@@ -235,4 +235,4 @@ program looks correct.
    The instruction was `ADD r2, r1`. What kind of bug do you suspect?
 2. Name two things a SimProc core can get wrong that `golden.py` will never notice.
 
-Next: [Where bugs hide](guide/where-bugs-hide.md).
+Next: [Where bugs hide](../guide/where-bugs-hide.md).

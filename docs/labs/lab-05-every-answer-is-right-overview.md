@@ -12,9 +12,9 @@ Package: [`labs/lab-05-every-answer-is-right/`](https://github.com/uoftasic/dd10
 
 ## Before you start
 
-- Finish [Lab 04](labs/lab-04-your-first-bug-hunt-overview.md): you have a suite you trust.
-- Read [Handshakes and timing](guide/the-handshake-is-the-contract.md).
-- Keep [The SimProc harness](reference/the-harness-api.md) open in another tab, for
+- Finish [Lab 04](../labs/lab-04-your-first-bug-hunt-overview.md): you have a suite you trust.
+- Read [Handshakes and timing](../guide/the-handshake-is-the-contract.md).
+- Keep [The SimProc harness](../reference/the-harness-api.md) open in another tab, for
   `count_done_pulses`, `count_halt_cycles`, and what `run()` returns.
 
 SimProc's contract has three parts that `golden.py` says nothing about:
@@ -259,7 +259,7 @@ Does the program take exactly as many cycles as the instruction costs say?
    division. This
    check turns "the answer is right and arrived late" into a red row with a number attached, and it
    costs one addition done once from the instruction costs in
-   [the ISA reference](reference/simproc-instruction-set.md).
+   [the ISA reference](../reference/simproc-instruction-set.md).
 
    </details>
 
@@ -296,7 +296,7 @@ What happens to a serial command when the sender doesn't wait for the receiver t
    Every bit after the first frame was sampled one bit period late, so bit *i* of the received
    byte is bit *i+1* of the sent one, and the top bit comes from the stop bit, which is always 1:
    `(0x0C >> 1) | 0x80 = 0x86`. `0x00` becomes `0x80` by the same rule.
-   [Handshakes and timing](guide/the-handshake-is-the-contract.md#sending-without-the-gap) has the
+   [Handshakes and timing](../guide/the-handshake-is-the-contract.md#sending-without-the-gap) has the
    full explanation.
 
    </details>
@@ -333,7 +333,7 @@ What happens to a serial command when the sender doesn't wait for the receiver t
    sent nor what a uniform slip would give (`0x99`). `0x55, 0xFF` arrives as `0x99 0xAA`, two bytes
    only: after its start bit, `0xFF` is a solid run of ones with no falling edge for the receiver to
    latch onto, so the third frame never happens and the PC stays 0. The table in
-   [Other bytes](guide/the-handshake-is-the-contract.md#other-bytes) has all four runs.
+   [Other bytes](../guide/the-handshake-is-the-contract.md#other-bytes) has all four runs.
 
    </details>
 
@@ -358,7 +358,7 @@ Can you find and fix both bugs with your new checks?
    make verdict
    ```
 
-   The three-row grade is the same as [Lab 04](labs/lab-04-your-first-bug-hunt-overview.md)'s,
+   The three-row grade is the same as [Lab 04](../labs/lab-04-your-first-bug-hunt-overview.md)'s,
    and row 2 is still the deliverable. Your checks from Parts 4–6 are in `test_lab05.py`, which
    `make hunt` and `make verdict` run. `make hunt` with an
    architectural suite alone will say `quiet` however much stimulus you add; the way out is a
@@ -424,5 +424,5 @@ Questions:
 
 Submit: nothing for this lab. Keep `test_lab05.py`; you'll bring it into Lab 06.
 
-Next on the Course path: read [Writing the bug report](guide/writing-the-bug-report.md), then do
-[Lab 06: Capstone](labs/lab-06-capstone-overview.md).
+Next on the Course path: read [Writing the bug report](../guide/writing-the-bug-report.md), then do
+[Lab 06: Capstone](../labs/lab-06-capstone-overview.md).

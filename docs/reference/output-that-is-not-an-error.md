@@ -129,8 +129,8 @@ Four of the five are one defect at four lines: the RAM has 64 entries and the ad
 wide, so addresses 64–255 are off the end of the array. Verilator found that by reading the file,
 before simulating anything. Icarus never mentions it, and shows it at run time as eight X bits on a
 pin, if your stimulus happens to read address 100. The run-time half is measured in
-[Two simulators](guide/two-simulators-two-jobs.md), and you run it in
-[Lab 02](labs/lab-02-the-only-test-this-chip-has-overview.md).
+[Two simulators](../guide/two-simulators-two-jobs.md), and you run it in
+[Lab 02](../labs/lab-02-the-only-test-this-chip-has-overview.md).
 
 Verilator treats warnings as fatal by default. That is a reasonable policy for code you own and an
 impossible one for code you have been handed to test, so
@@ -207,7 +207,7 @@ All three still work. The test runs and passes, and the log is noisier. cocotb 2
 > The three that are hard errors: `cocotb.fork` gives `AttributeError`, `@cocotb.coroutine` gives
 > `AttributeError`, and `dut.sig <= 1` gives `TypeError`. Four runnable demonstrations ship in
 > [`labs/cocotb-intro/oldapi/`](https://github.com/uoftasic/dd104/tree/main/labs/cocotb-intro/oldapi).
-> Full breakdown: [cocotb 2.x and older tutorials](guide/cocotb-2x-vs-every-tutorial.md).
+> Full breakdown: [cocotb 2.x and older tutorials](../guide/cocotb-2x-vs-every-tutorial.md).
 
 Other lines that look like problems and are not:
 
@@ -298,4 +298,4 @@ None of these is the exit code, and none is the absence of the word `Error`.
 
 Everything on this page comes from the harness in
 [`labs/common`](https://github.com/uoftasic/dd104/tree/main/labs/common), documented call by call
-in [The SimProc harness](reference/the-harness-api.md).
+in [The SimProc harness](../reference/the-harness-api.md).

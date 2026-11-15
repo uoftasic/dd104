@@ -26,14 +26,14 @@ passes on a core that takes the address from the wrong register field, because w
 name the same register there is no wrong one. Nobody found out until the bug was injected on
 purpose and the suite stayed green.
 
-[Where bugs hide](guide/where-bugs-hide.md) has the habit that prevents it. The point here is that
+[Where bugs hide](../guide/where-bugs-hide.md) has the habit that prevents it. The point here is that
 the fix was another directed test, written on purpose after somebody named the input class. You
 cannot generate your way out of a blind spot you have not named.
 
 ## Random tests
 
 `R10_random_programs` generates eight twenty-instruction programs, runs each on the chip, and
-compares the final register file with [the golden model](guide/the-golden-model.md). It is about
+compares the final register file with [the golden model](../guide/the-golden-model.md). It is about
 forty lines including the generator, and you could not work out a single one of its expected
 answers by hand.
 
@@ -60,7 +60,7 @@ all. `SUB rX, rY` with `rX != rY` is the window for a swapped subtract; outside 
 `gap.py` runs the same generator `R10` uses (imported from the same file, so there is one copy)
 through `golden.py`, and counts how often each of nine windows is entered. No simulator is involved
 and it takes about a second. You'll run it as `make gap` in
-[Lab 04, Part 6](labs/lab-04-your-first-bug-hunt-overview.md#part-6-what-random-stimulus-reaches):
+[Lab 04, Part 6](../labs/lab-04-your-first-bug-hunt-overview.md#part-6-what-random-stimulus-reaches):
 
 ```
 the eight seeds R10 actually runs
@@ -183,7 +183,7 @@ Put the three together:
 | The gap | | What neither covers, which is where the bugs that reach silicon live | A written list |
 
 The only thing that closes the gap is a list of questions you maintain by hand. That list is
-functional coverage. It is not a tool, and [Coverage as a question](guide/coverage-is-a-question.md)
+functional coverage. It is not a tool, and [Coverage as a question](../guide/coverage-is-a-question.md)
 shows what it looks like. On this machine it starts:
 
 | The question | Why it is on the list |
@@ -223,7 +223,7 @@ have yet.
 > After every random run, ask what it could not have reached, and write the answer next to the
 > seed count. "Ten thousand programs, none of which contained a memory access" is a useful
 > sentence. "Ten thousand programs" on its own is not a result, for the same reason
-> [a green tick is not a result](guide/it-works-is-not-a-result.md).
+> [a green tick is not a result](../guide/it-works-is-not-a-result.md).
 
 ## Check yourself
 
@@ -231,4 +231,4 @@ have yet.
    directly, and what directed test would you write?
 2. `R10` entered `B03`'s window twice and still passed. What one change to its checker fixes that?
 
-Next: [Lab 04: Your first bug hunt](labs/lab-04-your-first-bug-hunt-overview.md).
+Next: [Lab 04: Your first bug hunt](../labs/lab-04-your-first-bug-hunt-overview.md).

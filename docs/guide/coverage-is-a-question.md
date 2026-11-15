@@ -10,7 +10,7 @@ raise. Each question is worth as much as the answer you give it, and the percent
 side effect.
 
 The quickest way to see this is to point a real coverage tool at the two stimulus sets from
-[The lazy testbench](guide/the-lazy-testbench.md) and watch it find the blind spot without being
+[The lazy testbench](../guide/the-lazy-testbench.md) and watch it find the blind spot without being
 told anything about adders.
 
 ## What the coverage run prints
@@ -18,7 +18,7 @@ told anything about adders.
 The Lab 01 package has a `coverage/` add-on that runs Verilator's toggle coverage on the six
 hand-picked cases and on all 512 vectors. Icarus has no coverage instrumentation, so this is the
 one place early in the course where only the stricter simulator can answer. You'll run it in
-[Lab 01, Part 5](labs/lab-01-the-adder-you-already-trust-overview.md#part-5-ask-a-coverage-tool),
+[Lab 01, Part 5](../labs/lab-01-the-adder-you-already-trust-overview.md#part-5-ask-a-coverage-tool),
 and this is what it prints:
 
 ```
@@ -176,7 +176,7 @@ coverage is a list you maintain. Writing the list is the engineering; counting i
 Read the table again and you'll see it is organised around the ways an operation can be symmetric,
 defaulted or one-sided, rather than around the design's structure. Those are the places where a
 wrong implementation and a right one agree. That is where the thirteen SimProc bugs live.
-[Where bugs hide](guide/where-bugs-hide.md) is the full taxonomy, and every entry in it is a hole
+[Where bugs hide](../guide/where-bugs-hide.md) is the full taxonomy, and every entry in it is a hole
 this kind of list is designed to notice.
 
 > Never quote a coverage number without naming the metric and the assertions behind it. When you
@@ -200,4 +200,4 @@ You now have the four ideas the rest of DD104 builds on:
    What has been measured?
 2. Why can a testbench with no assertions score full toggle coverage?
 
-Next: [Lab 01: The adder you already trust](labs/lab-01-the-adder-you-already-trust-overview.md).
+Next: [Lab 01: The adder you already trust](../labs/lab-01-the-adder-you-already-trust-overview.md).

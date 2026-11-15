@@ -25,7 +25,7 @@ counter. The verdict it prints:
 ------------------------------------------------------------------------
 ```
 
-You'll run it in [cocotb on a counter, Part 4](labs/cocotb-intro-overview.md#part-4-a-two-sided-verdict).
+You'll run it in [cocotb on a counter, Part 4](../labs/cocotb-intro-overview.md#part-4-a-two-sided-verdict).
 
 ## The two counters
 
@@ -195,4 +195,4 @@ So a suite needs more than one kind of test.
 2. Write the assertion message you would want for a counter that holds when it should count.
    What values and signals does it name?
 
-Next: [Waveforms](guide/waveforms.md).
+Next: [Waveforms](../guide/waveforms.md).

@@ -39,7 +39,7 @@ You cannot get a green row 2 by editing the file the test runs against. That mak
 the deliverable" a fact about the grader rather than an opinion.
 
 You'll do this end to end on a bug you already know in
-[Lab 06, Part 7](labs/lab-06-capstone-overview.md#part-7-practise-the-report-on-b01), before
+[Lab 06, Part 7](../labs/lab-06-capstone-overview.md#part-7-practise-the-report-on-b01), before
 writing the real report.
 
 ## The five parts, in the order the reader needs them
@@ -198,4 +198,4 @@ Row 1 must be `ok` before row 2 means anything.
 1. Your repro needs a loop and a branch to fail. What do you try before you write the report?
 2. Why does the worked example include two tests that pass on the broken core?
 
-Next: [Lab 06: Capstone](labs/lab-06-capstone-overview.md).
+Next: [Lab 06: Capstone](../labs/lab-06-capstone-overview.md).

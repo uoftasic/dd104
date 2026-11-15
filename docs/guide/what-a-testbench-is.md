@@ -34,7 +34,7 @@ failed at one of them, so it helps to keep them separate:
 | Observe | Am I looking at the signal that would show it? | The bug happens off-screen |
 | Decide | Do I have a right answer to compare against? | The bug happens in full view and nothing objects |
 
-The shipped SimProc test from [the previous page](guide/it-works-is-not-a-result.md) fails at
+The shipped SimProc test from [the previous page](../guide/it-works-is-not-a-result.md) fails at
 drive. It never puts the processor in a situation where any of the thirteen bugs can show up,
 so observe and decide have nothing to work with.
 
@@ -70,7 +70,7 @@ passing verdict until you have both.
 
 Here is `make check` running the shipped example testbench, `labs/common/test_example.py`,
 against the core whose `SUB` computes `B - A`. You'll run it yourself in
-[Lab 02, Part 3](labs/lab-02-the-only-test-this-chip-has-overview.md#part-3-the-example-testbench).
+[Lab 02, Part 3](../labs/lab-02-the-only-test-this-chip-has-overview.md#part-3-the-example-testbench).
 
 ```
 ========================================================================
@@ -170,7 +170,7 @@ is deterministic, so you can reason about it: when a DD104 page quotes an exact 
 nanoseconds, yours will match to the digit. Seconds will not.
 
 A cocotb test also needs a simulator underneath it. `python3` and `pytest` on a test file both
-run nothing and report success; [Your first cocotb test](guide/your-first-cocotb-test.md#two-commands-that-run-nothing)
+run nothing and report success; [Your first cocotb test](../guide/your-first-cocotb-test.md#two-commands-that-run-nothing)
 shows what they print.
 
 ## The shortest complete DD104 test
@@ -199,7 +199,7 @@ Checking the cycle count is an observation most people skip, and it matters: two
 bugs leave every register, flag and byte of memory correct and disturb only timing and handshake
 pins. A testbench that only compares values cannot see them.
 
-The full harness reference is [The SimProc harness](reference/the-harness-api.md).
+The full harness reference is [The SimProc harness](../reference/the-harness-api.md).
 
 ## Check yourself
 
@@ -208,4 +208,4 @@ The full harness reference is [The SimProc harness](reference/the-harness-api.md
    table above, which instruction's result would you check first, and what sum would confirm the
    swap?
 
-Next: [Your first cocotb test](guide/your-first-cocotb-test.md).
+Next: [Your first cocotb test](../guide/your-first-cocotb-test.md).

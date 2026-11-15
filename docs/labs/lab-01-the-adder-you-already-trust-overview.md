@@ -11,16 +11,16 @@ Package: [`labs/lab-01-the-adder-you-already-trust/`](https://github.com/uoftasi
 
 ## Before you start
 
-- Read [Getting started](guide/getting-started.md), [What a passing test proves](guide/it-works-is-not-a-result.md),
-  [What a testbench is](guide/what-a-testbench-is.md),
-  [Your first cocotb test](guide/your-first-cocotb-test.md),
-  [The lazy testbench](guide/the-lazy-testbench.md) and
-  [Coverage as a question](guide/coverage-is-a-question.md).
+- Read [Getting started](../guide/getting-started.md), [What a passing test proves](../guide/it-works-is-not-a-result.md),
+  [What a testbench is](../guide/what-a-testbench-is.md),
+  [Your first cocotb test](../guide/your-first-cocotb-test.md),
+  [The lazy testbench](../guide/the-lazy-testbench.md) and
+  [Coverage as a question](../guide/coverage-is-a-question.md).
 - You need [IC101](https://uoftasic.com/ic101/) done (the noVNC desktop opens and you can get a
   terminal) and [DD102](https://uoftasic.com/dd102/) done (you have written a `ripple4.sv`; the lab
   ships its own copy in `src/`).
 - `broken/ripple4.sv` is not hidden, and its header says what is wrong with it. This lab is not a
-  bug hunt; that starts in [Lab 04](labs/lab-04-your-first-bug-hunt-overview.md). You may read the
+  bug hunt; that starts in [Lab 04](../labs/lab-04-your-first-bug-hunt-overview.md). You may read the
   changed line.
 
 ## Part 1: Load the course
@@ -136,7 +136,7 @@ Does the shipped testbench catch the broken adder?
 
    The `262` counts `t01`'s six vectors as well as `t02`'s 256; the six are repeated inside
    the 256. The output is followed by `make: *** [Makefile:49: check] Error 1`. That error line is the
-   verdict exiting non-zero on purpose ([Getting started](guide/getting-started.md#reading-a-labs-output)
+   verdict exiting non-zero on purpose ([Getting started](../guide/getting-started.md#reading-a-labs-output)
    explains why). It disappears when the verdict passes.
 
 5. Compare with your first prediction. `t02` is called "every a and every b". Why does it check
@@ -368,7 +368,7 @@ Questions:
 
 Submit: nothing for this lab.
 
-Next on the Course path: read [Clocks, resets and triggers](guide/clocks-resets-and-triggers.md),
-[cocotb 2.x and older tutorials](guide/cocotb-2x-vs-every-tutorial.md),
-[Driving and checking a design](guide/driving-and-checking.md) and [Waveforms](guide/waveforms.md),
-then do [Lab: cocotb on a counter](labs/cocotb-intro-overview.md).
+Next on the Course path: read [Clocks, resets and triggers](../guide/clocks-resets-and-triggers.md),
+[cocotb 2.x and older tutorials](../guide/cocotb-2x-vs-every-tutorial.md),
+[Driving and checking a design](../guide/driving-and-checking.md) and [Waveforms](../guide/waveforms.md),
+then do [Lab: cocotb on a counter](../labs/cocotb-intro-overview.md).

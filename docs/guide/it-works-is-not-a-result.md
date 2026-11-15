@@ -90,7 +90,7 @@ branches sign-extend the wrong way, `LOAD` reads its address from the destinatio
 instead of the pointer, and so on.
 
 This is what the shipped test prints against the good core and all thirteen broken ones. You'll
-produce it yourself in [Lab 02, Part 1](labs/lab-02-the-only-test-this-chip-has-overview.md#part-1-the-shipped-test):
+produce it yourself in [Lab 02, Part 1](../labs/lab-02-the-only-test-this-chip-has-overview.md#part-1-the-shipped-test):
 
 ```
 ------------------------------------------------------------------------
@@ -189,4 +189,4 @@ So the question gets a second half: when a test fails, ask whether it failed or 
 2. A testbench passes on the good core and raises `TypeError` on a broken one. Has it caught
    the bug?
 
-Next: [What a testbench is](guide/what-a-testbench-is.md).
+Next: [What a testbench is](../guide/what-a-testbench-is.md).

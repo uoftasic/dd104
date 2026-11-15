@@ -421,7 +421,7 @@ forever, and `recv_byte` says so in its timeout message.
 `send_byte()` leaves one bit period of idle after the frame, and the gap is required. The chip's
 receiver is busy for half a bit period longer than the frame it just received. Send the next start
 bit immediately and it misses it: no error, just a byte shifted by one.
-[Handshakes and timing](guide/the-handshake-is-the-contract.md) measures all of it.
+[Handshakes and timing](../guide/the-handshake-is-the-contract.md) measures all of it.
 
 A working `PING` does not prove the link works. `0xF0` already has its top bit set and `0xAA` is a
 fixed pattern, so a receiver whose bit period is slightly wrong still gets both right.
@@ -649,7 +649,7 @@ make sim   SIM=verilator         # the strict simulator
 ```
 
 Wall-clock figures are ballpark and move by a second or two between runs. Simulated-time numbers
-do not move at all, on either simulator; see [Two simulators](guide/two-simulators-two-jobs.md).
+do not move at all, on either simulator; see [Two simulators](../guide/two-simulators-two-jobs.md).
 
 For the warnings all of this prints along the way, see
-[Output that is not an error](reference/output-that-is-not-an-error.md).
+[Output that is not an error](../reference/output-that-is-not-an-error.md).

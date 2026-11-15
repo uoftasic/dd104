@@ -10,7 +10,7 @@ about which of the two you are doing.
 All the output below was measured on `hpretl/iic-osic-tools:2026.08` (cocotb 2.0.1, Icarus
 Verilog 14.0) by [`labs/cocotb-intro/test_02_triggers.py`](https://github.com/uoftasic/dd104/blob/main/labs/cocotb-intro/test_02_triggers.py):
 six tests, 1832.51 ns of simulation, well under a second of real time. You'll run it in
-[cocotb on a counter, Part 2](labs/cocotb-intro-overview.md#part-2-triggers).
+[cocotb on a counter, Part 2](../labs/cocotb-intro-overview.md#part-2-triggers).
 
 ## `Clock`, and the edge at t = 0
 
@@ -226,4 +226,4 @@ Import them from `cocotb.triggers`. (`Join`, for waiting on a task you started, 
 3. Your test reads `q` right after `await RisingEdge(dut.clk)` and every value is one count
    behind. Name two ways to fix the testbench.
 
-Next: [cocotb 2.x and older tutorials](guide/cocotb-2x-vs-every-tutorial.md).
+Next: [cocotb 2.x and older tutorials](../guide/cocotb-2x-vs-every-tutorial.md).

@@ -10,11 +10,11 @@ Package: [`labs/lab-04-your-first-bug-hunt/`](https://github.com/uoftasic/dd104/
 
 ## Before you start
 
-- Finish [Lab 03](labs/lab-03-three-blocks-before-the-processor-overview.md): `3 of 3 ALU bugs caught`.
-- Read [The golden model](guide/the-golden-model.md), [Where bugs hide](guide/where-bugs-hide.md)
-  and [Directed and random tests](guide/directed-random-and-the-gap.md).
-- Keep [The SimProc instruction set](reference/simproc-instruction-set.md) and
-  [The SimProc harness](reference/the-harness-api.md) open in other tabs.
+- Finish [Lab 03](../labs/lab-03-three-blocks-before-the-processor-overview.md): `3 of 3 ALU bugs caught`.
+- Read [The golden model](../guide/the-golden-model.md), [Where bugs hide](../guide/where-bugs-hide.md)
+  and [Directed and random tests](../guide/directed-random-and-the-gap.md).
+- Keep [The SimProc instruction set](../reference/simproc-instruction-set.md) and
+  [The SimProc harness](../reference/the-harness-api.md) open in other tabs.
 
 `make verdict` grades you in three rows, in this order:
 
@@ -154,7 +154,7 @@ discarded.
    `make hunt VERBOSE=1` does the same as `make probe`, and `make verdict VERBOSE=1` does it for all
    three rows of the grade.
 
-2. Work down the question list from [Where bugs hide](guide/where-bugs-hide.md#the-question-list).
+2. Work down the question list from [Where bugs hide](../guide/where-bugs-hide.md#the-question-list).
    Each answer is one small program. For example:
 
    ```python
@@ -215,7 +215,7 @@ Where does your core first disagree with the golden model?
 
    `golden.py` models architectural state only, and has no idea `done` or `halt` exist. A core
    that gets every answer right and its handshake wrong passes it. That is
-   [Lab 05](labs/lab-05-every-answer-is-right-overview.md).
+   [Lab 05](../labs/lab-05-every-answer-is-right-overview.md).
 
    </details>
 
@@ -285,7 +285,7 @@ runs eight random programs and compares the registers with the golden model afte
    ```
 
    It takes about a second, with no simulator. You should see the table from
-   [Directed and random tests](guide/directed-random-and-the-gap.md#what-the-generator-reaches),
+   [Directed and random tests](../guide/directed-random-and-the-gap.md#what-the-generator-reaches),
    ending `8 programs, 160 instructions written, 2 of 9 windows never entered`, and a second table
    over a thousand seeds in which the same two windows, `B05` and `B07`, are still at zero.
 
@@ -405,7 +405,7 @@ that transfers.
 | `make probe TB=…`, testbench that calls `print()` | the `print()` appears in the terminal | |
 
 The `sorry:` notes, and `make: *** [...] Error 1` under a FAIL verdict, are still normal. See
-[Output that is not an error](reference/output-that-is-not-an-error.md).
+[Output that is not an error](../reference/output-that-is-not-an-error.md).
 
 ## Finishing
 
@@ -414,5 +414,5 @@ You're done when `make verdict` on the core you were dealt shows three green row
 
 Submit: nothing for this lab. Keep `test_lab04.py`; you'll bring it into Lab 05 and Lab 06.
 
-Next on the Course path: read [Handshakes and timing](guide/the-handshake-is-the-contract.md), then
-do [Lab 05: Every answer is right](labs/lab-05-every-answer-is-right-overview.md).
+Next on the Course path: read [Handshakes and timing](../guide/the-handshake-is-the-contract.md), then
+do [Lab 05: Every answer is right](../labs/lab-05-every-answer-is-right-overview.md).
