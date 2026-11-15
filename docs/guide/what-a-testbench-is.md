@@ -163,11 +163,13 @@ beside it, and the two take turns. `await Timer(1, unit="ns")` looks like a slee
 actually does is hand control back to the simulator, ask it to advance one nanosecond of
 simulated time, and ask to be woken when it gets there.
 
-That's why a cocotb result line gives simulated time and real time as separate numbers:
+That's why a cocotb result line gives simulated time and real time as separate numbers. This
+one is for `t01_the_obvious_six`, which checks six hand-picked cases and is the first test in the
+adder testbench of [Lab 01](../labs/lab-01-the-adder-you-already-trust-overview.md):
 
 ```
-** test_six_cases.six_cases       PASS           6.00           0.00       6151.51  **
-                                                 └─ sim time (ns)  └─ real (s)  └─ ns/s
+** test_adder.t01_the_obvious_six       PASS           6.00           0.00       7127.11  **
+                                                       └─ sim time (ns)  └─ real (s)  └─ ns/s
 ```
 
 That is six nanoseconds of simulated time, one per case, in almost no real time. Simulated time
