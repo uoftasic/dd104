@@ -1,6 +1,6 @@
 # bug-09 — a branch overwrites the flags
 
-Catalogue B09. Tier 3, Lab 04.
+Catalogue **B09**. Tier 3, Lab 04.
 
 ```diff
 --- a/src/simproc_system.sv     line 622, the branch clause

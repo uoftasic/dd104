@@ -1,6 +1,6 @@
 # bug-12 — the UART RX bit period is one clock too long
 
-Catalogue B12. Tier 5, Lab 06. The only bug in the set that is not in the CPU.
+Catalogue **B12**. Tier 5, Lab 06. The only bug in the set that is not in the CPU.
 
 ```diff
 --- a/src/simproc_system.sv     line 1014, inside UART_RX

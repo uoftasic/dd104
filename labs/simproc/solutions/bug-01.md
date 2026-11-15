@@ -1,6 +1,6 @@
 # bug-01 — `SUB` computes `B - A`
 
-Catalogue B01. Tier 1, Lab 03 (the ALU, on its own).
+Catalogue **B01**. Tier 1, Lab 03 (the ALU, on its own).
 
 ```diff
 --- a/src/simproc_system.sv     line 811, inside the ALU

@@ -1,6 +1,6 @@
 # bug-07 — `LOAD` addresses memory with `rA`
 
-Catalogue B07. Tier 2, Lab 04. This is the set piece of the whole catalogue.
+Catalogue **B07**. Tier 2, Lab 04. This is the set piece of the whole catalogue.
 
 ```diff
 --- a/src/simproc_system.sv     line 589, CYCLE_3, the LOAD clause
