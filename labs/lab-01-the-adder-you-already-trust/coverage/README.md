@@ -3,8 +3,8 @@
 The lab one directory up asks whether the adder is right. This add-on asks which parts of it your
 stimulus never moved, and answers without knowing what an adder is.
 
-Writeup: [Lab 01, Part 5](https://uoftasic.com/dd104/#/labs/lab-01-the-adder-you-already-trust-overview?id=part-5-ask-a-coverage-tool).
-Background: [Coverage as a question](https://uoftasic.com/dd104/#/guide/coverage-is-a-question).
+Writeup: [Lab 01, Part 5](https://uoftasic.com/dd104/labs/lab-01-the-adder-you-already-trust-overview.html#part-5-ask-a-coverage-tool).
+Background: [Coverage as a question](https://uoftasic.com/dd104/guide/coverage-is-a-question.html).
 
 ```bash
 cd labs/lab-01-the-adder-you-already-trust/coverage

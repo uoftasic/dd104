@@ -16,7 +16,7 @@ Icarus Verilog 14.0, Verilator 5.050). Every lab package runs with `make` alone,
 container, with no environment setup, and every one prints a verdict.
 
 Students set up through the shared `workspace` and the noVNC desktop from
-[IC101](https://uoftasic.com/ic101/); [Lab 01, Part 1](https://uoftasic.com/dd104/#/labs/lab-01-the-adder-you-already-trust-overview)
+[IC101](https://uoftasic.com/ic101/); [Lab 01, Part 1](https://uoftasic.com/dd104/labs/lab-01-the-adder-you-already-trust-overview.html)
 has the steps. In a terminal on that desktop:
 
 ```bash

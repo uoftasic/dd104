@@ -27,7 +27,7 @@ Package: [`labs/lab-01-the-adder-you-already-trust/`](https://github.com/uoftasi
 
 Can you reach DD104's files, on the tool versions this course's outputs were recorded with?
 If you haven't set up the workbench yet, do
-[IC101 Lab 03](https://uoftasic.com/ic101/#/labs/lab-03-launch-the-workbench-overview) first.
+[IC101 Lab 03](https://uoftasic.com/ic101/labs/lab-03-launch-the-workbench-overview.html) first.
 
 1. From your `workspace` clone, start the desktop (`./scripts/start_vnc.sh`, or
    `scripts\start_vnc.bat` on Windows), open <http://localhost/> and open a terminal on the
@@ -76,7 +76,7 @@ If you haven't set up the workbench yet, do
 | `mod: no such module: dd104` | You ran `mod dd104` before `mod add dd104`. |
 | `fatal: could not read Username for 'https://github.com'` | git couldn't read the repo anonymously and is asking you to log in. Check that you typed `dd104`; if you did, ask in [Discord](https://discord.gg/hrJnP5UsGz). Don't type your password. |
 
-For anything else, see IC101's [Troubleshooting](https://uoftasic.com/ic101/#/reference/troubleshooting) page.
+For anything else, see IC101's [Troubleshooting](https://uoftasic.com/ic101/reference/troubleshooting.html) page.
 
 Check: `cocotb-config --version` prints `2.0.1` and you are in `/foss/designs/modules/dd104`.
 

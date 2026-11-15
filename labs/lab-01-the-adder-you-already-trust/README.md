@@ -1,7 +1,7 @@
 # Lab 01: The adder you already trust
 
 Writeup: [`docs/labs/lab-01-the-adder-you-already-trust-overview.md`](../../docs/labs/lab-01-the-adder-you-already-trust-overview.md)
-· live: <https://uoftasic.com/dd104/#/labs/lab-01-the-adder-you-already-trust-overview>
+· live: <https://uoftasic.com/dd104/labs/lab-01-the-adder-you-already-trust-overview.html>
 
 The 4-bit ripple-carry adder from DD102 with a cocotb testbench around it, and a second copy of
 the adder that is deliberately broken.

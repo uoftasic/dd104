@@ -1,7 +1,7 @@
 # Lab 02: The only test this chip has
 
 Writeup: [`docs/labs/lab-02-the-only-test-this-chip-has-overview.md`](../../docs/labs/lab-02-the-only-test-this-chip-has-overview.md)
-· live: <https://uoftasic.com/dd104/#/labs/lab-02-the-only-test-this-chip-has-overview>
+· live: <https://uoftasic.com/dd104/labs/lab-02-the-only-test-this-chip-has-overview.html>
 
 SimProc's one shipped test, run against the good core and all thirteen broken ones, and a
 testbench of your own that catches `B01`.

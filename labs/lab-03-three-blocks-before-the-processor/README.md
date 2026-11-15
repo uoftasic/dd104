@@ -1,7 +1,7 @@
 # Lab 03: Three blocks before the processor
 
 Writeup: [`docs/labs/lab-03-three-blocks-before-the-processor-overview.md`](../../docs/labs/lab-03-three-blocks-before-the-processor-overview.md)
-· live: <https://uoftasic.com/dd104/#/labs/lab-03-three-blocks-before-the-processor-overview>
+· live: <https://uoftasic.com/dd104/labs/lab-03-three-blocks-before-the-processor-overview.html>
 
 Unit tests for three SimProc modules, each elaborated on its own as the simulation top level:
 `program_counter` (16 lines of RTL), `register_file` (31) and `ALU` (34, driven with all 393,216

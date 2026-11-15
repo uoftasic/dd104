@@ -1,7 +1,7 @@
 # `labs/cocotb-intro`: cocotb on a counter
 
 Writeup: [`docs/labs/cocotb-intro-overview.md`](../../docs/labs/cocotb-intro-overview.md)
-· live: <https://uoftasic.com/dd104/#/labs/cocotb-intro-overview>
+· live: <https://uoftasic.com/dd104/labs/cocotb-intro-overview.html>
 
 Every file the cocotb guide pages talk about, complete and runnable, on an 8-bit counter. Where a
 guide page shows an excerpt, it names the file here that it came from.
