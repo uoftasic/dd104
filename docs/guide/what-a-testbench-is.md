@@ -8,22 +8,7 @@ literally. The design under test, the **DUT**, has inputs and outputs, and somet
 on the other end of those wires to drive the inputs, watch the outputs and have an opinion about
 what it sees. That something is a circuit too, even though you never manufacture it.
 
-```
-        ┌──────────────────────────┐
-        │        TESTBENCH         │
-        │                          │
-        │   drive ──────────┐      │
-        │                   ▼      │
-        │            ┌────────────┐│
-        │            │    DUT     ││
-        │            └────────────┘│
-        │                   │      │
-        │   observe ◄───────┘      │
-        │      │                   │
-        │      ▼                   │
-        │   decide  ── PASS / FAIL │
-        └──────────────────────────┘
-```
+![The testbench is wrapped around the DUT.](../assets/img/dd104-testbench-block.svg){width=420 fig-alt="A large box labelled TESTBENCH contains a smaller box labelled DUT. Inside the testbench, a line runs from the word drive and ends in an arrow pointing down into the top of the DUT. A line leaves the bottom of the DUT and ends in an arrow pointing left at the word observe. An arrow points down from observe to the word decide, and a line joins decide to the words PASS / FAIL."}
 
 Every testbench does three jobs: drive, observe and decide. A testbench that misses a bug has
 failed at one of them, so it helps to keep them separate:
