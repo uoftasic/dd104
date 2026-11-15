@@ -42,13 +42,13 @@ one names, in its own docstring, the verdict it must provoke.
 
 ## The four parts
 
-They run fast-first, so the numbers below are the labels the script prints, not
-the order it prints them in: 1, 3, 4, then 2.
+The script runs the fastest parts first, so it prints them in the order 1, 3, 4,
+then 2. The numbers below are the labels it prints.
 
 1. The classifier, against hand-written `results.xml`: one file per shape
    cocotb 2.0.1 can produce, including `<skipped/>` and a `<failure>` with no
    `error_type` (which is how cocotb records a test that could not start).
-   No simulator, sub-second.
+   It needs no simulator and takes under a second.
 2. End to end (`FULL=1`): every `check*.py` and `hunt.py` in the course,
    each fed a fixture, each required to print a specific verdict and exit
    non-zero.
@@ -62,6 +62,6 @@ the order it prints them in: 1, 3, 4, then 2.
    solution files are what a student reads when they give up. Six of the
    thirteen once disagreed, because nothing executed those numbers.
 
-A lab with a `core/` directory in it has a hunt in progress. Part 2 skips
-that lab rather than dealing over it, because `make new` deletes `core/` and a
-selftest must not cost you your lab.
+A lab with a `core/` directory in it has a hunt in progress. Part 2 skips that
+lab instead of dealing it a fresh core, because `make new` would delete `core/`,
+and a selftest must not cost you your lab.

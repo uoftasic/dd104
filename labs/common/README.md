@@ -1,10 +1,10 @@
 # `labs/common`: the harness, the assembler and the verdict
 
-The shared infrastructure every SimProc lab (Labs 02–06) uses: the cocotb harness, the assembler,
-the golden model, the bug catalogue and the verdict machinery.
+This directory holds the shared infrastructure that every SimProc lab (Labs 02–06) uses: the cocotb
+harness, the assembler, the golden model, the bug catalogue and the verdict machinery.
 
-Reference: [The SimProc harness](https://uoftasic.com/dd104/reference/the-harness-api.html) documents
-every call, with output from `test_api_tour.py`. The labs that use this directory directly are
+The reference page [The SimProc harness](https://uoftasic.com/dd104/reference/the-harness-api.html)
+documents every call, with output from `test_api_tour.py`. The labs that use this directory directly are
 [Lab 02](https://uoftasic.com/dd104/labs/lab-02-the-only-test-this-chip-has-overview.html) (Parts 3–5 and Going further),
 [Lab 03](https://uoftasic.com/dd104/labs/lab-03-three-blocks-before-the-processor-overview.html) (Part 5),
 [Lab 04](https://uoftasic.com/dd104/labs/lab-04-your-first-bug-hunt-overview.html) (Part 6),
@@ -16,8 +16,8 @@ cd labs/common
 make            # the example testbench on the good core, then on a broken one
 ```
 
-Runs in the workbench container (`hpretl/iic-osic-tools:2026.08`: cocotb 2.0.1, Icarus Verilog
-14.0, Verilator 5.050) with no environment setup and no arguments.
+It runs in the workbench container (`hpretl/iic-osic-tools:2026.08`: cocotb 2.0.1, Icarus Verilog
+14.0, Verilator 5.050) and needs no environment setup and no arguments.
 
 ## Targets
 
@@ -37,8 +37,8 @@ Runs in the workbench container (`hpretl/iic-osic-tools:2026.08`: cocotb 2.0.1, 
 | `make shuttle` | the shipped test, against the golden core and all thirteen | 18.5 s |
 | `make clean` | remove `build/`, `waves.vcd`, `__pycache__` | |
 
-Wall-clock figures are from the pinned container on a warm image and move by a second or two.
-Variables, all overridable on the command line:
+The wall-clock figures were measured in the pinned container on a warm image, and they move by a
+second or two. You can override these variables on the command line:
 
 ```bash
 make sim   TB=test_mine          # your own module instead of test_example
@@ -76,8 +76,8 @@ your own testbench, copy `test_example.py`.
 ## How `verdict.py` reads a result
 
 cocotb writes an assertion that fired and a test that crashed into `results.xml` the same way, as a
-`<failure>` element, distinguished only by `error_type`. A checker that reads them alike counts a
-crashed testbench as a catch. DD104 shipped exactly that bug: a student was told `3 of 3 ALU bugs
+`<failure>` element, and only the `error_type` attribute tells them apart. A checker that reads
+them alike therefore counts a crashed testbench as a catch. DD104 shipped exactly that bug: a student was told `3 of 3 ALU bugs
 caught` by a testbench whose exhaustive test raised `NameError` on every core.
 
 Every `check.py` and `hunt.py` in the course imports `verdict.py` instead of deciding for itself:
@@ -91,8 +91,8 @@ Every `check.py` and `hunt.py` in the course imports `verdict.py` instead of dec
 | `<failure>` with no `error_type` | cocotb could not start the test | Neither |
 | `<skipped/>` | Never ran | Not a pass |
 
-The list of "caught" types is a whitelist on purpose: being wrong the other way means printing
-PASS. Before you change a checker, run `make selftest` (and `make selftest FULL=1`).
+The list of "caught" types is a whitelist on purpose, because a type wrongly counted as caught
+turns a crashed testbench into a PASS. Before you change a checker, run `make selftest` (and `make selftest FULL=1`).
 
 ## Reference numbers
 
@@ -106,7 +106,8 @@ runs 11 tests, all passing, in 1,905,380.01 ns and about 21 s.
 | Bugs caught | 10 of 13 | 13 of 13 |
 | `make check-all` | 68.8 s | about 4 min |
 
-The three that hide from `test_example` need a different kind of test, not a bigger one:
+More tests of the same kind would not find the three bugs that `test_example` misses; each needs a
+different kind of test:
 
 | Bug | What finds it in `test_reference` | Why nothing else does |
 |---|---|---|
@@ -133,7 +134,7 @@ and bug catalogue.
 ## If you change the RTL
 
 `inject.py` checks the exact text of every line before it patches it. If someone edits
-`rtl/simproc_system.sv` and the line numbers move, you get this instead of a silently wrong grader:
+`rtl/simproc_system.sv` and the line numbers move, you get this error rather than a grader that is silently wrong:
 
 ```
 B01_sub_operands_swapped: rtl/simproc_system.sv line 811 has drifted.
