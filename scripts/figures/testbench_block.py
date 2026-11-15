@@ -14,6 +14,7 @@ def word(d, xy, text):
 
 
 d = drawing()
+d.config(margin=0.3)     # a little white around the edge, so no text touches it
 
 # The testbench: a box around everything, named at the top.
 d.add(flow.Box(w=9, h=7.7).anchor("SW").at((0, 0.6)))
