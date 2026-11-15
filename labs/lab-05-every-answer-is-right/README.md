@@ -3,8 +3,8 @@
 Writeup: [`docs/labs/lab-05-every-answer-is-right-overview.md`](../../docs/labs/lab-05-every-answer-is-right-overview.md)
 · live: <https://uoftasic.com/dd104/labs/lab-05-every-answer-is-right-overview.html>
 
-Two broken processors whose every register, flag, PC value and byte of memory is correct, and the
-checks on `done`, `halt` and the cycle count that catch them.
+This package holds two broken processors whose every register, flag, PC value and byte of memory
+is correct, and the checks on `done`, `halt` and the cycle count that catch them.
 
 ```bash
 cd labs/lab-05-every-answer-is-right
@@ -15,9 +15,9 @@ make probe       # the same run, with the simulator's output shown
 make verdict
 ```
 
-Runs in the workbench container (`hpretl/iic-osic-tools:2026.08`: cocotb 2.0.1, Icarus Verilog
+It runs in the workbench container (`hpretl/iic-osic-tools:2026.08`: cocotb 2.0.1, Icarus Verilog
 14.0) with no environment setup. The Makefile includes `../common/lab.mk`, so you need the whole
-repository.
+repository, not just this folder.
 
 ## Targets
 

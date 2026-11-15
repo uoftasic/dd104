@@ -7,7 +7,7 @@ cp solutions/test_lab05.py test_solution.py
 make verdict TB=test_solution      # grades the core already in core/; run `make new` first if you have none
 ```
 
-Four tests. Measured:
+The reference has four tests, and this is what they reported when we ran them against both bugs:
 
 ```
   caught  B08_store_drops_done               4 tests, 1 FAILED
@@ -43,8 +43,8 @@ This is what `t02` says when it fails:
 > 1 time(s), and that is where to look.
 
 `8, expected 9` and "some pulses are missing" are very different amounts of help. The first tells
-you the shortfall is one instruction, and the program has exactly one `STORE`. A failure message
-that does the arithmetic for the reader saves an hour.
+you the shortfall is one instruction, and the program has exactly one `STORE`. When a failure
+message does that arithmetic for the reader, it can save them an hour of looking.
 
 `t03` does the same: *"1 blip in a program with one STORE in it is a useful ratio — count the
 instructions of each kind and see which count matches."*
@@ -52,9 +52,10 @@ instructions of each kind and see which count matches."*
 ## The decision to argue about
 
 `test_architecture.py` in this package is Lab 04's suite with the cycle-count assertion removed
-from `t04_a_loop`. That is deliberate: a cycle count is a timing property, not an architectural
-one, and with it left in, Lab 04's suite catches `B13` by accident and the `make blind`
-demonstration does not work.
+from `t04_a_loop`. We removed it on purpose, because a cycle count is a timing property and not
+an architectural one. With it left in, Lab 04's suite catches `B13` by accident and the
+`make blind` demonstration does not work.
 
-So was Lab 04's cycle assertion a protocol test living in an architectural suite? It was. It is
-also a good test, and it should stay in Lab 04. Categories are for thinking with, not for filing.
+That makes Lab 04's cycle assertion a protocol test living in an architectural suite. It is also a
+good test, though, and it should stay in Lab 04. The categories help you think about what a test
+checks; they do not decide which suite it belongs in.
