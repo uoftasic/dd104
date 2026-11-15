@@ -70,19 +70,7 @@ The core is a six-state machine: `IDLE`, then `CYCLE_1` to `CYCLE_5`. It is not 
 no cache and speculates nothing, so a program's cycle count is the sum of its instructions' cycle
 counts and you can add it up by hand before you run it.
 
-```
-    IDLE ──run──> CYCLE_1 ──> CYCLE_2 ──> CYCLE_3 ──┬──> back to CYCLE_1        3 cycles
-                  fetch        read rA,rB   decode  │    STORE and all branches
-                  PC <- PC+1                        │
-                                                    ├──> CYCLE_4 ──> CYCLE_1    4 cycles
-                                                    │    write back  ADD SUB NAND SHL SHR LOAD
-                                                    │
-                                                    ├──> CYCLE_4 ──> CYCLE_5    5 cycles
-                                                    │    ORI: OR, then write r0
-                                                    │
-                                                    └──> IDLE ──> CYCLE_1       4 cycles
-                                                         0xC 0xD 0xE
-```
+![The core's states, and the four paths an instruction can take out of `CYCLE_3`.](../assets/img/dd104-simproc-fsm.svg){width=760 fig-alt="A state diagram. IDLE goes to CYCLE_1 on run, then to CYCLE_2 and CYCLE_3. Under CYCLE_1 are the notes fetch and PC ← PC+1, under CYCLE_2 read rA,rB, and under CYCLE_3 decode. Four paths leave CYCLE_3. The first goes back to CYCLE_1, for STORE and all branches: 3 cycles. The second goes to CYCLE_4, noted write back, and then to CYCLE_1, for ADD SUB NAND SHL SHR LOAD: 4 cycles. The third goes to CYCLE_4 and then CYCLE_5, noted ORI: OR, then write r0: 5 cycles. The fourth goes to IDLE and then CYCLE_1, for 0xC 0xD 0xE: 4 cycles."}
 
 Two details of that diagram matter more than they look.
 
