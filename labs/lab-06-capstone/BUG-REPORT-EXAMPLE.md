@@ -10,8 +10,8 @@ the argument. Read it for the shape, then write yours.
 
 ## 1. The smallest program that reproduces it
 
-Three instructions of setup and one `SUB`. Ships complete as
-[`../common/test_b01_repro.py`](../common/test_b01_repro.py), test `t01`:
+The program is three instructions of setup and one `SUB`. It ships complete as test `t01` in
+[`../common/test_b01_repro.py`](../common/test_b01_repro.py):
 
 ```python
     sp = SimProc(dut)
@@ -44,8 +44,8 @@ make check TB=test_b01_repro BUG=B01      # t01 fails on the broken one
             AssertionError: SUB r1, r2 with r1 = 200 and r2 = 100 left r1 = 156.
 ```
 
-Minimised: no loop, no branch, no memory, no UART traffic beyond what the harness needs, and no
-model. Both operands are constants, and they are different constants (see part 4).
+It is minimised: there is no loop, no branch, no memory, no UART traffic beyond what the harness
+needs, and no model. Both operands are constants, and they are different constants (see part 4).
 
 ## 2. Expected against actual, as numbers, with the arithmetic shown
 
@@ -56,8 +56,8 @@ model. Both operands are constants, and they are different constants (see part 4
 | why the expected value is what it is | `SUB rA, rB` is specified as `rA - rB`. `200 - 100 = 100`. |
 | why the actual value is what it is | `156 = (100 - 200) mod 256`, which is `rB - rA`. |
 
-The difference is the sign, not an offset or a single bit: `100` and `156` are negatives of each
-other in eight bits. That is the most useful sentence in this report.
+The two values differ in sign rather than by an offset or a single bit: `100` and `156` are
+negatives of each other in eight bits, and that is the most useful sentence in this report.
 
 ## 3. The shape
 
@@ -76,7 +76,7 @@ ALU SHR  value_mismatch=     0 flag_mismatch=     0
 
 65,024 of the 65,536 `SUB` operand pairs are wrong, and every other operation is perfect.
 
-The survivors are the diagnosis. `A - B == B - A (mod 256)` exactly when `2(A - B) == 0
+The 512 pairs that survive are what give you the diagnosis. `A - B == B - A (mod 256)` exactly when `2(A - B) == 0
 (mod 256)`, that is when `A - B` is `0` or `128`:
 
 | survivors | how many |
@@ -85,13 +85,13 @@ The survivors are the diagnosis. `A - B == B - A (mod 256)` exactly when `2(A - 
 | `\|A - B\| == 128` | 256 |
 | | 512 |
 
-`65,536 - 512 = 65,024` exactly. A count that factors into a sentence about the design is a
-hypothesis. This one says the subtractor's operands are the wrong way round, and nothing else
-produces exactly 512 survivors.
+`65,536 - 512 = 65,024` exactly. When a count factors into a sentence about the design, you have
+a hypothesis. This one says that the subtractor's operands are the wrong way round, and no other
+fault leaves exactly 512 survivors.
 
-The flag column matches the value column exactly (`65024` and `65024`), which is a second finding
-for free: `N` and `Z` are computed from `ALUout`, so they are wrong exactly when it is. The flag
-logic is not implicated.
+The flag column matches the value column exactly (`65024` and `65024`), and that gives you a
+second finding at no extra cost. `N` and `Z` are computed from `ALUout`, so they are wrong exactly
+when it is, and the flag logic itself is not implicated.
 
 ## 4. Where it is not
 
@@ -105,9 +105,10 @@ logic is not implicated.
   both cores.
 - The flags, decode, the register file, memory, the UART and cycle counts. `SUB` still takes four
   cycles and still writes the register the instruction names.
-- Reset. It neither hides the bug nor helps: the bug is combinational, with no state involved.
-- Register aliasing. It depends on the operand values being different, not on the operands being
-  different registers.
+- Reset. It neither hides the bug nor helps, because the bug is combinational and involves no
+  state.
+- Register aliasing. The bug depends on the operand values being different, not on the operands
+  being different registers.
 
 That list is what turns "the ALU is broken" into "line 811 of `simproc_system.sv`".
 
@@ -126,8 +127,8 @@ That list is what turns "the ALU is broken" into "line 811 of `simproc_system.sv
 
 ## The same thing in `make verdict`
 
-`make verdict` is parts 1 and 5 turned into a grade. Dealt this core with the test written but
-no fix applied:
+`make verdict` turns parts 1 and 5 into a grade. Here is what it prints when you have been dealt
+this core and have written the test but not yet applied a fix:
 
 ```
       ok  1. the golden core          must PASS      3 tests, all passed        4.2s
@@ -140,7 +141,8 @@ no fix applied:
    is the hard half and it is done.
 ```
 
-and after changing `ALUout = B - A;` back to `ALUout = A - B;` in `core/simproc_system.sv`:
+And here it is after you change `ALUout = B - A;` back to `ALUout = A - B;` in
+`core/simproc_system.sv`:
 
 ```
       ok  1. the golden core          must PASS      3 tests, all passed        4.2s
@@ -152,6 +154,6 @@ and after changing `ALUout = B - A;` back to `ALUout = A - B;` in `core/simproc_
 ```
 
 Row 2 does not change when you fix the design, because it is rebuilt from the catalogue every
-time rather than read from `core/`. That is why the report is built around a reproducer: the patch
-is something one person did once, and the test is what stops the bug coming back in a year, in a
-rewrite, done by someone who has never heard of you.
+time rather than read from `core/`. That is why the report is built around a reproducer. The
+patch is something one person did once, and the test is what stops the bug coming back a year
+later, in a rewrite by someone who has never heard of you.
