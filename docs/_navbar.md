@@ -1,4 +1,0 @@
-- [Guide](guide/getting-started.md)
-- [Labs](labs/lab-01-the-adder-you-already-trust-overview.md)
-- [Discord](https://discord.gg/hrJnP5UsGz)
-- [GitHub](https://github.com/uoftasic/dd104)

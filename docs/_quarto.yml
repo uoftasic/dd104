@@ -1,0 +1,160 @@
+# Quarto build of the DD104 docs (replacing Docsify's index.html,
+# _sidebar.md and _navbar.md).
+#
+#   quarto preview docs          # live site at http://localhost:4200
+#   quarto render docs           # site in docs/_site, with a PDF of every page
+#   quarto render docs --profile pdf --to typst
+#                                # the whole course as one PDF in docs/_book
+#
+# The sidebar follows the Course path order on the home page.
+
+project:
+  type: website
+  output-dir: _site
+
+website:
+  title: "DD104 — Pre-Silicon Verification"
+  description: "Verilator and cocotb: find the bugs hiding in a real 8-bit core."
+  site-url: https://uoftasic.com/dd104/
+  repo-url: https://github.com/uoftasic/dd104
+  repo-subdir: docs
+  repo-actions: [issue]
+  search: true
+  page-navigation: true
+  navbar:
+    left:
+      - text: "Guide"
+        href: guide/getting-started.md
+      - text: "Labs"
+        href: labs/lab-01-the-adder-you-already-trust-overview.md
+    right:
+      - text: Course PDF
+        icon: file-pdf
+        href: dd104-course.pdf
+      - icon: discord
+        href: https://discord.gg/hrJnP5UsGz
+        aria-label: Discord
+      - icon: github
+        href: https://github.com/uoftasic/dd104
+        aria-label: GitHub
+  sidebar:
+    style: docked
+    contents:
+      - text: "Home"
+        href: index.md
+      - section: "1. Testbenches"
+        contents:
+          - text: "Getting started"
+            href: guide/getting-started.md
+          - text: "What a passing test proves"
+            href: guide/it-works-is-not-a-result.md
+          - text: "What a testbench is"
+            href: guide/what-a-testbench-is.md
+          - text: "Your first cocotb test"
+            href: guide/your-first-cocotb-test.md
+          - text: "The lazy testbench"
+            href: guide/the-lazy-testbench.md
+          - text: "Coverage as a question"
+            href: guide/coverage-is-a-question.md
+          - text: "Lab 01: The adder you already trust"
+            href: labs/lab-01-the-adder-you-already-trust-overview.md
+      - section: "2. cocotb"
+        contents:
+          - text: "Clocks, resets and triggers"
+            href: guide/clocks-resets-and-triggers.md
+          - text: "cocotb 2.x and older tutorials"
+            href: guide/cocotb-2x-vs-every-tutorial.md
+          - text: "Driving and checking a design"
+            href: guide/driving-and-checking.md
+          - text: "Waveforms"
+            href: guide/waveforms.md
+          - text: "Lab: cocotb on a counter"
+            href: labs/cocotb-intro-overview.md
+      - section: "3. SimProc"
+        contents:
+          - text: "Two simulators"
+            href: guide/two-simulators-two-jobs.md
+          - text: "SimProc in one page"
+            href: guide/simproc-in-one-page.md
+          - text: "Lab 02: The only test this chip has"
+            href: labs/lab-02-the-only-test-this-chip-has-overview.md
+      - section: "4. Unit tests"
+        contents:
+          - text: "Flags as architectural state"
+            href: guide/flags-are-state.md
+          - text: "Lab 03: Three blocks before the processor"
+            href: labs/lab-03-three-blocks-before-the-processor-overview.md
+      - section: "5. Bug hunting"
+        contents:
+          - text: "The golden model"
+            href: guide/the-golden-model.md
+          - text: "Where bugs hide"
+            href: guide/where-bugs-hide.md
+          - text: "Directed and random tests"
+            href: guide/directed-random-and-the-gap.md
+          - text: "Lab 04: Your first bug hunt"
+            href: labs/lab-04-your-first-bug-hunt-overview.md
+      - section: "6. Handshakes"
+        contents:
+          - text: "Handshakes and timing"
+            href: guide/the-handshake-is-the-contract.md
+          - text: "Lab 05: Every answer is right"
+            href: labs/lab-05-every-answer-is-right-overview.md
+      - section: "7. Capstone"
+        contents:
+          - text: "Writing the bug report"
+            href: guide/writing-the-bug-report.md
+          - text: "Lab 06: Capstone"
+            href: labs/lab-06-capstone-overview.md
+      - section: "Reference"
+        contents:
+          - text: "The SimProc instruction set"
+            href: reference/simproc-instruction-set.md
+          - text: "The SimProc harness"
+            href: reference/the-harness-api.md
+          - text: "Output that is not an error"
+            href: reference/output-that-is-not-an-error.md
+      - section: "Repo"
+        contents:
+          - text: "Lab packages"
+            href: https://github.com/uoftasic/dd104/tree/main/labs
+          - text: "The harness"
+            href: https://github.com/uoftasic/dd104/tree/main/labs/common
+          - text: "The counter package"
+            href: https://github.com/uoftasic/dd104/tree/main/labs/cocotb-intro
+
+filters:
+  - _filters/course.lua
+
+# Collapsed answers move to the end of each page in PDFs; set this to
+# "inline" to print them where they sit instead.
+answers-in-pdf: end
+
+format:
+  html:
+    theme:
+      light: [cosmo, _light.scss]
+      dark: [darkly, _dark.scss]
+    css: _styles.css
+    # Keeps old Docsify links (.../dd104/#/labs/...) working.
+    include-in-header: _docsify-redirect.html
+    toc: true
+    toc-depth: 3
+    code-copy: true
+    lightbox: auto
+    html-math-method:
+      method: mathjax
+      url: "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-chtml-full.js"
+    # Listing html first stops Quarto adding a second "Typst" link.
+    format-links:
+      - html
+      - format: typst
+        text: PDF
+        icon: file-pdf
+  typst:
+    papersize: us-letter
+    margin:
+      x: 0.9in
+      y: 0.9in
+    fontsize: 10.5pt
+    toc: false
