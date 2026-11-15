@@ -3,17 +3,18 @@
 Writeup: [`docs/labs/cocotb-intro-overview.md`](../../docs/labs/cocotb-intro-overview.md)
 · live: <https://uoftasic.com/dd104/labs/cocotb-intro-overview.html>
 
-Every file the cocotb guide pages talk about, complete and runnable, on an 8-bit counter. Where a
-guide page shows an excerpt, it names the file here that it came from.
+This package holds every file the cocotb guide pages talk about, complete and runnable, all built
+around an 8-bit counter. Where a guide page shows an excerpt, it names the file here that it came
+from.
 
 ```bash
 cd labs/cocotb-intro
 make
 ```
 
-Runs in the workbench container (`hpretl/iic-osic-tools:2026.08`: cocotb 2.0.1, Icarus Verilog
-14.0) with no environment setup. `make` runs four testbenches, nineteen tests, and prints a
-verdict in 8–14 s of wall clock, of which 0.3 s is simulation.
+It runs in the workbench container (`hpretl/iic-osic-tools:2026.08`: cocotb 2.0.1, Icarus Verilog
+14.0) without any environment setup. `make` runs four testbenches, nineteen tests in all, and
+prints a verdict. That takes 8–14 s of wall clock, of which only 0.3 s is simulation.
 
 ## Targets
 
@@ -29,11 +30,13 @@ verdict in 8–14 s of wall clock, of which 0.3 s is simulation.
 | `make nothing` | a green run that tested nothing |
 | `make clean` | remove `build/`, the waveform files and caches |
 
-Add `SIM=verilator` to any of them. `make sim SIM=verilator` gives 6 tests, 6 PASS, the same as
-Icarus; the counter lints clean.
+You can add `SIM=verilator` to any of them to use Verilator instead of Icarus.
+`make sim SIM=verilator` gives the same result as Icarus, 6 tests and 6 PASS, and the counter lints clean.
 
-`make sim` and `make broken` always run `test_03_checking`; passing `TB=` to them has no effect.
-To run your own copy, call `sim.mk` directly and give each run its own `SIM_BUILD`:
+`make sim` and `make broken` always run `test_03_checking`, so passing `TB=` to them has no
+effect. To run your own copy of the testbench, call `sim.mk` directly and give each run its own
+`SIM_BUILD`. cocotb relinks only when the sources are newer than the last build, so a second run
+with a different `RTL=` in the same `SIM_BUILD` would quietly re-run the first design:
 
 ```bash
 cp test_03_checking.py test_mine.py
@@ -42,9 +45,9 @@ make -f sim.mk sim TB=test_mine RTL=rtl/counter_broken.sv SIM_BUILD=build/mine-b
 ```
 
 `make broken` exits 0 when the testbench fails on the broken counter, because that failure is
-what it is checking for. It exits non-zero, printing `test_03_checking.py PASSED on the broken
-counter`, if the testbench cannot see the bug. `make`, `make sim` and `make broken` all exit 0 on
-the shipped files.
+what it is checking for. If the testbench can't see the bug, it prints
+`test_03_checking.py PASSED on the broken counter` and exits non-zero. On the shipped files, `make`, `make sim` and
+`make broken` all exit 0.
 
 ## Files
 
