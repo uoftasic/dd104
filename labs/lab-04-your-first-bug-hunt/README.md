@@ -3,8 +3,9 @@
 Writeup: [`docs/labs/lab-04-your-first-bug-hunt-overview.md`](../../docs/labs/lab-04-your-first-bug-hunt-overview.md)
 · live: <https://uoftasic.com/dd104/labs/lab-04-your-first-bug-hunt-overview.html>
 
-A processor with one line changed, a five-bug pool, and a three-row grade that requires a test
-which fails on the core you were dealt.
+You are dealt a processor with one line changed, drawn from a pool of five bugs, and you write a
+test that finds it. The grade has three rows, and to pass it your test has to fail on the core
+you were dealt.
 
 ```bash
 cd labs/lab-04-your-first-bug-hunt
@@ -14,7 +15,7 @@ make probe       # the same run, showing everything the simulator prints
 make verdict     # the grade
 ```
 
-Runs in the workbench container (`hpretl/iic-osic-tools:2026.08`: cocotb 2.0.1, Icarus Verilog
+Everything runs in the workbench container (`hpretl/iic-osic-tools:2026.08`: cocotb 2.0.1, Icarus Verilog
 14.0) with no environment setup. The Makefile includes `../common/lab.mk`, so you need the whole
 repository, not just this directory.
 
@@ -50,9 +51,10 @@ The pool is `B04`, `B05`, `B06`, `B07` and `B09`. The grade only ever runs `TB=t
 | `core/` | created by `make new`; the RTL you edit; gitignored |
 | `solutions/` | a ten-test suite that catches all five; open it after your own verdict passes |
 
-`core/.sealed` holds the answer, base64-encoded. Decoding it costs you the lab. `make reveal` does
-it for you and says so.
+`core/.sealed` holds the answer, base64-encoded, and decoding it costs you the lab. `make reveal`
+decodes it for you and tells you that it has.
 
 ## Done
 
-`make verdict` says `VERDICT: PASS`, three green rows, on the core you were dealt.
+You're done when `make verdict` says `VERDICT: PASS`, with all three rows green, on the core you
+were dealt.
