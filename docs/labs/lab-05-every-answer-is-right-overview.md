@@ -1,10 +1,10 @@
 # Lab 05: Every answer is right
 
-You'll meet two broken processors on which every register, flag, PC value and byte of memory is
-correct for every program you can write. The golden model agrees with them completely, and an
-architecturally complete suite built from Lab 04's passes on both. You'll write three short checks
-that catch them, run a test that measures the UART receiver's turnaround time, and hunt both
-bugs.
+In this lab you'll meet two broken processors that get every register, flag, PC value and byte of
+memory right, for every program you can write. The golden model agrees with both of them
+completely, and an architecturally complete suite built from Lab 04's passes on both. You'll write
+three short checks that do catch them, run a test that measures the UART receiver's turnaround
+time, and then hunt both bugs.
 
 This lab takes about 75 minutes.
 
@@ -12,7 +12,7 @@ Package: [`labs/lab-05-every-answer-is-right/`](https://github.com/uoftasic/dd10
 
 ## Before you start
 
-- Finish [Lab 04](../labs/lab-04-your-first-bug-hunt-overview.md): you have a suite you trust.
+- Finish [Lab 04](../labs/lab-04-your-first-bug-hunt-overview.md), so that you have a suite you trust.
 - Read [Handshakes and timing](../guide/the-handshake-is-the-contract.md).
 - Keep [The SimProc harness](../reference/the-harness-api.md) open in another tab, for
   `count_done_pulses`, `count_halt_cycles`, and what `run()` returns.
@@ -27,8 +27,8 @@ SimProc's contract has three parts that `golden.py` says nothing about:
 
 Anything outside the core that wants to know whether an instruction finished (a debugger, a
 performance counter, a testbench scoreboard) watches `done`. Anything that wants to know whether the
-processor is running watches `halt`. A design that produces every right answer one cycle late has
-missed its timing budget.
+processor is running watches `halt`. The cycle count is part of the contract as well, because a
+design that produces every right answer one cycle late has still missed its timing budget.
 
 ```bash
 mod dd104     # in a new terminal, load .designinit first (Lab 01, Part 1)
@@ -67,24 +67,24 @@ Does a suite that checks every architectural result catch these two cores?
    ```
 
 `test_architecture.py` is Lab 04's finished suite with its one cycle-count assertion removed
-(question 1 in Finishing says why): ten tests that compare all four registers, the
-PC, both flags and every byte of memory with the golden model after every instruction of a mixed
-program, plus every shift amount in both directions, all sixteen branch displacements, a compare
-followed by two branches, and `LOAD` and `STORE` through pointers in a different register from the
-data. It catches every bug in Labs 03 and 04.
+(question 1 in Finishing explains why). Its ten tests compare all four registers, the PC, both
+flags and every byte of memory with the golden model after every instruction of a mixed program.
+They also cover every shift amount in both directions, all sixteen branch displacements, a compare
+followed by two branches, and `LOAD` and `STORE` through pointers held in a different register from
+the data. The suite catches every bug in Labs 03 and 04.
 
 2. Would more vectors, programs or register assertions help it catch these two?
 
    <details>
    <summary>Answer</summary>
 
-   No. Nothing is wrong with the suite; it reads architectural state, and neither of these bugs is
-   in architectural state. More vectors, programs or register assertions will not reach them. A
-   different kind of check will.
+   No. Nothing is wrong with the suite: it reads architectural state, and neither of these bugs is
+   in architectural state, so more vectors, programs or register assertions won't reach them.
+   Catching them takes a different kind of check.
 
    </details>
 
-Check: three green rows, two of them on broken cores.
+Check: you see three green rows, and two of them are for broken cores.
 
 ## Part 2: Count the pulses
 
@@ -103,11 +103,12 @@ How many clock cycles should this lab's program take, and how many `done` pulses
    a done-triggered scoreboard would have made 9 comparisons for a 9-instruction program
    ```
 
-   `37` and `9` are exact.
+   Both `37` and `9` are exact.
 
-2. Work out the 37 yourself from the instruction costs in the table at the top of this page. Every
-   test in this lab uses the same nine-instruction program, `PROGRAM` at the top of
-   `test_lab05.py`, one of them a `STORE`. Write the sum down; you will assert it in Part 6.
+2. Every test in this lab runs the same nine-instruction program, `PROGRAM` at the top of
+   `test_lab05.py`, and one of its instructions is a `STORE`. Work out the 37 yourself from the
+   instruction costs in the table at the top of this page, and write the sum down, because you'll
+   assert it in Part 6.
 
    <details>
    <summary>Answer</summary>
@@ -118,10 +119,10 @@ How many clock cycles should this lab's program take, and how many `done` pulses
 
    </details>
 
-The shipped `t02` reports the pulse count and asserts almost nothing about it, only that at least
-one instruction retired. That is deliberate, as the next part shows.
+The shipped test `t02` in `test_lab05.py` reports the pulse count but asserts almost nothing about it, only that at least
+one instruction retired. We left it that way on purpose, and the next part shows why.
 
-Check: `37 clock cycles` and `9 comparisons` in the log.
+Check: the log shows `37 clock cycles` and `9 comparisons`.
 
 ## Part 3: The shipped file against `B08`
 
@@ -134,16 +135,16 @@ What happens to a scoreboard triggered by `done` on a core that drops a `done` p
    make check BUG=B08
    ```
 
-   You should see `MISSED`: the shipped file passes.
+   You should see `MISSED`, which means the shipped file passes on the broken core.
 
-2. `make check` doesn't show the simulator's log. To see the broken run's log, run the checker
-   with `-v`:
+2. `make check` doesn't show the simulator's log, so to see the log of the broken run, call the
+   checker directly with `-v`:
 
    ```bash
    python3 ../common/check.py --tb test_lab05 --bug B08 --dir . -v
    ```
 
-   You should see the same `MISSED` verdict, then the log, with
+   You should see the same `MISSED` verdict followed by the log, which includes
    `a done-triggered scoreboard would have made 8 comparisons for a 9-instruction program`.
 
 3. Nothing went red and no assertion failed. What would a scoreboard triggered by `done` have
@@ -153,16 +154,18 @@ What happens to a scoreboard triggered by `done` on a core that drops a `done` p
    <summary>Answer</summary>
 
    It would have compared eight machine states with the model, found all eight correct (they
-   are), and reported a clean run. The ninth instruction executed and wrote the right byte to the
-   right address. It never signalled that it had finished, so nothing outside the core noticed it.
-   Nine instructions retired with eight pulses, and that is the entire observable defect.
+   are), and reported a clean run. The ninth instruction did execute, and it wrote the right byte
+   to the right address, but it never signalled that it had finished, so nothing outside the core
+   noticed it. Nine instructions retired with only eight pulses, and that is the whole of the
+   observable defect.
 
-   A missing trigger does not fail your test; it stops part of your test from running, and nothing
-   on the screen tells you. A failure at least shows up.
+   This is worse than a failure because a missing trigger doesn't make your test fail. It stops
+   part of your test from running, and nothing on the screen tells you so, whereas a failure at
+   least shows up.
 
    </details>
 
-Check: the broken run says 8 comparisons.
+Check: the log of the broken run says 8 comparisons.
 
 ## Part 4: Assert the number
 
@@ -178,28 +181,29 @@ Can you make the pulse count fail loudly, with a message that points at the culp
            AssertionError: `done` pulsed 8 times for a 9-instruction program.
    ```
 
-   These blocks, here and in Part 5, come from the finished file with all four tests; until you
-   have written the other two, yours shows fewer tests. The reference message continues:
+   The output blocks here and in Part 5 come from the finished file, which has all four tests, so
+   until you've written the other two, your output will show fewer tests. The reference message
+   continues:
 
    > The shortfall is 1. There is exactly one instruction in this program that appears exactly
    > 1 time(s), and that is where to look.
 
-`8, expected 9` and "some pulses are missing" are very different amounts of help. The first says
-the shortfall is one instruction, so look at the instructions that appear once in the program:
-the one `SHL` and the one `STORE`. (The reference message says there is exactly one such
-instruction; `PROGRAM` has two.) A failure message that does the arithmetic for the reader saves an
-hour, and costs one line.
+A message like `8, expected 9` is far more help than "some pulses are missing", because it tells
+you the shortfall is one instruction, so you know to look at the instructions that appear only once
+in the program: the one `SHL` and the one `STORE`. (The reference message says there is exactly one
+such instruction, but `PROGRAM` has two.) A failure message that does the arithmetic for the reader
+costs one line to write and can save you an hour.
 
-Check: `caught` on `B08`.
+Check: `make check` reports `caught` on `B08`.
 
 ## Part 5: Watch `halt`
 
 Is `halt` ever high while the core is running?
 
-1. Write the second TODO as a new test: use `await sp.count_halt_cycles(n)`, which runs the loaded
-   program for `n` cycles of execution and returns how many of them had `halt` high. For `n`, use
-   the cycle count `sp.run()` returns, then `sp.reset()` before counting, the way `t02` does for
-   `count_done_pulses`. Assert that the result is zero.
+1. Write the second TODO as a new test. It uses `await sp.count_halt_cycles(n)`, which runs the
+   loaded program for `n` cycles of execution and returns how many of those cycles had `halt`
+   high. For `n`, use the cycle count that `sp.run()` returns, and call `sp.reset()` before
+   counting, the same way `t02` does for `count_done_pulses`. Then assert that the result is zero.
 
 2. Run it against `B13`:
 
@@ -215,29 +219,31 @@ Is `halt` ever high while the core is running?
            AssertionError: the program took 38 clock cycles, expected 37.
    ```
 
-   The second line appears once you have done Part 6 too. `1`, `38` and `37` are exact.
+   The second line only appears once you've done Part 6 as well. The numbers `1`, `38` and `37`
+   are exact.
 
-This is the cheapest useful assertion in the course: one number, one expected value, no arithmetic,
-and zero is the only correct answer, because while `RUN` is asserted the core is not supposed to
-visit `IDLE` at all.
+This is the cheapest useful assertion in the course. It compares one number with one expected
+value and needs no arithmetic, and zero is the only correct answer, because while `RUN` is asserted
+the core is not supposed to visit `IDLE` at all.
 
 3. Every value `B13` produces is correct, in the right order and the right place. Is it a real bug?
-   Decide before you open the answer, which also says what `B13` changes; skip it if you want to
-   find that yourself in Part 8.
+   Decide before you open the answer. The answer also says what `B13` changes, so leave it closed
+   if you'd rather find that out yourself in Part 8.
 
    <details>
    <summary>Answer</summary>
 
-   `B13` drops the core into `IDLE` for one cycle after every `STORE` and then restarts it at once,
-   because `RUN` is still asserted. Its only symptoms are one wasted cycle and a one-cycle blip on a
-   pin. On a real chip that is a performance bug (one store in a tight loop, run a million times,
-   is a million wasted cycles) and a glitch any debugger can see, because anything watching `halt`
-   sees the processor stop and start. "Functionally equivalent" is a claim about outputs, made by
-   someone who has already decided which outputs count, so it does not mean "correct".
+   Yes. `B13` drops the core into `IDLE` for one cycle after every `STORE` and then restarts it at
+   once, because `RUN` is still asserted. Its only symptoms are one wasted cycle and a one-cycle
+   blip on a pin, but on a real chip that is a performance bug (one store in a tight loop, run a
+   million times, is a million wasted cycles) and also a glitch any debugger can see, because
+   anything watching `halt` sees the processor stop and start again. "Functionally equivalent"
+   doesn't mean "correct": it's a claim about outputs, made by someone who has already decided
+   which outputs count.
 
    </details>
 
-Check: `caught` on `B13`, with `halt` high on 1 cycle.
+Check: `make check` reports `caught` on `B13`, with `halt` high on 1 cycle.
 
 ## Part 6: Assert the clock
 
@@ -253,13 +259,12 @@ Does the program take exactly as many cycles as the instruction costs say?
    <details>
    <summary>Answer</summary>
 
-   $38 - 37 = 1$: one extra cycle, from an instruction that runs once. The program has one `SHL`
-   and one `STORE`, so the count narrows the search to those two. In a program with five stores and
-   nothing else run five times, five extra cycles would point straight at the stores by the same
-   division. This
-   check turns "the answer is right and arrived late" into a red row with a number attached, and it
-   costs one addition done once from the instruction costs in
-   [the ISA reference](../reference/simproc-instruction-set.md).
+   $38 - 37 = 1$, so there is one extra cycle, and it comes from an instruction that runs once. The
+   program has one `SHL` and one `STORE`, so the count narrows the search to those two. By the same
+   division, in a program with five stores and nothing else run five times, five extra cycles would
+   point straight at the stores. This check turns "the answer is right and arrived late" into a red
+   row with a number attached, and all it costs is one addition, done once, from the instruction
+   costs in [the ISA reference](../reference/simproc-instruction-set.md).
 
    </details>
 
@@ -301,8 +306,8 @@ What happens to a serial command when the sender doesn't wait for the receiver t
 
    </details>
 
-3. Change the command bytes. Before you run, use your rule to predict what `0x34, 0x12` will
-   arrive as. Then run it:
+3. Now change the command bytes. Before you run anything, use your rule to predict what
+   `0x34, 0x12` will arrive as. Then run it:
 
    ```bash
    sed 's/^COMMAND = (CMD_SET_PC, 12, 0)/COMMAND = (CMD_SET_PC, 0x34, 0x12)/' \
@@ -328,11 +333,11 @@ What happens to a serial command when the sender doesn't wait for the receiver t
    <details>
    <summary>Answer</summary>
 
-   `0x0F, 0x33` arrives as `0x99 0x87 0xE6`: the second frame slips cleanly,
-   then the receiver resynchronises onto a different edge and the third byte is neither what you
-   sent nor what a uniform slip would give (`0x99`). `0x55, 0xFF` arrives as `0x99 0xAA`, two bytes
-   only: after its start bit, `0xFF` is a solid run of ones with no falling edge for the receiver to
-   latch onto, so the third frame never happens and the PC stays 0. The table in
+   `0x0F, 0x33` arrives as `0x99 0x87 0xE6`. The second frame slips cleanly, but then the receiver
+   resynchronises onto a different edge, so the third byte is neither what you sent nor what a
+   uniform slip would give (`0x99`). `0x55, 0xFF` arrives as `0x99 0xAA`, only two bytes, because
+   after its start bit `0xFF` is a solid run of ones with no falling edge for the receiver to latch
+   onto. The third frame never happens, and the PC stays 0. The table in
    [Other bytes](../guide/the-handshake-is-the-contract.md#other-bytes) has all four runs.
 
    </details>
@@ -359,21 +364,20 @@ Can you find and fix both bugs with your new checks?
    ```
 
    The three-row grade is the same as [Lab 04](../labs/lab-04-your-first-bug-hunt-overview.md)'s,
-   and row 2 is still the deliverable. Your checks from Parts 4–6 are in `test_lab05.py`, which
-   `make hunt` and `make verdict` run. `make hunt` with an
-   architectural suite alone will say `quiet` however much stimulus you add; the way out is a
-   different kind of check.
+   and row 2 is still the deliverable. `make hunt` and `make verdict` run `test_lab05.py`, which
+   is where your checks from Parts 4–6 are. With an architectural suite alone, `make hunt` will say
+   `quiet` however much stimulus you add, and the way out is a different kind of check.
 
 2. As in Lab 04, `make probe` shows everything the simulator printed, including a probe program's
    `print()` output. `make hunt VERBOSE=1` and `make verdict VERBOSE=1` do the same.
 
-3. Run `make new` again until you have dealt and fixed both.
+3. Run `make new` again until you've been dealt both bugs and fixed them.
 
 Check: `make verdict` passes on both bugs.
 
 ## Expected results
 
-The complete difference between a working processor and these two:
+This table is the complete difference between a working processor and these two:
 
 | | Golden | `B08` | `B13` |
 |---|---|---|---|
@@ -400,15 +404,15 @@ You're done when `make verdict` shows three green rows and `VERDICT: PASS` on bo
 Questions:
 
 1. `test_architecture.py` is Lab 04's suite with one assertion removed: the exact cycle count in
-   `t04_a_loop`. With it left in, Lab 04's suite catches `B13` by accident and `make blind` does not
-   work. So was Lab 04's cycle assertion a protocol test living in an architectural suite?
+   `t04_a_loop`. With it left in, Lab 04's suite catches `B13` by accident, and `make blind`
+   doesn't work. So was Lab 04's cycle assertion a protocol test living in an architectural suite?
 
    <details>
    <summary>Answer</summary>
 
-   It was, and it is a good test that belongs in Lab 04. "Architectural" and "protocol" are useful
-   because they tell you what kinds of check you are missing, not because every test fits in
-   exactly one box.
+   It was, and it's still a good test that belongs in Lab 04. The labels "architectural" and
+   "protocol" are useful because they tell you what kinds of check you're missing; they don't
+   mean every test has to fit in exactly one box.
 
    </details>
 
@@ -417,8 +421,9 @@ Questions:
    <details>
    <summary>Answer</summary>
 
-   Asserting how many times it fired, not just that every comparison it made agreed. One counter
-   and two lines turn the worst failure mode in verification into an ordinary red row.
+   Asserting how many times the scoreboard fired, as well as that every comparison it made agreed.
+   That takes one counter and two lines, and it turns the worst failure mode in verification into
+   an ordinary red row.
 
    </details>
 
