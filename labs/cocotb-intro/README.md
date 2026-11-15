@@ -63,5 +63,5 @@ what it is checking for. If the testbench can't see the bug, it prints
 | `oldapi/test_1x_fork.py` | `cocotb.fork`: gone, `AttributeError` |
 | `oldapi/test_1x_assign.py` | `dut.sig <= 1`: gone, `TypeError` |
 | `oldapi/test_1x_imports.py` | `cocotb.binary`, `cocotb.result`: fail before any test runs |
-| `sim.mk` | the twelve lines that point cocotb at a Verilog file |
+| `sim.mk` | the thirteen lines that point cocotb at a Verilog file |
 | `counter.gtkw` | a GTKWave save file for the counter's signals |

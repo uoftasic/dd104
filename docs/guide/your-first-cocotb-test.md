@@ -130,9 +130,9 @@ back: set `COCOTB_RANDOM_SEED` to it and run again.
 
 Nothing in `test_01_hello.py` says which file to compile or which module is the top level. That
 information lives in [`sim.mk`](https://github.com/uoftasic/dd104/blob/main/labs/cocotb-intro/sim.mk).
-These are its twelve working lines. The shipped file also has a comment header and the `?=`
-defaults for `HERE`, `TB`, `RTL` and `SIM`, which give the two `$(...)` references their
-values:
+These are nine of its thirteen working lines. The other four are the `?=` defaults for `HERE`,
+`TB`, `RTL` and `SIM`, which give the two `$(...)` references their values, and the shipped file
+also has a comment header:
 
 ```make
 TOPLEVEL_LANG       ?= verilog
