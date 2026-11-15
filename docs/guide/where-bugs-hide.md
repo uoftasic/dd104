@@ -108,8 +108,8 @@ value to the wrong register: after a reset `r0` and `r1` both hold zero, so the 
 computes `0 | imm` correctly and puts it in `r1`, and the machine holds the right number under the
 wrong name. A test that checks `r0` after a single `ORI` finds zero there and fails, which is how
 Lab 02's `t03` catches it, and seven of the eleven reference tests fail on `B11` against two on
-`B10`. Only a test that looks for the value anywhere in the registers misses it, until the second
-`ORI` reads an `r0` that the first one never wrote.
+`B10`. A test that only looks for the value somewhere in the registers misses it, but only until
+the second `ORI`, which reads an `r0` that the first one never wrote.
 
 > The habit: never test an operation only from a reset state, and never test it only once. Once
 > you do two of anything (two `ORI`s, two branches off one compare, two writes to the same
