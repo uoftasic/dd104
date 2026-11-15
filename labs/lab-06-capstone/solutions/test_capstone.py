@@ -452,8 +452,8 @@ async def p01_done_pulses_once_per_instruction(dut):
 
     Assert it. Then put the count in the failure message, because "8, expected
     9" and "some pulses are missing" are very different amounts of help -- the
-    first one tells you the shortfall is one instruction, and there is only one
-    instruction in that program that appears exactly once.
+    first one tells you the shortfall is one instruction, and only two
+    instructions in that program, SHL and STORE, appear exactly once.
     ──────────────────────────────────────────────────────────────────────────
     """
     sp = SimProc(dut)
@@ -479,9 +479,9 @@ async def p01_done_pulses_once_per_instruction(dut):
         f"  One pulse per retired instruction. Every register, flag and byte "
         f"of memory this core produced is correct (t01 passed), so the "
         f"instruction did execute -- it just did not say so.\n"
-        f"  The shortfall is {len(prog) - pulses}. There is exactly one "
-        f"instruction in this program that appears exactly "
-        f"{len(prog) - pulses} time(s), and that is where to look.\n"
+        f"  The shortfall is {len(prog) - pulses}. Look at the instructions "
+        f"that appear exactly {len(prog) - pulses} time(s) in this program: "
+        f"one of them retired without pulsing `done`.\n"
         f"  Anything outside this core that waits for `done` -- a debugger, a "
         f"performance counter, a scoreboard in a testbench -- is silently "
         f"skipping that instruction. A scoreboard that misses it does not go "

@@ -126,8 +126,8 @@ async def t02_the_scoreboard_that_stopped_scoring(dut):
 
     Assert it. Then put the count in the failure message, because "8, expected
     9" and "some pulses are missing" are very different amounts of help -- the
-    first one tells you the shortfall is one instruction, and there is only one
-    instruction in that program that appears exactly once.
+    first one tells you the shortfall is one instruction, and only two
+    instructions in that program, SHL and STORE, appear exactly once.
     ──────────────────────────────────────────────────────────────────────────
     """
     sp = SimProc(dut)
