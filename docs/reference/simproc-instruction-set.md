@@ -63,8 +63,8 @@ is `4` in each.
 ### All 256 bytes
 
 There are no illegal encodings, because every byte decodes to something, and no two opcodes
-collide. We checked this by single-stepping all 256 instruction bytes and classifying each one by its cycle
-count, `done`, PC delta, register write and memory write:
+collide. We checked this by single-stepping all 256 instruction bytes and classifying each one by
+its cycle count, `done`, PC delta, register write and memory write:
 
 | | encodings | which |
 |---|---|---|
@@ -197,7 +197,7 @@ the cycle counts of its instructions, and you can check it by hand.
 
 | instruction | cycles | |
 |---|---|---|
-| `ORI` | 5 | `IDLE`→`CYCLE_1`…`CYCLE_5` |
+| `ORI` | 5 | `CYCLE_1`…`CYCLE_5`, writes `r0` in `CYCLE_5` |
 | `ADD` `SUB` `NAND` `SHL` `SHR` `LOAD` | 4 | write-back in `CYCLE_4` |
 | `STORE` `JMP` `BZ` `BNZ` `BPZ` | 3 | retires in `CYCLE_3` |
 | `0xC` `0xD` `0xE` | 4 | and no `done` pulse; see below |

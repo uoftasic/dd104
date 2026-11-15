@@ -210,9 +210,9 @@ noisier log.
 > warning. Write the new spellings anyway, but if your test is failing, a `DeprecationWarning` isn't
 > the reason.
 >
-> Three old forms are hard errors, though: `cocotb.fork` gives `AttributeError`,
-> `@cocotb.coroutine` gives `AttributeError`, and `dut.sig <= 1` gives `TypeError`. Four runnable
-> demonstrations ship in
+> Some old forms are hard errors, though, among them `cocotb.fork`, which gives
+> `AttributeError`, `@cocotb.coroutine`, which gives `AttributeError`, and `dut.sig <= 1`, which
+> gives `TypeError`. Four runnable demonstrations ship in
 > [`labs/cocotb-intro/oldapi/`](https://github.com/uoftasic/dd104/tree/main/labs/cocotb-intro/oldapi),
 > and [cocotb 2.x and older tutorials](../guide/cocotb-2x-vs-every-tutorial.md) has the full
 > breakdown.

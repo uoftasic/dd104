@@ -486,7 +486,7 @@ How many of the thirteen does your testbench catch so far?
 
    With your Part 7 test added, `B01` is caught too; with the reference solution's `t04`, the count
    is `5 of 13 caught`. Your count depends on what your test checks. Expect most of the thirteen
-   to stay missed, since four tests shouldn't be able to catch thirteen bugs.
+   to stay missed for now, because four short tests aren't meant to catch thirteen bugs.
 
 3. `t03` runs a single `ORI 5` and checks `r0`. Why is that enough to catch `B11`, a tier-5 bug?
 

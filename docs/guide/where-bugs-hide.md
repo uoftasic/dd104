@@ -27,8 +27,9 @@ does in about twenty seconds, and it is wrong on
 That is 65,024 of the 65,536 `SUB` vectors, or 99.2 % of them, so this processor gets subtraction
 wrong ninety-nine times in a hundred.
 
-Even so, the bug passed code review, and it passed the only test the chip ever shipped with. On
-DD104's own six-test example suite it takes four separate assertions to catch it.
+Even so, the bug passed code review, and it passed the only test the chip ever shipped with,
+while DD104's own six-test example suite catches it four times over, with four separate
+assertions.
 
 Those facts are consistent with each other, and seeing why is the single most useful idea in
 verification.

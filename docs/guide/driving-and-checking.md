@@ -2,7 +2,7 @@
 
 This page answers: *my testbench passes. Is that good?*
 
-On its own, a pass isn't even information. SimProc's one shipped test asserts `uo_out == 3`,
+On its own, a pass tells you almost nothing. SimProc's one shipped test asserts `uo_out == 3`,
 which decodes to "the processor is not running", so it passes on the real core and on all
 thirteen broken ones, including the one whose `SUB` computes `B − A`. When a testbench passes,
 all you have learned is that it accepted the design, which is a claim about the testbench rather
@@ -107,9 +107,8 @@ assert tc == 0, (
 
 When you read that, you know which line of RTL to open, without rerunning anything, adding a
 print or opening a waveform. That's the standard to aim for: write the message you would want to
-see if this test failed at 2 a.m. six months from now, on someone else's machine.
-
-Three habits get you there.
+see if this test failed at 2 a.m. six months from now, on someone else's machine. Three habits
+get you there.
 
 The first is a `state()` helper whose output you paste into every message:
 
@@ -187,10 +186,9 @@ directed test looks at one signal at a time, while a model looks at all of them 
 
 It also has a limit that matters just as much: the model can only be wrong in the same ways you
 are. This one can't see `tc` depending on `en` in any situation the stimulus never reached, and
-it has no idea that `done` or `halt` exist. In SimProc that gap is a whole class of bug, because a core that computes every answer correctly
-and gets its handshake wrong passes a model comparison.
-
-That's why a suite needs more than one kind of test.
+it has no idea that `done` or `halt` exist. In SimProc that gap is a whole class of bug, because
+a core that computes every answer correctly and gets its handshake wrong passes a model
+comparison, and that's why a suite needs more than one kind of test.
 
 ## Check yourself
 

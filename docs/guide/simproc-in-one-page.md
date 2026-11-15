@@ -221,15 +221,15 @@ If you do open the file, this is its shape, and these are the paths the harness 
 ```
 tb
 └── tt_um_ieeeuoftasic_simproc          the pin frame
-    └── U1                              simproc_system      lines 1–320
-        ├── RAM1.mem[0..63]             64 bytes            lines 826–858
-        ├── UART1                       8N1, no parity      lines 860–1178
-        └── CPU1                        the core            lines 321–739
+    └── U1                              simproc_system      lines 1–326
+        ├── RAM1.mem[0..63]             64 bytes            lines 827–859
+        ├── UART1                       8N1, no parity      lines 863–1178
+        └── CPU1                        the core            lines 330–739
             ├── curr_state              IDLE / CYCLE_1..CYCLE_5
             ├── n_flag_out, z_flag_out
             ├── RF1.rf[0..3]            the registers       lines 741–771
             ├── PC1.pc_out                                  lines 773–788
-            └── ALU1                    6 ops, N and Z      lines 789–823
+            └── ALU1                    6 ops, N and Z      lines 790–823
 ```
 
 Three of those modules are 16, 31 and 34 lines, which is why

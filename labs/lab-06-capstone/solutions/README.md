@@ -38,7 +38,7 @@ exist.
 
 ## Two things to argue about
 
-1. Two tests do a third of the work. `t01_arithmetic` and `t08_against_the_golden_model` catch six
+1. Two tests do a third of the work. `t01_arithmetic` and `t08_against_the_golden_model` catch seven
    of the thirteen between them, and five bugs are caught by exactly one test each. Is that a
    well-balanced suite or one with a long tail of special cases bolted on? Both readings are
    defensible, and the answer changes what you would write next.

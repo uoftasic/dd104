@@ -119,8 +119,9 @@ How many clock cycles should this lab's program take, and how many `done` pulses
 
    </details>
 
-The shipped test `t02` in `test_lab05.py` reports the pulse count but asserts almost nothing about it, only that at least
-one instruction retired. We left it that way on purpose, and the next part shows why.
+The shipped test `t02` in `test_lab05.py` reports the pulse count but asserts almost nothing
+about it, only that at least one instruction retired. We left it that way on purpose, and the
+next part shows why.
 
 Check: the log shows `37 clock cycles` and `9 comparisons`.
 
@@ -261,10 +262,10 @@ Does the program take exactly as many cycles as the instruction costs say?
 
    $38 - 37 = 1$, so there is one extra cycle, and it comes from an instruction that runs once. The
    program has one `SHL` and one `STORE`, so the count narrows the search to those two. By the same
-   division, in a program with five stores and nothing else run five times, five extra cycles would
-   point straight at the stores. This check turns "the answer is right and arrived late" into a red
-   row with a number attached, and all it costs is one addition, done once, from the instruction
-   costs in [the ISA reference](../reference/simproc-instruction-set.md).
+   division, in a program with five `STORE`s and no other instruction that runs five times, five
+   extra cycles would point straight at the stores. This check turns "the answer is right and
+   arrived late" into a red row with a number attached, and all it costs is one addition, done
+   once, from the instruction costs in [the ISA reference](../reference/simproc-instruction-set.md).
 
    </details>
 

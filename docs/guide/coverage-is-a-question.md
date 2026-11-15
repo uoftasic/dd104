@@ -2,8 +2,8 @@
 
 This page answers: *how do I know when I have tested enough?*
 
-You can't, and no coverage number will tell you. Everything useful about
-coverage follows from accepting this instead of looking for a way around it.
+You can't know that for certain, and no coverage number will tell you. Everything useful about
+coverage follows once you accept this, rather than looking for a way around it.
 
 It helps to treat coverage as a tool that raises questions about your stimulus, rather than as a
 score to push up. Each question is only worth as much as the answer you give it, and the
@@ -136,8 +136,8 @@ The dangerous cell is the bottom-left one, because it's the one with a good numb
 In the second block, all 512 vectors ran and one point still never moved: `a[3]:1->0`.
 
 That doesn't mean anything went untested, because every input combination was applied. The sweep
-ends with `a = 15` and stops there, so the top bit of `a` goes up several times and never comes
-back down. Toggle coverage counts transitions rather than values, which makes the order of your
+ends with `a = 15` and stops there, so the top bit of `a` goes up once and never comes back
+down. Toggle coverage counts transitions rather than values, which makes the order of your
 loops part of your stimulus.
 
 The same package has a sharper version of this. `cov_all.sv` puts `cin` in the innermost loop on
@@ -174,7 +174,7 @@ yourself. For SimProc it starts like this:
 | Have I taken a backward branch? | One sign-extension bug still gets forward displacements right |
 | Have I taken and not taken every branch? | A branch never taken has never been tested |
 | Have I run two branches off one compare? | Flags are supposed to survive a branch |
-| Have I checked for one `done` pulse per retired instruction? | Two bugs disturb nothing else |
+| Have I checked for one `done` pulse per retired instruction? | One bug disturbs nothing else |
 | Have I run the UART at more than one baud rate? | One bug is invisible at the default rate |
 
 You could answer each of those today with a `for` loop and a set, without any coverage tool,

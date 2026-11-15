@@ -134,8 +134,8 @@ works; it's the older spelling.)
 ## Reset
 
 `rst_n` is active low and synchronous, which means that pulling it low does nothing until a
-rising clock edge arrives. SimProc, the course's 8-bit processor, uses the same convention. You don't have to take it on trust,
-because you can test it in four lines:
+rising clock edge arrives. SimProc, the course's 8-bit processor, uses the same convention. You
+don't have to take it on trust, because you can test it in two lines:
 
 ```python
 dut.rst_n.value = 0            # asserted, but no clock edge yet

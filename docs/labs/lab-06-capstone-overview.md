@@ -294,8 +294,9 @@ Does your suite catch all thirteen, and which tests do the catching?
    ```
    ------------------------------------------------------------------------
     13 of 13 caught.
-    Every bug in the catalogue. Nothing in this course hides from
-    this testbench any more.
+    Every bug in the catalogue, every one of them caught by a check
+    that fired. Nothing in this course hides from this testbench any
+    more.
    ========================================================================
    ```
 
@@ -321,7 +322,7 @@ Does your suite catch all thirteen, and which tests do the catching?
    Most of the work was already done before this lab began, but the three new tests took the
    longest.
 
-3. Two general tests, `t01_arithmetic` and `t08_against_the_golden_model`, catch six of the
+3. Two general tests, `t01_arithmetic` and `t08_against_the_golden_model`, catch seven of the
    thirteen between them, and five bugs are caught by exactly one test each. Is that a
    well-balanced suite, or one with a long tail of special cases bolted on? Write down your answer
    and what you would write next. Either reading can be defended.

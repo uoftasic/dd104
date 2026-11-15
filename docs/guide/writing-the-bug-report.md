@@ -7,8 +7,9 @@ a chat window doesn't do the same job. The capstone is built on one idea that su
 
 > The test is the deliverable, not the fix.
 
-The reason comes down to which of the two lasts. A patch is something one person did once,
-in one file, on one afternoon. A test that fails on the broken design and passes on the fixed one
+You met the reason in Lab 04, when the grade's row 2 turned out to be the deliverable, and it
+comes down to which of the two lasts. A patch is something one person did once, in one file, on
+one afternoon. A test that fails on the broken design and passes on the fixed one
 is what stops the bug coming back next year, in a rewrite, done by someone who has never heard of
 you. Of those two things, only the test will still be doing any work in 2031.
 
@@ -58,7 +59,8 @@ Minimise the program: cut instructions until it stops failing, then put the last
 A ten-line repro and a three-line repro show the same bug, but they cost very different amounts
 of someone else's day, because every instruction you leave in is one the reader has to rule out.
 
-The worked example is three instructions of setup and one `SUB`, and it ships complete as
+The worked example is two `set_reg` calls, which come to twelve instructions of setup, and one
+`SUB`, and it ships complete as
 [`labs/common/test_b01_repro.py`](https://github.com/uoftasic/dd104/blob/main/labs/common/test_b01_repro.py):
 
 ```python

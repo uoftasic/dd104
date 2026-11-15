@@ -47,10 +47,11 @@ Because both sides return the same tuple, comparing them takes a single `==`. Yo
 field by field or keep a list of things to remember to look at, so the comparison also checks
 the registers you weren't thinking about.
 
-> Write the model from the ISA, not from the Verilog. A model written by reading the RTL agrees
-> with the design about everything, including its bugs, so it passes forever and proves nothing.
-> This is the most common way a verification effort wastes six months, and it's easy to do by
-> accident, so it's worth writing at the top of the file.
+> The rule that `spec()` followed in Lab 03 applies here too: write the model from the ISA, not
+> from the Verilog. A model written by reading the RTL agrees with the design about
+> everything, including its bugs, so it passes forever and proves nothing. Lab 03 called this the
+> most common way a verification effort wastes six months, and it's easy to do by accident, so
+> it's worth writing at the top of the file.
 >
 > `golden.py` is written from [the instruction set](../reference/simproc-instruction-set.md). Where
 > the ISA was ambiguous, somebody had to make a decision, and the end of this page describes one.
@@ -92,7 +93,7 @@ the program:
 
 You didn't write any of that message yourself, and every part of it is useful:
 
-- which instruction failed: the nineteenth, rather than "somewhere in the program";
+- which instruction failed: number 19, counting from 0, rather than "somewhere in the program";
 - where that instruction lives: address 19;
 - what it was: `0x66`, already disassembled to `SUB r1, r2`, so you don't have to decode the hex;
 - the state of the whole machine on both sides. Here $195 + 61 = 256$, which is the signature of a

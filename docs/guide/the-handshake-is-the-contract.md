@@ -41,9 +41,10 @@ model (`golden.py`) has no idea `done` exists.
 > name: the handshake. A downstream block that is waiting for a pulse that never comes doesn't get
 > a late answer; it gets no answer at all.
 
-This matters more than it might seem, because `done` is the signal a scoreboard triggers on. A
-missing pulse doesn't make such a test fail. Instead the scoreboard stops scoring, and the test
-keeps reporting green about a stretch of the program it is no longer checking.
+This matters more than it might seem, for the reason [Where bugs hide](../guide/where-bugs-hide.md)
+gave: `done` is the signal a scoreboard triggers on, and a missing pulse doesn't make such a test
+fail. Instead the scoreboard stops scoring, and the test keeps reporting green about a stretch of
+the program it is no longer checking.
 
 ## One cycle late
 
@@ -121,13 +122,13 @@ You can work out each of those numbers from the RTL:
 | State | Clocks | Why |
 |---|---|---|
 | `START` | 16 | It leaves when `clkCount == (clk_per_bit-1)>>1` = 15, counting from 0, so it stays for 16 clocks. That is half a bit period, which puts the sampling point in the middle of the start bit |
-| `RECEIVE` | 288 | 9 × 32, for the eight data bits and the parity bit |
+| `RECEIVE` | 288 | 9 × 32: the eight data bits, then one more bit period, which ends in the middle of the stop bit. The receiver's RTL keeps that ninth period as the slot for a parity bit, but SimProc's UART is built with no parity |
 | `DONE` | 32 | One more bit period, during which it holds the byte before it looks at the line again |
 
 That adds up to 16 + 288 + 32 = 336 clocks. The frame on the wire was 10 bit periods (start, eight
 data, stop), which is 320 clocks, so the receiver is busy for exactly half a bit period longer than
-each frame it receives. The chip isn't ready when your
-frame ends but 16 clocks later, and 16 is `clk_per_bit / 2`.
+each frame it receives. The chip is ready again 16 clocks after your frame ends, rather than as it
+ends, and 16 is `clk_per_bit / 2`.
 
 The test asserts the formula rather than just the number, so it still holds at other baud rates.
 Here it is swept across four settings:

@@ -178,9 +178,9 @@ without throwing anything away.
    and arithmetic with `rA != rB` is wrong, for instance, you have answered questions 1, 3 and 4 at
    once, and you're down to four lines of RTL.
 
-When one debugging session takes five minutes and another takes two hours, the difference is
-rarely insight. Usually it comes down to whether the first ten minutes went on narrowing the
-problem down or on reading the RTL.
+As [Where bugs hide](../guide/where-bugs-hide.md#the-question-list) put it, what separates a
+five-minute debugging session from a two-hour one is rarely insight. It usually comes down to
+whether the first ten minutes went on narrowing the problem down or on reading the RTL.
 
 If you've spent a real hour on one core and are stuck, `make reveal` tells you the bug's name and
 what it hides behind, though not the line. You still have to write the test that catches it,
