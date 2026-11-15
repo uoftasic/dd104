@@ -1,9 +1,9 @@
 # DD104 — Pre-Silicon Verification
 
-Find the bugs hidden in a real 8-bit processor, using cocotb, Icarus Verilog and Verilator,
-before they cost a mask set.
+In this course you find the bugs hidden in a real 8-bit processor, using cocotb, Icarus Verilog
+and Verilator, before they cost a mask set.
 
-Part of the UofT ASIC Team education materials, published at <https://uoftasic.com/dd104/>.
+DD104 is part of the UofT ASIC Team education materials, published at <https://uoftasic.com/dd104/>.
 The labs run in the workbench: the IIC-OSIC-TOOLS container you start from the `workspace` clone
 you set up in [IC101](https://uoftasic.com/ic101/). You get this course's files with the
 workbench's `mod` command (`mod add dd104`); [Lab 01, Part 1](labs/lab-01-the-adder-you-already-trust-overview.md#part-1-load-the-course)
@@ -12,27 +12,27 @@ walks you through it.
 ## Who this course is for
 
 You have finished the digital track up to DD103: you can write SystemVerilog, simulate it, and
-take it through a flow to layout. Nothing in that flow checked whether the design computes what
-you meant. This course is about that gap.
+take it through a flow to layout. None of those steps checked whether the design computes what
+you meant it to, and that question is what this course is about.
 
 SimProc is an 8-bit processor written by students on this team and wrapped for a real chip
 (a TinyTapeout shuttle): an ALU, four registers, 64 bytes of memory and a UART, about 1,200
-lines of SystemVerilog. It shipped with one test, and that test passes on a processor whose `SUB`
-has its operands swapped and computes `B - A`. DD104
-ships thirteen broken versions of SimProc, each a one-line edit, and all thirteen pass that
-test. By the end of the course you will have a test suite that catches all thirteen, and a
-written bug report for one of them.
+lines of SystemVerilog. It shipped with one test, and that test still passes on a processor whose
+`SUB` has its operands swapped and computes `B - A`. DD104 ships thirteen broken versions of
+SimProc, each made by a one-line edit, and all thirteen pass that test. By the end of the course
+you will have written a test suite that catches all thirteen, and a bug report for one of them.
 
 | | |
 |---|---|
 | Track | Digital |
 | Prerequisites | [IC101](https://uoftasic.com/ic101/), then [DD101](https://uoftasic.com/dd101/), [DD102](https://uoftasic.com/dd102/) and [DD103](https://uoftasic.com/dd103/), in that order |
 | Tools | cocotb 2.0.1, Icarus Verilog 14.0, Verilator 5.050, Surfer and GTKWave, all in the workbench image `hpretl/iic-osic-tools:2026.08` |
-| Machine | The workbench you already have. No PDK, no LibreLane, no synthesis. Most runs take under ten seconds; the longest, Lab 06's `make check-all`, takes about four and a half minutes. |
+| Machine | The workbench you already have. This course needs no PDK, no LibreLane and no synthesis. Most runs take under ten seconds; the longest, Lab 06's `make check-all`, takes about four and a half minutes. |
 | Total time | About 19 hours, self-paced. The Course path rows below add up to 18 h 55 min. |
 
 Check your cocotb version before you search the web for help: `cocotb-config --version` should
-print `2.0.1`. Most cocotb tutorials online are for 1.x. Three things they use are errors in 2.x:
+print `2.0.1`. That matters because most cocotb tutorials online were written for 1.x, and three
+things they use are errors in 2.x:
 `cocotb.fork` (use `cocotb.start_soon`), `@cocotb.coroutine` (use a plain `async def`) and
 `dut.sig <= 1` (use `dut.sig.value = 1`). Most of the rest, such as `units=`, `MODULE=` and
 `.value.integer`, still runs and only prints a deprecation warning.
@@ -40,10 +40,10 @@ print `2.0.1`. Most cocotb tutorials online are for 1.x. Three things they use a
 
 ## Course path
 
-Work down this table in order. A Read row is guide pages: reading only, no commands. A Do row
-is one lab writeup, where every command in the course lives. Each lab's "Before you start"
-section repeats which pages it expects you to have read. The counter lab has no number, but it
-isn't optional.
+Work down this table in order. A Read row is a set of guide pages, which are for reading only and
+have no commands in them. A Do row is one lab writeup, and the lab writeups are where every
+command in the course lives. Each lab's "Before you start" section repeats which pages it expects
+you to have read. The counter lab in row 4 has no number, but it isn't optional.
 
 | # | | What | Time |
 |---|---|---|---|
@@ -62,8 +62,8 @@ isn't optional.
 | 13 | Read | [Writing the bug report](guide/writing-the-bug-report.md) | 25 min |
 | 14 | Do | [Lab 06: Capstone](labs/lab-06-capstone-overview.md). Build one suite that catches all thirteen bugs, and write a bug report for one of them. | 3 h 30 min |
 
-Keep these open in a tab while you work. They are for looking things up, not for reading
-start to finish:
+Keep these reference pages open in a tab while you work. They're for looking things up rather
+than for reading start to finish:
 
 - [The SimProc instruction set](reference/simproc-instruction-set.md)
 - [The SimProc harness](reference/the-harness-api.md)
@@ -71,8 +71,8 @@ start to finish:
 
 ## Getting help
 
-Ask in the [team Discord](https://discord.gg/hrJnP5UsGz). Nobody expects you to work this out
-alone. [Getting started](guide/getting-started.md#getting-help) says what to include in a
+Ask in the [team Discord](https://discord.gg/hrJnP5UsGz); nobody expects you to work all of this
+out alone. [Getting started](guide/getting-started.md#getting-help) says what to include in a
 question so it can be answered quickly.
 
 ## Next courses
