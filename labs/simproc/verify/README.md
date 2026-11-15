@@ -1,6 +1,6 @@
 # `verify/`: measuring how the bugs behave
 
-Instructor-side. Nothing in here goes to a student.
+This directory is for instructors, and nothing in it goes to a student.
 
 Every claim in `../README.md` and `../solutions/*.md` (which tests catch a bug, which
 numbers a student will see, which bugs the shipped test still passes) came from runs in
@@ -53,7 +53,7 @@ cd <workdir>/verify && make -f Makefile.alu -B
 ```
 
 Run that one by hand at least once. It finds three of the thirteen bugs without
-knowing that a processor exists, and it does not find bug-06, which is the cleanest
+knowing that a processor exists, and it misses bug-06, which is the cleanest
 demonstration in the course of where a unit test stops.
 
 ## A baud-dependent testbench bug

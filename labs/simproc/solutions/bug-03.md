@@ -39,9 +39,9 @@ Every arithmetic result this core produces is correct. Only the flag is wrong,
 and only for results that are nonzero but end in four zero bits. A test that
 compares values and never compares flags passes completely.
 
-T08 misses it: 20 random programs, 600 random instructions, all pass. That
-is the most useful single fact in this variant: random stimulus with no coverage
-model does not find a flag bug, because flags are only observable through a
+T08 misses it: its 20 random programs, 600 random instructions in all, every one
+passes. That is the most useful single fact in this variant. Random stimulus with
+no coverage model does not find a flag bug, because flags are only observable through a
 *subsequent* branch, and a random program rarely puts the right branch after the
 right result.
 
@@ -50,9 +50,9 @@ right result.
 Flags are architectural state. They are as much a part of the answer as the eight
 bits in the register, and they need to be in the scoreboard.
 
-Also: this is the bug that shows what "coverage" means before anyone has said the
-word. 600 random instructions is a lot of stimulus and zero coverage of the thing
-that is broken.
+This is also the bug that shows what "coverage" means before anyone has said the
+word: 600 random instructions is a lot of stimulus, and it gives zero coverage of
+the thing that is broken.
 
 ## The fix
 

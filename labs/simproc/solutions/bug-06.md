@@ -27,13 +27,13 @@ everyone writes. Only amounts 2 and 3 are wrong, in both directions.
 
 ## What it teaches
 
-Two things, and the second one is worth more.
+It teaches two things, and the second one is worth more.
 
-Sweep the field, do not sample it. There are four encodable amounts and two
-directions: eight cases, and testing all eight is not thorough, it is just
-finishing.
+The first is to sweep the field rather than sample it. There are four encodable
+amounts and two directions, which makes eight cases, and testing all eight is less
+a matter of being thorough than of finishing the job.
 
-The unit test that cannot find it. Put this variant next to bug-01, bug-02
+The second is the unit test that cannot find it. Put this variant next to bug-01, bug-02
 and bug-03 in the same course. Those three are found by the ALU sweep in 19
 seconds. This one is not: the ALU sweep is 0/393,216 clean, because the ALU
 shifts perfectly well by whatever amount it is handed, and the wrong amount is

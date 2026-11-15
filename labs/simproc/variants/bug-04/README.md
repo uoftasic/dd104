@@ -20,10 +20,10 @@ ADD r1,r0        R1 = R1 + R0
 | should be | 2 | 7 |
 | this core | 2 | 0 |
 
-R1 never changes. Not once, in either `ADD`. And yet `SUB r1,r1` clearly worked —
-R1 was already 0, so who can tell.
+R1 never changes, in either `ADD`. `SUB r1,r1` seems to have worked, but R1 was
+already 0, so you can't tell.
 
-`LOAD` still writes the register you name. That is worth knowing before you
+`LOAD` still writes the register you name, which is worth knowing before you
 start looking.
 
 ## What you have

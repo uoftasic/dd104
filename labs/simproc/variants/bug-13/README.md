@@ -5,7 +5,7 @@
 
 ## What was seen
 
-`uo_out[1]` is `halt` — high when the core is sitting in IDLE, doing nothing.
+`uo_out[1]` is `halt`, which is high when the core is sitting in IDLE doing nothing.
 While a program is running it should be low, continuously, from the `RUN` command
 until the `HALT` command.
 
@@ -22,11 +22,11 @@ STORE r1,r2 ; ADD r1,r0 ; STORE r1,r2 ; ADD r1,r0 ; STORE r1,r2
 | should be | 7 | 21 | 32 | 21 | 14 | 0 |
 | this core | 7 | 21 | 32 | 21 | 14 | 3 |
 
-Every architectural result is identical to a correct core. Registers, memory,
-flags, the program counter, the instruction count, the `done` count — all of it
-matches, on every program tried.
+Every architectural result is identical to a correct core: registers, memory,
+flags, the program counter, the instruction count and the `done` count all match,
+on every program tried.
 
-Three clocks. Three `STORE`s.
+There are three of those clocks, and the program has three `STORE`s.
 
 ## What you have
 
@@ -47,6 +47,6 @@ It passes.
 
 This is the one where you have to decide whether it is a bug at all. Argue it
 both ways before you look. Then consider: it costs one clock cycle per `STORE`,
-forever, on every program this chip will ever run — and anyone debugging this
+forever, on every program this chip will ever run, and anyone debugging this
 core through the `halt` pin sees the machine stop, three times, for no reason
 they can name.

@@ -24,7 +24,7 @@ one. The full ten-test suite scores 10/10 on it. Every program runs, every
 result is right.
 
 At `clk_per_bit = 16`, `PING` answers `0xAA`, so the link's own health check says
-the link is fine, and data does not survive the trip. (`ValueError` is cocotb
+the link is fine, even though data does not survive the trip. (`ValueError` is cocotb
 reporting that the byte it read back has bits that are neither 0 nor 1.)
 
 ## What you have

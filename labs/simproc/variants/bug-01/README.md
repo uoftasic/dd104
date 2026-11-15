@@ -21,8 +21,8 @@ SUB r1,r0        R1 = R1 - R0
 | should be | 2 | 7 |
 | this core | 2 | 249 |
 
-249 is not garbage. 256 − 249 = 7, so the machine computed −7 and wrapped it into
-eight bits. It got the right magnitude and the wrong sign.
+249 isn't garbage. 256 − 249 = 7, so the machine computed −7 and wrapped it into
+eight bits, which means it got the right magnitude and the wrong sign.
 
 Every other instruction in that program behaved.
 

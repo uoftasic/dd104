@@ -27,7 +27,8 @@ correct core exactly.
 
 ## Why it hides
 
-Because it is, in every sense a data-comparing testbench can measure, correct.
+It hides because, in every sense a data-comparing testbench can measure, it is
+correct.
 Same values, same addresses, same flags, same `done` count, same instruction
 count. Only the timing and one status pin differ.
 

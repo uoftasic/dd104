@@ -37,8 +37,9 @@ The clean core is `0xAA` and 6/6 at all seven.
 ## Why it hides
 
 Set the labs' bus-functional model to `uio_in = 8` (`clk_per_bit = 32`) and this
-core is indistinguishable from a correct one. Not "mostly fine", but
-10/10 on the full systematic suite, every program, every value.
+core is indistinguishable from a correct one. It scores 10/10 on the full
+systematic suite, with every program and every value right, which is a long way
+past "mostly fine".
 
 The drift is one clock per bit against a bit period of 32 clocks; eight clocks of
 error at the last bit is still a quarter of a bit time, so every sample lands
@@ -53,7 +54,7 @@ that contains `x` bits.
 At `clk_per_bit = 16`, `PING` still answers `0xAA` over a link that cannot carry
 data. `PING` sends `0xF0`, whose bit 7 is already 1; a receiver that samples
 bit 7 one bit-time late reads the stop bit, which is also 1, and the command
-decodes perfectly. The health check passes and the link is broken.
+decodes perfectly, so the health check passes over a broken link.
 
 ## What it teaches
 

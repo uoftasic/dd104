@@ -52,5 +52,5 @@ It passes.
 2. The one-line fix.
 3. That same test passing.
 
-There are four encodable shift amounts and two directions. Eight cases. Test
-eight cases.
+There are four encodable shift amounts and two directions, which makes eight
+cases, so test all eight.

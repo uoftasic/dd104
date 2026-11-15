@@ -18,10 +18,10 @@ Catalogue B02. Tier 1, Lab 03.
 
 ## Why it hides
 
-`~(A & B) == ~(A | B)` exactly when `A == B` — 256 vectors. 65,536 − 256 = 65,280,
-which is what the sweep prints.
+`~(A & B) == ~(A | B)` exactly when `A == B`, which is 256 vectors, and
+65,536 − 256 = 65,280 is what the sweep prints.
 
-And those 256 vectors are, again, the ones everybody uses. SimProc has no `NOT`
+Those 256 vectors are, again, the ones everybody uses. SimProc has no `NOT`
 instruction. `NAND rX,rX` is how you invert a register, and it is the single most
 common way `NAND` appears in a real SimProc program. It is correct under this bug.
 
@@ -29,7 +29,7 @@ common way `NAND` appears in a real SimProc program. It is correct under this bu
 
 "I tested NAND" and "I tested NAND on two different operands" are different
 sentences, and only the second one is a test. This is the cleanest example in the
-set of a bug that lives exactly where the idiom lives — the operand pattern a
+set of a bug that lives exactly where the idiom lives: the operand pattern a
 programmer reaches for first is the operand pattern that hides it.
 
 Pair it with bug-01 in the same lab. Both are one line in the same `case`
