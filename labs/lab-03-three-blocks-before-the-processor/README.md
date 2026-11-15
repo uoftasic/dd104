@@ -3,18 +3,18 @@
 Writeup: [`docs/labs/lab-03-three-blocks-before-the-processor-overview.md`](../../docs/labs/lab-03-three-blocks-before-the-processor-overview.md)
 · live: <https://uoftasic.com/dd104/labs/lab-03-three-blocks-before-the-processor-overview.html>
 
-Unit tests for three SimProc modules, each elaborated on its own as the simulation top level:
-`program_counter` (16 lines of RTL), `register_file` (31) and `ALU` (34, driven with all 393,216
-legal vectors).
+This package holds unit tests for three SimProc modules, and each one is elaborated on its own as
+the simulation top level: `program_counter` (16 lines of RTL), `register_file` (31) and `ALU` (34,
+which the tests drive with all 393,216 legal vectors).
 
 ```bash
 cd labs/lab-03-three-blocks-before-the-processor
 make
 ```
 
-Runs in the workbench container (`hpretl/iic-osic-tools:2026.08`: cocotb 2.0.1, Icarus Verilog
-14.0) with no environment setup. It uses `../common/sim.mk` and the RTL in `../common/rtl/`, so
-you need the whole repository, not just this directory.
+It runs in the workbench container (`hpretl/iic-osic-tools:2026.08`, which has cocotb 2.0.1 and
+Icarus Verilog 14.0) and needs no environment setup. It does use `../common/sim.mk` and the RTL in
+`../common/rtl/`, so you need the whole repository, not just this directory.
 
 ## Targets
 
@@ -29,7 +29,8 @@ you need the whole repository, not just this directory.
 | `make check-alu-bugs` | all three ALU bugs at once | ~90 s |
 | `make clean` | remove `build/` | |
 
-`TB_PC`, `TB_RF` and `TB_ALU` choose which module runs against which block.
+`TB_PC`, `TB_RF` and `TB_ALU` choose which Python test module runs against each block, as in
+`make rf TB_RF=test_rf_solution` in `solutions/README.md`.
 
 ## Files
 
@@ -41,11 +42,11 @@ you need the whole repository, not just this directory.
 | `check.py` | the unit-level verdict; it uses the same bug catalogue as the processor-level labs |
 | `solutions/` | reference `test_alu.py` and `test_rf.py`; open them after your own run passes |
 
-The RTL is the whole 1,178-line `../common/rtl/simproc_system.sv`, compiled every time; cocotb
-elaborates one module from it as the top level.
+Every run compiles the whole 1,178-line `../common/rtl/simproc_system.sv`, and cocotb then
+elaborates just one module from it as the top level.
 
 ## Done
 
 `make check-alu-bugs` says `3 of 3 ALU bugs caught`, and `make rf` runs five tests instead of two.
-If it says `NO COUNT` instead, one of your tests crashed rather than caught anything; the writeup's
-Part 6 covers it.
+If it says `NO COUNT` instead, one of your tests crashed rather than caught anything, and Part 6 of
+the writeup explains what to do.
