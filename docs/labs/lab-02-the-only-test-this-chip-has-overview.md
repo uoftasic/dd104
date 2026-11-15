@@ -8,8 +8,8 @@ on the one whose `SUB` has its operands swapped.
 This lab takes about 1 hour 45 minutes.
 
 Package: [`labs/lab-02-the-only-test-this-chip-has/`](https://github.com/uoftasic/dd104/tree/main/labs/lab-02-the-only-test-this-chip-has).
-It includes `../common/lab.mk`, so you need the whole repository checked out, not just this
-directory. Every lab from here on does the same.
+It includes `../common/lab.mk`, which lives outside the package, so you need the whole repository
+checked out and not just this directory. Every lab from here on works the same way.
 
 ## Before you start
 
@@ -21,8 +21,8 @@ directory. Every lab from here on does the same.
   [The SimProc harness](../reference/the-harness-api.md) open in other tabs.
 
 In this lab, "the golden core" is the correct SimProc, and the thirteen broken ones are named
-`B01` to `B13`. Work in a terminal on the noVNC desktop. `mod dd104` takes you to the course folder,
-as in [Lab 01, Part 1](../labs/lab-01-the-adder-you-already-trust-overview.md#part-1-load-the-course):
+`B01` to `B13`. Work in a terminal on the noVNC desktop, where `mod dd104` takes you to the course
+folder, as in [Lab 01, Part 1](../labs/lab-01-the-adder-you-already-trust-overview.md#part-1-load-the-course):
 
 ```bash
 mod dd104     # in a new terminal, load .designinit first (Lab 01, Part 1)
@@ -39,7 +39,7 @@ Which of fourteen processors does the shipped test catch, and what does it actua
    make shuttle
    ```
 
-   This takes about half a minute; it builds and runs fourteen cores.
+   This takes about half a minute, because it builds and runs fourteen cores.
 
 2. Before your first result you will see a wall of lines like this:
 
@@ -48,10 +48,11 @@ Which of fourteen processors does the shipped test catch, and what does it actua
    supported (the process will be sensitive to all bits in 'instr_reg_out[7:0]').
    ```
 
-   Icarus prints 28 of these on every compile, for the rest of the course. They are notes, not
-   errors, and the exit code is 0. A real Icarus failure starts a line with `error:` and stops.
+   Icarus prints 28 of these every time it compiles the design, and it will keep doing so for
+   the rest of the course. They're notes rather than errors, and the exit code is 0; a real
+   Icarus failure starts a line with `error:` and stops.
    [Output that is not an error](../reference/output-that-is-not-an-error.md) explains why the
-   simulation is still correct, and lists everything else like this.
+   simulation is still correct, and lists the other harmless messages like this one.
 
 3. You should see:
 
@@ -84,11 +85,12 @@ Which of fourteen processors does the shipped test catch, and what does it actua
    ========================================================================
    ```
 
-   `13 of 13` and the names are exact; the seconds are wall clock. The cores are listed in tier
-   order, not by number. Each of the thirteen is a one-line edit to `simproc_system.sv`.
+   `13 of 13` and the names are exact, but the seconds are wall-clock time and will vary. The
+   cores are listed in tier order rather than by number. Each of the thirteen broken cores is a
+   one-line edit to `simproc_system.sv`.
 
-4. Open the test itself, `../common/test_shuttle.py`. It is `test/test.py` from the SimProc
-   repository, unchanged, with a comment block explaining the pin decode.
+4. Open the test itself, `../common/test_shuttle.py`. It's `test/test.py` from the SimProc
+   repository, unchanged apart from a comment block that explains the pin decode.
 
 5. Write down, in one sentence, the strongest true claim it supports. (This is the first
    check-yourself question on [What a passing test proves](../guide/it-works-is-not-a-result.md).)
@@ -97,9 +99,9 @@ Which of fourteen processors does the shipped test catch, and what does it actua
    <summary>Answer</summary>
 
    *After reset and 100 clock cycles with `ui_in[0]` high, this design drives `uo_out` to
-   `0x03`.* That is a real and even useful claim: it would catch a core that came up running by
-   accident, or a UART that sent garbage at power-on. It is just a very small claim, and nothing
-   about how the test is written tells you so.
+   `0x03`.* That's a real claim, and even a useful one: it would catch a core that came up
+   running by accident, or a UART that sent garbage at power-on. It's just a very small claim,
+   and nothing about the way the test is written tells you how small it is.
 
    </details>
 
@@ -110,7 +112,8 @@ Which of fourteen processors does the shipped test catch, and what does it actua
    ```
 
    You should see thirteen names in five tiers (a tier is how hard the bug is to think of), each
-   with what it hides behind and what it teaches. It does not say what any of them changes.
+   with what it hides behind and what it teaches. It doesn't tell you what any of them changes
+   in the design.
 
 Check: `13 of 13` on your screen, and a one-sentence claim written down.
 
@@ -135,12 +138,13 @@ What does it take to make the processor run one instruction and check the result
 
    and, in the log, `uo_out = 3, and the core is IDLE`, then
    `halt=1 done=0 state=IDLE — this is a processor doing nothing, and t01 asserted exactly that`,
-   then `one ORI, 5 clock cycles, r0 = 5`. The four simulated times and the `5 clock cycles` are
-   exact.
+   then `one ORI, 5 clock cycles, r0 = 5`. The four simulated times and the `5 clock cycles`
+   should match yours exactly.
 
-2. Read `t03` in `test_lab02.py`. Three lines of Python and the processor runs an instruction.
-   `sp.run()` loads the program, adds a parking loop after it (a `JMP -1`, because the processor
-   has no halt instruction), runs it, and returns once it reaches that loop:
+2. Read `t03` in `test_lab02.py`. It takes only three lines of Python to make the processor run
+   an instruction, and a fourth to check the result. `sp.run()` loads the program, adds a parking
+   loop after it (a `JMP -1`, because the processor has no halt instruction), runs it, and returns
+   once it reaches that loop:
 
    ```python
    sp = SimProc(dut)
@@ -155,13 +159,14 @@ What does it take to make the processor run one instruction and check the result
    <details>
    <summary>Answer</summary>
 
-   No. Both are as weak as the shipped test. `t02` is a better sentence, not a better test: when
-   it fails, its message names the pin instead of handing you an integer to decode. Assert on the
-   decoded meaning, not the bus value; it costs nothing.
+   No. Both are exactly as weak as the shipped test, because both check the same idle chip. What
+   `t02` improves is the message it gives when it fails, which names the pin instead of handing
+   you an integer to decode. Asserting on the decoded meaning rather than the bus value costs
+   nothing, so do it.
 
    </details>
 
-The docstring at the top of `test_lab02.py` is a two-page version of the harness API.
+The docstring at the top of `test_lab02.py` is a two-page summary of the harness API.
 
 Check: `TESTS=3 PASS=3` and `35610.00` ns.
 
@@ -169,8 +174,8 @@ Check: `TESTS=3 PASS=3` and `35610.00` ns.
 
 In how many different ways can a testbench catch one bug?
 
-The harness directory, `labs/common`, ships six worked tests in `test_example.py`. Copying that
-file is how you are meant to start your own testbenches.
+The harness directory, `labs/common`, ships six worked tests in `test_example.py`, and the
+intended way to start a testbench of your own is to copy that file.
 
 1. Run the example against the golden core and `B01`:
 
@@ -206,8 +211,9 @@ file is how you are meant to start your own testbenches.
    <summary>Answer</summary>
 
    `t05` runs a loop controlled by a subtraction. On `B01` the subtraction goes the wrong way, so
-   the loop never ends and the program never reaches its parking loop. The symptom is a timeout,
-   not a mismatch, and it is only a useful bug report because the test has a deadline.
+   the loop never ends and the program never reaches its parking loop. That's why the symptom
+   is a timeout rather than a mismatch, and it's a useful bug report only because the test sets a
+   deadline.
 
    </details>
 
@@ -219,9 +225,9 @@ file is how you are meant to start your own testbenches.
    make check TB=test_mine BUG=B01
    ```
 
-   `TB` names a Python module, not a file: `TB=test_mine`, never `TB=test_mine.py`. You should see
-   six tests pass under `make sim`, and the same `caught` verdict as in step 1 from `make check`,
-   under the name `test_mine`.
+   `TB` takes the name of a Python module rather than a file, so write `TB=test_mine`, never
+   `TB=test_mine.py`. You should see six tests pass under `make sim`, and `make check` should give
+   the same `caught` verdict as in step 1, this time under the name `test_mine`.
 
 Check: `make check` in `labs/common` ends on `VERDICT: PASS`.
 
@@ -264,7 +270,7 @@ Check: your sum is 109.
 
 Do Icarus and Verilator agree about this design?
 
-Still in `labs/common`.
+You stay in `labs/common` for this part.
 
 1. Lint the design:
 
@@ -275,15 +281,16 @@ Still in `labs/common`.
 
    You should see twelve warnings in well under a second, including
    `rtl/simproc_system.sv:848:16: Bit extraction of array[63:0] requires 6 bit index, not 8 bits.`,
-   ending with `%Error: Exiting due to 12 warning(s)`. That last line is expected: Verilator treats
-   warnings as fatal, and the warnings are the finding. What does line 848 tell you about addresses
-   64 to 255?
+   ending with `%Error: Exiting due to 12 warning(s)`. That last line is expected, because
+   Verilator treats warnings as fatal, and here the warnings are what you ran it to find. What
+   does line 848 tell you about addresses 64 to 255?
 
    <details>
    <summary>Answer</summary>
 
    The RAM, module `dp_ram` in `simproc_system.sv`, has 64 entries and the address bus is 8 bits,
-   so addresses 64–255 are off the end of the array. Verilator found that by reading the file, before simulating anything.
+   so addresses 64–255 are off the end of the array. Verilator found that just by reading the
+   file, before simulating anything.
 
    </details>
 
@@ -304,9 +311,9 @@ Still in `labs/common`.
    <summary>Answer</summary>
 
    Verilator is 2-state, so it truncates the address to the six bits the array has:
-   `100 & 63 = 36`, and you get the byte at address 36, the `0x5A` the test wrote there before
-   reading. Icarus is
-   4-state, so reading past the end gives `x`, and eight `X` characters come off the pin.
+   `100 & 63 = 36`, and you get the byte at address 36, which is the `0x5A` the test wrote there
+   before reading. Icarus is 4-state, so reading past the end gives `x`, and eight `X` characters
+   come off the pin.
 
    </details>
 
@@ -340,8 +347,8 @@ What does one `ORI` look like inside the core?
    make waves
    ```
 
-   It takes about two seconds and writes `waves.vcd`, 337,999 bytes. The size is exact, because it
-   is a dump of a deterministic simulation.
+   It takes about two seconds and writes `waves.vcd`, which is 337,999 bytes. The size is exact,
+   because the file is a dump of a deterministic simulation.
 
 2. Open it from your terminal on the noVNC desktop:
 
@@ -350,12 +357,13 @@ What does one `ORI` look like inside the core?
    ```
 
 3. Add `clk` and `uo_out`. Then open `tb` → `tt_um_ieeeuoftasic_simproc` → `U1` → `CPU1` and add
-   `curr_state`. The trace holds all three tests; `t03` runs from 2,310 ns to 35,610 ns, and its
+   `curr_state`. The trace holds all three tests: `t03` runs from 2,310 ns to 35,610 ns, and its
    `ORI` comes after the UART commands that start the core.
 
    You should see `curr_state` walk from `IDLE` through `CYCLE_1` … `CYCLE_5` and back, with
-   `done` (bit 2 of `uo_out`) pulsing as the instruction retires. Learn to move around the viewer
-   now, while the trace is 35,610 ns long; later traces are millions of nanoseconds.
+   `done` (bit 2 of `uo_out`) pulsing as the instruction retires. It's worth learning to move
+   around the viewer now, while the trace is only 35,610 ns long, because later traces run to
+   millions of nanoseconds.
 
 Check: you can point at the five cycles of the `ORI`.
 
@@ -386,18 +394,19 @@ Can you write a test that passes on the golden core and fails on the core whose 
    ========================================================================
    ```
 
-   and `make: *** [../common/lab.mk:66: check] Error 1` under it, which is the verdict exiting
-   non-zero. `t03` never subtracts, so it misses.
+   followed by `make: *** [../common/lab.mk:66: check] Error 1`, which is make reporting that the
+   verdict exited non-zero. Your testbench misses `B01` because `t03` never subtracts.
 
-3. Read the hint. `SUB rX, rX` clears a register and appears in nearly every program on this
-   machine. For how many of the 65,536 operand pairs do `A - B` and `B - A` give the same byte?
+3. Read the hint. `SUB rX, rX` is how you clear a register, so it appears in nearly every program
+   on this machine. For how many of the 65,536 operand pairs do `A - B` and `B - A` give the same byte?
 
    <details>
    <summary>Answer</summary>
 
    For 512 of them. They agree for every pair with `A == B` (256 pairs, `SUB rX, rX` among them),
    and for every pair whose difference is 128, because 128 is its own negation in eight bits (256
-   more). That is 0.78 % of the input space, and the most natural subtraction test lands inside it.
+   more). That's only 0.78 % of the input space, but the most natural subtraction test lands
+   inside it.
 
    </details>
 
@@ -430,7 +439,7 @@ Can you write a test that passes on the golden core and fails on the core whose 
    <summary>Answer</summary>
 
    `N = 1`, `Z = 0`. $140 = 0b10001100$, so bit 7 is set. The machine has no opinion about whether
-   that byte means 140 or −116; `N` is bit 7 of the result. See
+   that byte means 140 or −116, because `N` is simply bit 7 of the result. See
    [Flags as architectural state](../guide/flags-are-state.md).
 
    </details>
@@ -446,10 +455,11 @@ Can you write a test that passes on the golden core and fails on the core whose 
     VERDICT: PASS
    ```
 
-   The name and message are whatever you wrote; `140` and `116` are exact. If you asserted the
-   wrong `N`, the golden-core row reads `FAIL` instead and the verdict says
-   `VERDICT: FAIL — your testbench does not pass the GOLDEN core.` That is the right order for
-   things to go wrong in: a testbench that fails on the golden core is telling you about itself.
+   The test name and the message will be whatever you wrote, but `140` and `116` are exact. If
+   you asserted the wrong `N`, the golden-core row reads `FAIL` instead and the verdict says
+   `VERDICT: FAIL — your testbench does not pass the GOLDEN core.` That's the right order for
+   things to go wrong in, because a testbench that fails on the golden core is telling you about
+   a mistake in the testbench itself.
 
 Check: `make check` says `ok` on the golden core and `caught` on `B01`, with your new test
 asserting both `r1` and the flags.
@@ -465,7 +475,7 @@ How many of the thirteen does your testbench catch so far?
    ```
 
    It takes about 22 seconds and prints, for each core you missed, one line about what it hides
-   behind. Keep the output. It is your scoreboard for the rest of the course; by
+   behind. Keep the output, because it's your scoreboard for the rest of the course: by
    [Lab 06](../labs/lab-06-capstone-overview.md) the goal is `13 of 13 caught`.
 
 2. On the shipped file the count is `1 of 13 caught`, and the one it catches is:
@@ -475,8 +485,8 @@ How many of the thirteen does your testbench catch so far?
    ```
 
    With your Part 7 test added, `B01` is caught too; with the reference solution's `t04`, the count
-   is `5 of 13 caught`. Yours depends on what your test checks. Expect most of the thirteen to stay
-   missed; four tests should not catch thirteen bugs.
+   is `5 of 13 caught`. Your count depends on what your test checks. Expect most of the thirteen
+   to stay missed, since four tests shouldn't be able to catch thirteen bugs.
 
 3. `t03` runs a single `ORI 5` and checks `r0`. Why is that enough to catch `B11`, a tier-5 bug?
 
@@ -528,11 +538,11 @@ Both simulators give `TESTS=6 PASS=6 FAIL=0 SKIP=0` and `512010.01` ns, with Ver
 
 `ccache` keeps the compiled C++ files, and its `Hits` line counts across everything compiled in
 this container. Each Verilator build compiles six files. If you did Part 5 in this container, its
-Verilator builds have already filled the cache: both builds here are fast, and the line reads
-`Hits: 12 / 18`, then `Hits: 18 / 24`. The cache is lost when the container stops, so to see the
-cold build, run these commands first thing after a restart. Then the first Verilator build takes
-about 16 s end to end, against about 6 s for Icarus, because it builds a C++ program first, and
-the line reads `Hits: 0 / 6`; the second takes a few seconds, and the hits go up by six, to
+Verilator builds have already filled the cache, so both builds here are fast, and the line reads
+`Hits: 12 / 18`, then `Hits: 18 / 24`. The cache is lost when the container stops, so to see a
+cold build, run these commands first thing after a restart. The first Verilator build then takes
+about 16 s end to end, against about 6 s for Icarus, because Verilator builds a C++ program
+first, and the line reads `Hits: 0 / 6`; the second takes a few seconds, and the hits go up by six, to
 `Hits: 6 / 12 (50.00%)`. [Two simulators](../guide/two-simulators-two-jobs.md#the-build-cost)
 explains the numbers.
 
