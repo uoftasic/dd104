@@ -1,9 +1,10 @@
 # Lab 06: Capstone
 
-You'll bring your work from Labs 04 and 05 into one suite, find the three tier-5 bugs, the hardest
-in the catalogue to think of, and finish with a suite that catches all thirteen and a written bug
-report for one of the three. None of the three is subtle in the RTL. All three are subtle in the
-stimulus.
+In this lab you bring your tests from Labs 04 and 05 together into one suite and use it to find
+the three tier-5 bugs, which are the hardest in the catalogue to think of. You finish with a suite
+that catches all thirteen bugs and a written bug report for one of the three. None of the three is
+subtle in the RTL; what makes them hard to catch is the stimulus, because each one needs a test
+input that ordinary tests don't happen to produce.
 
 This lab takes about 3 hours 30 minutes.
 
@@ -22,24 +23,25 @@ The three bugs in this lab's pool, and why each survives:
 | | Survives because |
 |---|---|
 | `B10_ori_adds_instead_of_ors` | `0 \| imm` equals `0 + imm`, so the first `ORI` after reset is always right, and OR and ADD agree exactly when the operands share no set bits, which is every constant anyone builds on purpose |
-| `B11_ori_writes_r1_reads_r0` | The value it produces is correct; only its destination is wrong, and after a reset the two candidate destinations hold the same thing |
-| `B12_uart_rx_bit_period` | It does not exist at the default parameter value, and the link test everybody starts with passes over the broken link |
+| `B11_ori_writes_r1_reads_r0` | The value it produces is correct and only its destination is wrong, and right after a reset the two registers it could have written hold the same thing |
+| `B12_uart_rx_bit_period` | It has no effect at all at the default parameter value, and the link test that everybody writes first passes even over the broken link |
 
-Use this coverage list as questions about your own suite. Each has an answer you can measure:
+Read the coverage list below as a set of questions to ask about your own suite. Each one has an
+answer you can measure:
 
 | | Ask |
 |---|---|
 | Instructions | Which of the sixteen opcodes has my suite never executed, including the three unimplemented ones? |
 | Operands | For each instruction, have I run it with `rA == rB` and with `rA != rB`? |
-| Fields | Every shift amount (4), every branch displacement (16), every `ORI` immediate that overlaps bits already set |
+| Fields | Have I used every shift amount (4), every branch displacement (16), and every `ORI` immediate that overlaps bits already set? |
 | Registers | Has each of the four been a source, a destination, a pointer, and a bystander that must not move? |
-| Flags | Asserted after every flag-setting instruction, and asserted not to move after the ones that leave them alone? |
-| Memory | Address 0, address 63, an address above 63 |
-| Protocol | `done` counted, `halt` counted, cycle counts asserted |
-| Parameters | `clk_per_bit` swept, not sampled at its default |
+| Flags | Do I assert the flags after every flag-setting instruction, and assert that they don't move after the ones that leave them alone? |
+| Memory | Have I used address 0, address 63, and an address above 63? |
+| Protocol | Do I count `done`, count `halt`, and assert cycle counts? |
+| Parameters | Have I swept `clk_per_bit`, rather than only sampling it at its default? |
 | State | Does anything in my suite run long enough to leave the window where reset has made everything equal? |
 
-The last two rows are `B12` and `B11`, and the fields row is `B10`.
+The last two rows are where `B12` and `B11` hide, and the Fields row is where `B10` hides.
 
 ```bash
 mod dd104     # in a new terminal, load .designinit first (Lab 01, Part 1)
@@ -51,7 +53,7 @@ cd labs/lab-06-capstone
 How many of the thirteen does the suite you already have catch?
 
 1. Copy your Lab 04 and Lab 05 tests into `test_capstone.py`. `make check-all` scores whatever
-   that module contains, and there is no credit for retyping work.
+   that module contains, so copy them as they are; there is no credit for retyping work.
 
 2. Score it against all thirteen:
 
@@ -59,8 +61,8 @@ How many of the thirteen does the suite you already have catch?
    make check-all
    ```
 
-   It takes about four minutes: fourteen full builds and simulations. You should see a scoreboard,
-   and for each bug you missed, one line about what it hides behind:
+   It takes about four minutes, because it runs fourteen full builds and simulations. You should
+   see a scoreboard and, for each bug you missed, a line saying what it hides behind:
 
    ```
      caught  tier 1  B01_sub_operands_swapped           t01_arithmetic          20.9s
@@ -75,8 +77,8 @@ How many of the thirteen does the suite you already have catch?
 
    Your count and list will depend on what you brought in.
 
-This is the only place in the course where you get a hint after failing. Use the list as a work
-queue.
+This is the only place in the course where a failure comes with a hint, so use the list of
+missed bugs as your work queue for the rest of the lab.
 
 Check: you have a baseline count.
 
@@ -94,8 +96,9 @@ Why does a good testbench miss an `ORI` that adds instead of ORs?
    ```
 
    You should see `MISSED  B10_ori_adds_instead_of_ors` and the hint
-   `ORing in bits that were not already set — ADD agrees`. Six tests and a 29-instruction model
-   comparison, and none of those instructions ORed in a bit that was already set.
+   `ORing in bits that were not already set — ADD agrees`. The example testbench has six tests
+   and a 29-instruction comparison against the model, and none of those instructions ORs in a bit
+   that was already set.
 
 2. The hint says when `ADD` agrees with `OR`. Before writing a test, work out why that makes this
    bug hard to catch: try `5 | 3` against `5 + 3`, then think about how a program on this machine
@@ -105,8 +108,9 @@ Why does a good testbench miss an `ORI` that adds instead of ORs?
    <summary>Answer</summary>
 
    `5 | 3 = 7` but `5 + 3 = 8`; then `7 | 24 = 31` but `8 + 24 = 32`. OR and ADD give the same
-   answer on every pair of operands that share no set bits. That is how you build a constant on
-   this machine, and it is what `set_reg` does:
+   answer on every pair of operands that share no set bits. Building a constant on this machine
+   only ever ORs in bits that aren't set yet, which is exactly the case where the two agree, and
+   that is what `set_reg` does:
 
    ```
    SUB r0, r0     # clear
@@ -115,9 +119,9 @@ Why does a good testbench miss an `ORI` that adds instead of ORs?
    ORI 0x07       # the bottom three -- disjoint from what is already there
    ```
 
-   Every one of those `ORI`s is correct on a core whose `ORI` adds. And the first `ORI` after a
-   reset is `0 | imm`, which is `0 + imm`, so even an overlapping immediate is right the first
-   time.
+   Every one of those `ORI`s gives the right answer on a core whose `ORI` adds. The first `ORI`
+   after a reset is safe too, because it computes `0 | imm`, which equals `0 + imm`, so even an
+   overlapping immediate gives the right answer the first time.
 
    </details>
 
@@ -128,9 +132,10 @@ Why does a good testbench miss an `ORI` that adds instead of ORs?
    assert sp.reg(0) == 31
    ```
 
-4. Run `make check BUG=B10`. You should see `caught`: `31` on a correct core, `32` on `B10`.
+4. Run `make check BUG=B10`. You should see `caught`, because the register holds `31` on a
+   correct core and `32` on `B10`.
 
-Against the eleven-test reference suite, `B10` is caught by 2 of 11 tests.
+In the eleven-test reference suite, 2 of the 11 tests catch `B10`.
 
 Check: `make check BUG=B10` says `caught`.
 
@@ -154,17 +159,19 @@ Why can a value be right and still be wrong?
            R05_flags_survive_a_branch
    ```
 
-   Seven of eleven is exact, and by some distance the highest number in this pool.
+   Seven failing tests out of eleven is an exact count, and it's the highest of the three bugs in
+   this pool by some distance.
 
-2. Compare a five-instruction constant builder on the two cores (both rows exact):
+2. Compare what a five-instruction constant builder leaves in the registers on the two cores
+   (both rows are exact):
 
    | | `r0` | `r1` |
    |---|---|---|
    | Golden | 20 | 0 |
    | `B11` | 0 | 4 |
 
-   `ORI` reads `r0` and writes `r1`, so the shift in the middle of the builder shifts a register
-   that never received anything.
+   On `B11`, `ORI` reads `r0` but writes `r1`, so the shift in the middle of the builder shifts
+   `r0`, a register that never received anything.
 
 3. Make sure your suite catches it with `make check BUG=B11`.
 
@@ -175,22 +182,23 @@ Why can a value be right and still be wrong?
    <summary>Answer</summary>
 
    It is easy to catch here because `ORI` is the only way to get a constant into the machine, so
-   every `set_reg` in every test goes through it; not every design is that obliging. But the value
-   is right and the destination is wrong. Right after a reset `r0` and `r1` hold the same thing, so
-   a machine that reads one and writes the other produces a number that is correct in every respect
-   except where it is. Reset is a state in which several things are temporarily indistinguishable,
-   and a test that stays inside that window cannot tell them apart. Your programs are short because
-   short programs are readable.
+   every `set_reg` in every test goes through it (not every design is that obliging). A short
+   test that only checks the value misses it because the value is right and only the destination
+   is wrong. Right after a reset `r0` and `r1` hold the same thing, so a machine that reads one and
+   writes the other produces a number that is correct in every respect except where it ends up.
+   Reset is a state in which several things are temporarily indistinguishable, and a test that
+   stays inside that window can't tell them apart. Your programs are short because short programs
+   are readable, and that is what keeps them inside the window.
 
    </details>
 
-`B11` is also upstream's own to-do, applied to one of its two sites. The SimProc source shipped
-with a comment suggesting exactly this change. DD104's fork removed the comment on purpose,
-because in a course whose premise is "there are hidden bugs in this file" it reads as a planted
-clue pointing at correct code. [`ORI-DECISION.md`](https://github.com/uoftasic/dd104/blob/main/ORI-DECISION.md)
-has the full reasoning, including why the shipped behaviour is the specified one. A source comment
-is not a specification, and neither is a to-do, and `B11` shows what happens when one is
-half-applied.
+`B11` is also upstream's own to-do, applied to only one of the two places it touches. The SimProc
+source shipped with a comment suggesting exactly this change, and we removed that comment from
+DD104's fork on purpose, because in a course whose premise is "there are hidden bugs in this file"
+it reads as a planted clue pointing at code that is in fact correct.
+[`ORI-DECISION.md`](https://github.com/uoftasic/dd104/blob/main/ORI-DECISION.md) has the full
+reasoning, including why the shipped behaviour is the specified one. Neither a source comment nor
+a to-do is a specification, and `B11` shows what happens when a to-do is applied halfway.
 
 Check: your suite catches `B11`.
 
@@ -198,11 +206,11 @@ Check: your suite catches `B11`.
 
 Does the UART work at every speed, or only at the default?
 
-`clk_per_bit` is `uio_in × 4`. Every lab so far has run at the default `uio_in = 8`, so
-`clk_per_bit = 32`.
+The UART's bit period, `clk_per_bit`, is `uio_in × 4`. Every lab so far has run at the default
+`uio_in = 8`, which gives `clk_per_bit = 32`.
 
-1. Write a test that sweeps it, and at each speed does a `PING` and moves a byte that is not a
-   fixed pattern:
+1. Write a test that sweeps the bit period and, at each speed, sends a `PING` and also writes and
+   reads back a byte that is not a fixed pattern:
 
    ```python
    for uio in (4, 8, 16, 32, 64):
@@ -212,26 +220,29 @@ Does the UART work at every speed, or only at the default?
        got = await sp.uart_read(0x3F)
    ```
 
-2. `B12` adds one clock to every received bit. Before you run, predict whether it fails at short
-   bit periods or long ones first. Then run it with `make sim`, then `make check BUG=B12`. On the
-   golden core every speed works. On `B12` you should see this pattern (every row exact):
+2. `B12` adds one clock to every bit the UART receives. Before you run, predict whether it starts
+   failing at short bit periods or at long ones. Then run the test with `make sim`, and after that
+   with `make check BUG=B12`. On the golden core every speed works, and on `B12` you should see
+   this pattern (every row is exact):
 
    | `clk_per_bit` | `PING` | A data byte (`0x5A`, written then read back) |
    |---|---|---|
    | 8 | `TimeoutError`, no reply at all | |
-   | 16 | `0xAA` | `ValueError`: the reply is X bits |
+   | 16 | `0xAA` | `ValueError`, because the reply is X bits |
    | 24 | `0xAA` | `0x5A` |
    | 32 (the labs' default) | `0xAA` | `0x5A` |
    | 64, 128, 256 | `0xAA` | `0x5A` |
 
-3. At 16, `PING` answers `0xAA` perfectly over a link that cannot carry a byte. Why?
+3. At `clk_per_bit = 16`, `PING` gets a perfect `0xAA` reply over a link that cannot carry a data
+   byte. Why?
 
    <details>
    <summary>Answer</summary>
 
-   Because of the bytes involved: `0xF0` already has its top bit set and the reply `0xAA` is a
-   fixed pattern, so a receiver that mis-samples bit 7 as the stop bit gets both right. A link test
-   that passes over a broken link is worse than none, because you believe it.
+   It's because of the particular bytes involved. The `PING` command, `0xF0`, already has its top
+   bit set, and the reply `0xAA` is a fixed pattern, so a receiver that mis-samples bit 7 as the
+   stop bit still gets both of them right. A link test that passes over a broken link is worse
+   than having no link test, because you believe it.
 
    </details>
 
@@ -241,10 +252,11 @@ Does the UART work at every speed, or only at the default?
    <summary>Answer</summary>
 
    The extra clock per received bit makes the sample point drift further off centre with each bit
-   of a frame, and a long bit period has room to absorb it. At the default this core behaves like
-   a correct one, and the rest of your suite scores the same on it, so which speeds work is the
-   diagnosis. Against the reference suite, `B12` is caught by 1 of 11 tests, the only one that
-   sweeps. When a design has a parameter, test it at more than one value.
+   of a frame, and a long bit period has room to absorb that drift. At the default speed this core
+   behaves like a correct one, and the rest of your suite scores the same on it as on the golden
+   core, so the pattern of which speeds work is your diagnosis. Only 1 of the 11 tests in the
+   reference suite catches `B12`, and it's the only one that sweeps the bit period. When a design
+   has a parameter, test it at more than one value.
 
    </details>
 
@@ -254,7 +266,7 @@ Check: `make check BUG=B12` says `caught`.
 
 Can you find which of the three your dealt core has?
 
-1. Deal one of the three and hunt it:
+1. Deal yourself a core with one of the three bugs and hunt for it:
 
    ```bash
    make new
@@ -262,13 +274,14 @@ Can you find which of the three your dealt core has?
    make verdict
    ```
 
-   The grade is the same three rows as [Lab 04](../labs/lab-04-your-first-bug-hunt-overview.md); row
-   2 is still the deliverable. `make probe` is here too, showing every `print()` and `dut._log`
-   line live, and so are `make hunt VERBOSE=1` and `make verdict VERBOSE=1`.
+   The grade is the same three rows as in [Lab 04](../labs/lab-04-your-first-bug-hunt-overview.md),
+   and row 2 is still the deliverable. The Lab 04 tools are here too: `make probe`, which shows
+   every `print()` and `dut._log` line as it happens, and `make hunt VERBOSE=1` and
+   `make verdict VERBOSE=1`.
 
-Knowing three bugs exist and knowing which one you have are different things. The pool description
-in `test_capstone.py` describes all three without naming the line any of them touches, which is
-about the information a bug report gives you in real life.
+Knowing that three bugs exist doesn't tell you which one you have. The pool description in
+`test_capstone.py` describes all three without naming the line any of them touches, which is
+about as much as a bug report tells you in real life.
 
 Check: `make verdict` says `VERDICT: PASS`.
 
@@ -286,7 +299,7 @@ Does your suite catch all thirteen, and which tests do the catching?
    ========================================================================
    ```
 
-2. Look at which test catches what. In the reference capstone suite:
+2. Look at which test catches each bug. In the reference capstone suite, the catches are:
 
    ```
      caught  tier 1  B01_sub_operands_swapped           t01_arithmetic
@@ -304,13 +317,14 @@ Does your suite catch all thirteen, and which tests do the catching?
      caught  tier 5  B12_uart_rx_bit_period             c03_baud_sweep
    ```
 
-   The reference suite is sixteen tests: ten from Lab 04, three from Lab 05 and three new. Most of
-   the work was already done, and the last three took the longest.
+   The reference suite has sixteen tests: ten from Lab 04, three from Lab 05 and three new ones.
+   Most of the work was already done before this lab began, but the three new tests took the
+   longest.
 
 3. Two general tests, `t01_arithmetic` and `t08_against_the_golden_model`, catch six of the
    thirteen between them, and five bugs are caught by exactly one test each. Is that a
    well-balanced suite, or one with a long tail of special cases bolted on? Write down your answer
-   and what you would write next. Both readings are defensible.
+   and what you would write next. Either reading can be defended.
 
 Check: `13 of 13 caught`.
 
@@ -326,7 +340,7 @@ Can you take a bug you already know through the whole report loop?
    ```
 
    You should see `ok` on the golden core and `caught  B01_sub_operands_swapped  3 tests, 1 FAILED`,
-   with `SUB r1, r2 with r1 = 200 and r2 = 100 left r1 = 156.`
+   with the message `SUB r1, r2 with r1 = 200 and r2 = 100 left r1 = 156.`
 
 2. Deal `B01` in the Lab 04 package and grade the reproducer against it. `make new` deletes the
    `core/` already in `labs/lab-04-your-first-bug-hunt`, so finish anything you still want from
@@ -338,8 +352,9 @@ Can you take a bug you already know through the whole report loop?
    make verdict TB=test_b01_repro
    ```
 
-   The `make new` banner still lists Lab 04's five-bug pool; the core it wrote is `B01`. You should
-   see rows 1 and 2 green and row 3 `FAIL`: the test exists and the design is still broken.
+   The `make new` banner still lists Lab 04's five-bug pool, but the core it wrote has `B01`. You
+   should see rows 1 and 2 green and row 3 `FAIL`, which means the test exists and the design is
+   still broken.
 
    ```
          ok  1. the golden core          must PASS      3 tests, all passed        7.8s
@@ -392,15 +407,15 @@ Can someone act on your bug without redoing your work?
    2. Expected against actual, as numbers, with the arithmetic shown.
    3. The shape: how many vectors or cycles are wrong, out of how many, and what the count implies
       before anyone opens the RTL.
-   4. Where it is not: what still works.
+   4. Where it isn't: what still works.
    5. The habit the suite gained, in one line, and the test that enforces it, by name.
 
-A red test is where the report starts. The report is what someone can act on without redoing your
-week. Part 4 is the one people skip and the one designers read first: "every `ORI`
-whose immediate is disjoint from `r0` is correct, all 393,216 ALU vectors are correct, and both
-branches and all memory accesses are unaffected" turns a report into a map. The report is finished
-when a test in the suite fails before the fix and passes after, which is what `make verdict`
-checks.
+A red test is only where the report starts; the report itself is what lets someone act on the bug
+without redoing your week. Part 4 of the report is the one people skip, and it's the one designers
+read first, because a sentence like "every `ORI` whose immediate is disjoint from `r0` is correct,
+all 393,216 ALU vectors are correct, and both branches and all memory accesses are unaffected"
+tells them where not to look, and that turns a report into a map. The report is finished when a
+test in the suite fails before the fix and passes after it, which is what `make verdict` checks.
 
 Check: `BUG-REPORT.md` exists and has all five parts.
 
@@ -417,7 +432,7 @@ What claim does your suite now support?
    assert dut.uo_out.value == 3
    ```
 
-   which supports "this processor is not running". How long is yours, and why?
+   which supports only "this processor is not running". How long is your sentence, and why?
 
    <details>
    <summary>Answer</summary>
