@@ -55,22 +55,29 @@ reading it is the one thing that can make this course worthless to a student.
 
 ## Docs
 
-The course site is plain Docsify from `./docs`, with no build step:
+The course site is built with Quarto from `./docs`. `docs/_quarto.yml` holds the site, sidebar
+and navbar, and `docs/_quarto-pdf.yml` builds the whole course as one PDF. To preview it you need
+[Quarto](https://quarto.org/docs/get-started/) 1.11:
 
 ```bash
-npx docsify-cli serve docs      # → http://localhost:3000
+quarto preview docs                            # -> http://localhost:4200
+quarto render docs --profile pdf --to typst    # whole course as one PDF in docs/_book/
 ```
 
 | Path | On Pages? | Purpose |
 |------|-----------|---------|
-| `docs/` | Yes | The course site; `docs/README.md` has the Course path |
+| `docs/` | Yes | The course site; `docs/index.md` is the home page and has the Course path |
 | `docs/guide/` | Yes | Guide pages: reading only, no commands |
 | `docs/labs/` | Yes | Lab writeups: every command a student runs, in numbered parts and steps |
 | `docs/reference/` | Yes | Lookup pages: instruction set, harness API, output that is not an error |
 | `labs/` | No | Runnable packages |
-| `scripts/`, `notebooks/`, `data/`, `figures/` | No | Repo scaffolding, unused by DD104 |
+| `scripts/` | No | `check_site.py`, the link check for the rendered site; the rest is template scaffolding |
+| `notebooks/`, `data/`, `figures/` | No | Repo scaffolding, unused by DD104 |
 
-GitHub Pages: deploy from a branch, `main`, folder `/docs`. No Actions deploy step is needed.
+GitHub Pages is set to Source: GitHub Actions. On every push to `main` that touches `docs/`,
+`scripts/check_site.py` or the workflow itself, `.github/workflows/site.yml` renders the site (with a PDF of every page) and the course PDF,
+checks the rendered site's local links and anchors with `scripts/check_site.py`, and deploys
+`docs/_site`.
 
 This repo was created from [uoftasic/course-template](https://github.com/uoftasic/course-template).
 `TEMPLATE.md` and `scripts/init-template.py` are that template's bootstrap files and are not part
