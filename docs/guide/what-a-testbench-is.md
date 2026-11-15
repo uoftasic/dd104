@@ -3,10 +3,10 @@
 This page answers: *what am I writing when I write a testbench? It isn't the design, and it
 isn't quite a program either.*
 
-A **testbench** is a second circuit whose job is doubt. Take that literally. The design under
-test, the **DUT**, has inputs and outputs, and something has to sit on the other end of those
-wires: something that drives the inputs, watches the outputs, and has an opinion about what it
-sees. That something is a circuit too. You just never manufacture it.
+A **testbench** is a second circuit, and its job is to doubt the first one. We mean "circuit"
+literally. The design under test, the **DUT**, has inputs and outputs, and something has to sit
+on the other end of those wires to drive the inputs, watch the outputs and have an opinion about
+what it sees. That something is a circuit too, even though you never manufacture it.
 
 ```
         ┌──────────────────────────┐
@@ -35,8 +35,8 @@ failed at one of them, so it helps to keep them separate:
 | Decide | Do I have a right answer to compare against? | The bug happens in full view and nothing objects |
 
 The shipped SimProc test from [the previous page](../guide/it-works-is-not-a-result.md) fails at
-drive. It never puts the processor in a situation where any of the thirteen bugs can show up,
-so observe and decide have nothing to work with.
+the first job, drive. It never puts the processor in a situation where any of the thirteen bugs
+can show up, so the observe and decide jobs have nothing to work with.
 
 ## Tests that can fail
 
@@ -50,21 +50,21 @@ async def it_works(dut):
 
 It passes on the golden core, on the core whose `SUB` is backwards, on the core that writes
 every result into the wrong register, and on the core that never signals that an instruction
-finished. Since it passes on everything, it tells them apart from nothing.
+finished. Because it passes on all of them, it can't tell a good core from a broken one.
 
 Every testbench sits somewhere between that and a complete proof, and the only way to find out
 where yours sits is to make it fail on purpose. Until you have seen a test go red, treat it as a
 guess about your own code.
 
-That is why the DD104 verdict has two sides:
+That's why the DD104 verdict has two sides, one for the golden core and one for a broken core:
 
 | | Must be | Because otherwise |
 |---|---|---|
 | On the golden core | PASS | You are testing the wrong thing, or your expectations are wrong |
 | On a known-broken core | FAIL | You are not testing anything |
 
-Neither half means anything alone. `make check` measures both, and it will not give you a
-passing verdict until you have both.
+Neither half means anything on its own, so `make check` measures both, and it won't give you a
+passing verdict until your testbench meets both.
 
 ## Four ways to catch one bug
 
@@ -104,10 +104,11 @@ observation:
 | `t05` | The program never reached the address it parks at | Drive: the machine took a path that does not end |
 | `t06` | Instruction 19 disagreed with a reference model | Decide: an independent implementation |
 
-`t05` is worth a second look. Nothing in it inspected a wrong value. It ran a loop controlled by
-a subtraction, the subtraction went the wrong way, and the loop never ended. The symptom was a
-timeout, not a mismatch. A timeout is a perfectly good bug report as long as your testbench has
-a deadline. A testbench with no timeout hangs forever and tells you nothing.
+`t05` is worth a second look, because nothing in it inspected a wrong value. It ran a loop
+controlled by a subtraction, the subtraction went the wrong way, and so the loop never ended and
+the symptom was a timeout rather than a mismatch. A timeout is a perfectly good bug report, as
+long as your testbench has a deadline. A testbench with no timeout just hangs forever and tells
+you nothing.
 
 ## Reading a failure message
 
@@ -117,24 +118,26 @@ You will spend most of this course looking at red text, so it pays to read it we
 AssertionError: r1 is 199, expected 247.
 ```
 
-This is a good failure message. It has what happened (`199`), what should have happened
-(`247`), and where to look (`r1`). The same bug with a worse testbench gives you this:
+This is a good failure message, because it tells you what happened (`199`), what should have
+happened (`247`) and where to look (`r1`). The same bug caught by a worse testbench gives you
+this:
 
 ```
 AssertionError
 ```
 
-Same bug, same instant, no information. The difference is entirely in how the assertion was
-written:
+It's the same bug, caught at the same instant, but the message tells you nothing about it.
+The difference is entirely in how the assertion was written:
 
 ```python
 assert sp.reg(1) == 247, f"r1 is {sp.reg(1)}, expected 247."
 ```
 
-Give every assertion you write in this course a message that names both numbers. In six weeks,
-whether past-you bothered is what decides whether a failure costs you an hour of confusion.
+Give every assertion you write in this course a message that names both numbers. When one of
+your tests fails six weeks from now, whether you wrote that message is what decides whether the
+failure costs you an hour of confusion.
 
-The wrong number is a clue in its own right. `t03` runs three instructions on `r1 = 200` and
+The wrong number is also a clue in its own right. `t03` runs three instructions on `r1 = 200` and
 `r2 = 60`:
 
 | Step | On the golden core | On `B01`, where SUB is backwards |
@@ -143,22 +146,24 @@ The wrong number is a clue in its own right. `t03` runs three instructions on `r
 | `SUB r1, r2` | `4 - 60 = -56`, wraps to 200 | `60 - 4` = 56 |
 | `NAND r1, r2` | `~(200 & 60) = ~8` = 247 | `~(56 & 60) = ~56` = 199 |
 
-The number you are shown, `199`, is two instructions downstream of the bug. Walk it backwards
-and the middle row gives it away: `200 + 56 = 256`. The two results are exact negations of each
-other, which is what swapping the operands of a subtraction does and nothing else does. Reading
-a wrong number this way is a skill you can practise on every failure you cause.
+The number you're shown, `199`, comes out two instructions after the bug. If you work backwards
+from it, the middle row gives the bug away: `200 + 56 = 256`, so once you allow for the wrap, the
+two `SUB` results are exact negations of each other. Swapping the operands of a subtraction does
+exactly that, and nothing else does. Reading a wrong number this way is a skill you can practise
+on every failure you cause.
 
 ## The second circuit in cocotb
 
 In classic Verilog the testbench is Verilog too: a module with no ports that instantiates the
-DUT and wiggles its inputs. It really is a second circuit in the same language.
+DUT and wiggles its inputs, so it really is a second circuit, written in the same language as
+the first.
 
-cocotb moves the testbench into Python. Your Python does not run inside the simulation; it runs
-beside it, and the two take turns. `await Timer(1, unit="ns")` does not sleep. It hands control
-back to the simulator, asks it to advance one nanosecond of simulated time, and asks to be woken
-when it gets there.
+cocotb moves the testbench into Python. Your Python doesn't run inside the simulation; it runs
+beside it, and the two take turns. `await Timer(1, unit="ns")` looks like a sleep, but what it
+actually does is hand control back to the simulator, ask it to advance one nanosecond of
+simulated time, and ask to be woken when it gets there.
 
-That is why the numbers in a cocotb result line are not wall-clock seconds:
+That's why a cocotb result line gives simulated time and real time as separate numbers:
 
 ```
 ** test_six_cases.six_cases       PASS           6.00           0.00       6151.51  **
@@ -167,15 +172,15 @@ That is why the numbers in a cocotb result line are not wall-clock seconds:
 
 That is six nanoseconds of simulated time, one per case, in almost no real time. Simulated time
 is deterministic, so you can reason about it: when a DD104 page quotes an exact number of
-nanoseconds, yours will match to the digit. Seconds will not.
+nanoseconds, yours will match to the digit, but your real-time seconds won't match ours.
 
-A cocotb test also needs a simulator underneath it. `python3` and `pytest` on a test file both
-run nothing and report success; [Your first cocotb test](../guide/your-first-cocotb-test.md#two-commands-that-run-nothing)
+A cocotb test also needs a simulator underneath it. If you run a test file with `python3` or
+with `pytest`, neither starts one, so both run nothing and report success; [Your first cocotb test](../guide/your-first-cocotb-test.md#two-commands-that-run-nothing)
 shows what they print.
 
 ## The shortest complete DD104 test
 
-This is a complete file. It comes from the harness's six worked tests in
+This is a complete test file. It comes from the harness's six worked tests in
 [`labs/common/test_example.py`](https://github.com/uoftasic/dd104/blob/main/labs/common/test_example.py),
 and copying that file is how you are meant to start every SimProc lab.
 
@@ -193,11 +198,11 @@ async def r1_gets_five(dut):
     assert cycles == 9, f"took {cycles} cycles, expected 5 + 4"
 ```
 
-Drive (`sp.run`), observe (`sp.reg` and the returned cycle count), decide (two assertions, each
-with a message). The count is nine because `ORI` takes five cycles and `ADD` takes four.
-Checking the cycle count is an observation most people skip, and it matters: two of the thirteen
-bugs leave every register, flag and byte of memory correct and disturb only timing and handshake
-pins. A testbench that only compares values cannot see them.
+All three jobs are in it: `sp.run` drives, `sp.reg` and the returned cycle count observe, and
+the two assertions, each with a message, decide. The count is nine because `ORI` takes five
+cycles and `ADD` takes four. Most people skip checking the cycle count, but it matters, because
+two of the thirteen bugs leave every register, flag and byte of memory correct and disturb only
+timing and handshake pins, so a testbench that only compares values can't see them.
 
 The full harness reference is [The SimProc harness](../reference/the-harness-api.md).
 
