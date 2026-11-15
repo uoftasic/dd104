@@ -3,8 +3,8 @@
 Writeup: [`docs/labs/lab-02-the-only-test-this-chip-has-overview.md`](../../docs/labs/lab-02-the-only-test-this-chip-has-overview.md)
 · live: <https://uoftasic.com/dd104/labs/lab-02-the-only-test-this-chip-has-overview.html>
 
-SimProc's one shipped test, run against the good core and all thirteen broken ones, and a
-testbench of your own that catches `B01`.
+You run SimProc's one shipped test against the good core and all thirteen broken ones, and then
+write a testbench of your own that catches `B01`.
 
 ```bash
 cd labs/lab-02-the-only-test-this-chip-has
@@ -12,7 +12,7 @@ make shuttle     # start here
 make             # sim, then check
 ```
 
-Runs in the workbench container (`hpretl/iic-osic-tools:2026.08`: cocotb 2.0.1, Icarus Verilog
+Everything runs in the workbench container (`hpretl/iic-osic-tools:2026.08`: cocotb 2.0.1, Icarus Verilog
 14.0) with no environment setup. The Makefile includes `../common/lab.mk`, so you need the whole
 repository, not just this directory.
 
@@ -33,8 +33,8 @@ All of these come from [`../common/lab.mk`](../common/lab.mk), which every SimPr
 | `make model` | the golden model, with no simulator | instant |
 | `make clean` | remove `build/`, `waves.vcd`, `__pycache__` | |
 
-Wall-clock figures are ballpark. `TB=test_mine` runs a different module; `TB` names a Python
-module, not a file.
+The wall-clock times are ballpark figures. To run a different testbench, set `TB`, as in
+`TB=test_mine`; it names a Python module, not a file.
 
 ## Files
 
