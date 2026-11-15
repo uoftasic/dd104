@@ -140,7 +140,7 @@ How long does each trigger really wait, and is the counter's reset synchronous?
 
 Check: six tests pass in 1832.51 ns, and you can say why ten edges from t = 0 took 90 ns.
 
-## Part 3: The 1.x traps
+## Part 3: The 1.x traps {#part-3-the-1x-traps}
 
 Which cocotb 1.x forms still run on cocotb 2.0.1, and which fail?
 

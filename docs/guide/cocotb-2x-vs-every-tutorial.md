@@ -242,7 +242,7 @@ result. "Six tests ran, they passed on the good core, and this one fails on the 
 | `Clock(clk, 10)` | `Clock(clk, 10, unit="ns")` | Works, as a 10 ps clock |
 | `cocotb.fork(coro)` | `cocotb.start_soon(coro)` | `AttributeError: module 'cocotb' has no attribute 'fork'` |
 | `dut.sig <= 1` | `dut.sig.value = 1` | `TypeError: '<=' not supported between instances of 'LogicObject' and 'int'` |
-| `dut.sig = 1` | `dut.sig.value = 1` | `AttributeError: ... Did you forget to add \`.value\`?` (silent in 1.x) |
+| `dut.sig = 1` | `dut.sig.value = 1` | `` AttributeError: ... Did you forget to add `.value`? `` (silent in 1.x) |
 | `sig.value.integer` | `int(sig.value)` | Works, `DeprecationWarning` |
 | `sig.value.binstr` | `str(sig.value)` | Works, `DeprecationWarning` |
 | `sig.setimmediatevalue(v)` | `sig.value = Immediate(v)`, from `cocotb.handle` | Works, `DeprecationWarning` |
