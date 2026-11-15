@@ -36,7 +36,7 @@ That excerpt is only the logic. The complete file, with its port list, is
 
 This is all of
 [`labs/cocotb-intro/test_01_hello.py`](https://github.com/uoftasic/dd104/blob/main/labs/cocotb-intro/test_01_hello.py)
-except its header comment and numbered inline comments:
+except its module docstring, the comment above the imports and the numbered inline comments:
 
 ```python
 import cocotb
@@ -44,7 +44,7 @@ from cocotb.clock import Clock
 from cocotb.triggers import RisingEdge, Timer
 
 
-@cocotb.test()
+@cocotb.test(timeout_time=5, timeout_unit="ms")
 async def counts_up(dut):
     """Reset the counter, let it count once, and check that it did."""
     cocotb.start_soon(Clock(dut.clk, 10, unit="ns").start())
@@ -72,7 +72,9 @@ Every cocotb test you write has the same five parts as this one.
 
 **`@cocotb.test()`** marks a function as a test. cocotb imports your module and looks for
 functions with this decorator, so a function without it is just an ordinary Python function:
-cocotb won't run it, and it won't tell you that it skipped it either.
+cocotb won't run it, and it won't tell you that it skipped it either. The two arguments in this
+file put a 5 ms timeout on the test, which
+[Clocks, resets and triggers](../guide/clocks-resets-and-triggers.md) explains.
 
 **`async def` and `await`.** Your test is a coroutine. Each `await` means "wake me when this
 happens", and the simulator runs until it does. No simulated time passes between one `await` and
@@ -120,7 +122,8 @@ anything.
 ```
 
 The left column is simulated time in nanoseconds, not wall-clock time. The test took 21 ns of
-simulation, and a lot less than that of your time.
+simulation, and at the 21,998 simulated nanoseconds per real second in the last column, that was
+about a millisecond of your time.
 
 `Seeding Python random module with 1787717251` is cocotb reseeding Python's global `random` at
 the start of every run. When a random test fails, that number lets you get exactly the same run
