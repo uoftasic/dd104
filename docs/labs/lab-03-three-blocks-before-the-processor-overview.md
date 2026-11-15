@@ -458,8 +458,9 @@ Questions:
    <details>
    <summary>Answer</summary>
 
-   The other ten are in the control path around the ALU (decode, write-back, branching, the
-   handshake), and `make check-alu-bugs` says so in its closing line. Finishing a block proves that
+   Nine of the other ten are in the control path around the ALU (decode, write-back, branching,
+   the handshake), and the tenth, `B12`, is in the UART receiver. `make check-alu-bugs` says so in
+   its closing line. Finishing a block proves that
    the block is right, but it says nothing about whether the processor uses the right block, with
    the right operands, at the right time. Testing that is the subject of Lab 04.
 
