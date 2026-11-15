@@ -13,7 +13,7 @@ the wrong time rather than with the wrong value.
 Most bugs in this course are cheaper to find with a better assertion message than with a viewer,
 and opening the waveform first is a habit that costs hours. But some bugs are only visible as a
 picture, and this page is for those. You'll do everything on it in
-[cocotb on a counter, Part 5](labs/cocotb-intro-overview.md#part-5-waveforms).
+[cocotb on a counter, Part 5](../labs/cocotb-intro-overview.md#part-5-waveforms).
 
 ## Getting a waveform out
 
@@ -185,4 +185,4 @@ why you learn the viewer before you need it, not during the hour you need it.
 2. You open a SimProc waveform to chase a wrong register value. Which signals do you add, in what
    order?
 
-Next: [cocotb on a counter](labs/cocotb-intro-overview.md).
+Next: [cocotb on a counter](../labs/cocotb-intro-overview.md).

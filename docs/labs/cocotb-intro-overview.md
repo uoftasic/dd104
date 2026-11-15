@@ -12,12 +12,12 @@ Package: [`labs/cocotb-intro/`](https://github.com/uoftasic/dd104/tree/main/labs
 
 ## Before you start
 
-- Finish [Lab 01](labs/lab-01-the-adder-you-already-trust-overview.md).
-- Read [Your first cocotb test](guide/your-first-cocotb-test.md),
-  [Clocks, resets and triggers](guide/clocks-resets-and-triggers.md),
-  [cocotb 2.x and older tutorials](guide/cocotb-2x-vs-every-tutorial.md),
-  [Driving and checking a design](guide/driving-and-checking.md) and
-  [Waveforms](guide/waveforms.md).
+- Finish [Lab 01](../labs/lab-01-the-adder-you-already-trust-overview.md).
+- Read [Your first cocotb test](../guide/your-first-cocotb-test.md),
+  [Clocks, resets and triggers](../guide/clocks-resets-and-triggers.md),
+  [cocotb 2.x and older tutorials](../guide/cocotb-2x-vs-every-tutorial.md),
+  [Driving and checking a design](../guide/driving-and-checking.md) and
+  [Waveforms](../guide/waveforms.md).
 - Work in a terminal on the noVNC desktop (Part 5 opens graphical viewers), in the package
   directory:
 
@@ -84,7 +84,7 @@ What does the smallest cocotb test print, and what goes wrong if it reads `q` at
    `assert ... + where ...` lines are pytest taking your `assert` apart and showing what each piece
    evaluated to. The message prints `00000000` because `dut.q.value` is a `LogicArray`, which can
    hold `X` and `Z`, so printing it gives the bit pattern. `int(dut.q.value)` would give `0`.
-   [Your first cocotb test](guide/your-first-cocotb-test.md#reading-a-value-at-the-clock-edge)
+   [Your first cocotb test](../guide/your-first-cocotb-test.md#reading-a-value-at-the-clock-edge)
    has the full explanation.
 
    </details>
@@ -104,7 +104,7 @@ How long does each trigger really wait, and is the counter's reset synchronous?
    You should see `TESTS=6 PASS=6 FAIL=0 SKIP=0` and `1832.51` ns of simulated time.
 
 2. Find these lines in the log and match each to its section of
-   [Clocks, resets and triggers](guide/clocks-resets-and-triggers.md):
+   [Clocks, resets and triggers](../guide/clocks-resets-and-triggers.md):
 
    ```
    10 edges counted from t=0 took 90 ns (nine periods -- the edge at t=0 was free)
@@ -385,6 +385,6 @@ You should see `TESTS=6 PASS=6` on the first and `TESTS=6 PASS=5 FAIL=1` on the 
 run failing is the half that shows your testbench can see the bug. (`make sim TB=...` does not
 work here: the package's `sim` target always runs `test_03_checking`.)
 
-Next on the Course path: read [Two simulators](guide/two-simulators-two-jobs.md) and
-[SimProc in one page](guide/simproc-in-one-page.md), then do
-[Lab 02: The only test this chip has](labs/lab-02-the-only-test-this-chip-has-overview.md).
+Next on the Course path: read [Two simulators](../guide/two-simulators-two-jobs.md) and
+[SimProc in one page](../guide/simproc-in-one-page.md), then do
+[Lab 02: The only test this chip has](../labs/lab-02-the-only-test-this-chip-has-overview.md).

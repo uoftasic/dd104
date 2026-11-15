@@ -13,7 +13,7 @@ ones, so this page starts with them.
 Everything below was run in the workbench and the output is pasted unedited. The four
 demonstration files ship in
 [`labs/cocotb-intro/oldapi/`](https://github.com/uoftasic/dd104/tree/main/labs/cocotb-intro/oldapi),
-and you'll run them in [cocotb on a counter, Part 3](labs/cocotb-intro-overview.md#part-3-the-1x-traps).
+and you'll run them in [cocotb on a counter, Part 3](../labs/cocotb-intro-overview.md#part-3-the-1x-traps).
 
 ## Forms that still work
 
@@ -278,4 +278,4 @@ list, it is from 1.x. You'll run this in the lab.
 3. `TypeError: '<=' not supported between instances of 'LogicObject' and 'int'`. What did the
    author of that line mean to write?
 
-Next: [Driving and checking a design](guide/driving-and-checking.md).
+Next: [Driving and checking a design](../guide/driving-and-checking.md).

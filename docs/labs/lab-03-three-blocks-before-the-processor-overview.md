@@ -11,10 +11,10 @@ Package: [`labs/lab-03-three-blocks-before-the-processor/`](https://github.com/u
 
 ## Before you start
 
-- Finish [Lab 02](labs/lab-02-the-only-test-this-chip-has-overview.md): you have seen `13 of 13`.
-- Read [The lazy testbench](guide/the-lazy-testbench.md), [Coverage as a question](guide/coverage-is-a-question.md)
-  and [Flags as architectural state](guide/flags-are-state.md).
-- Keep [SimProc in one page](guide/simproc-in-one-page.md) open in another tab.
+- Finish [Lab 02](../labs/lab-02-the-only-test-this-chip-has-overview.md): you have seen `13 of 13`.
+- Read [The lazy testbench](../guide/the-lazy-testbench.md), [Coverage as a question](../guide/coverage-is-a-question.md)
+  and [Flags as architectural state](../guide/flags-are-state.md).
+- Keep [SimProc in one page](../guide/simproc-in-one-page.md) open in another tab.
 
 You don't need the chip around a module to test it. cocotb hands the simulator a list of source
 files and the name of one module to elaborate as the top level. Give it `simproc_system.sv` and
@@ -62,7 +62,7 @@ What does a complete unit test of a small block look like?
    ```
 
    All five simulated times are exact. The same 28 Icarus `sorry:` notes you saw in Lab 02 appear
-   on these unit-level compiles; see [Output that is not an error](reference/output-that-is-not-an-error.md).
+   on these unit-level compiles; see [Output that is not an error](../reference/output-that-is-not-an-error.md).
 
 2. Read `test_pc.py`. It is 120 lines including comments, and it is the model for everything you
    write in this lab: drive on one edge, sample after the other, and never let your stimulus race
@@ -120,7 +120,7 @@ Is `r0` hardwired to zero, as it is on RISC-V and MIPS?
    `r0` is an ordinary register here. It holds whatever you last put in it, and `ORI`, the only
    instruction that can introduce a constant, writes `r0` and nothing else. That changes how you
    read every `ORI` in this course. Better to learn it now than at 1 a.m. in
-   [Lab 06](labs/lab-06-capstone-overview.md).
+   [Lab 06](../labs/lab-06-capstone-overview.md).
 
    </details>
 
@@ -296,7 +296,7 @@ Can a testbench that checks only values see a bug in the `Z` flag?
    The first takes about 40 seconds and should say `MISSED  B03_zero_flag_low_nibble`. The second
    should say `caught  B03_zero_flag_low_nibble  6 tests, 2 FAILED`, with
    `t04_flags_are_state` reporting `after r1 = 16 the flags are N=0 Z=1, expected N=0 Z=0.`
-   [Flags as architectural state](guide/flags-are-state.md#four-lines-that-catch-it) explains
+   [Flags as architectural state](../guide/flags-are-state.md#four-lines-that-catch-it) explains
    why 16 is the value that catches it.
 
 Check: `MISSED` on `B03` from both value-only testbenches, and `caught` from `test_example`.
@@ -455,7 +455,7 @@ Questions:
 
 Submit: nothing for this lab.
 
-Next on the Course path: read [The golden model](guide/the-golden-model.md),
-[Where bugs hide](guide/where-bugs-hide.md) and
-[Directed and random tests](guide/directed-random-and-the-gap.md), then do
-[Lab 04: Your first bug hunt](labs/lab-04-your-first-bug-hunt-overview.md).
+Next on the Course path: read [The golden model](../guide/the-golden-model.md),
+[Where bugs hide](../guide/where-bugs-hide.md) and
+[Directed and random tests](../guide/directed-random-and-the-gap.md), then do
+[Lab 04: Your first bug hunt](../labs/lab-04-your-first-bug-hunt-overview.md).

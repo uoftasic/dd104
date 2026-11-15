@@ -84,7 +84,7 @@ required.
 
 [`labs/common/test_handshake_timing.py`](https://github.com/uoftasic/dd104/blob/main/labs/common/test_handshake_timing.py)
 measures why. It is four tests and 90,910 ns of simulated time, under a second of wall clock, and
-you'll run it in [Lab 05, Part 7](labs/lab-05-every-answer-is-right-overview.md#part-7-the-uart-receivers-busy-time).
+you'll run it in [Lab 05, Part 7](../labs/lab-05-every-answer-is-right-overview.md#part-7-the-uart-receivers-busy-time).
 
 ## How long the receiver is busy
 
@@ -256,4 +256,4 @@ frame look completely different in a log and are the same defect.
 2. At `clk_per_bit = 48`, how many clocks after the end of a frame is the receiver ready again?
 3. Why does `PING` make a poor link test?
 
-Next: [Lab 05: Every answer is right](labs/lab-05-every-answer-is-right-overview.md).
+Next: [Lab 05: Every answer is right](../labs/lab-05-every-answer-is-right-overview.md).

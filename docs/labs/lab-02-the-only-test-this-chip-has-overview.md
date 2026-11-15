@@ -13,16 +13,16 @@ directory. Every lab from here on does the same.
 
 ## Before you start
 
-- Finish [Lab 01](labs/lab-01-the-adder-you-already-trust-overview.md) (`make check` says
-  `VERDICT: PASS`) and [cocotb on a counter](labs/cocotb-intro-overview.md).
-- Read [Two simulators](guide/two-simulators-two-jobs.md) and
-  [SimProc in one page](guide/simproc-in-one-page.md).
-- Keep [The SimProc instruction set](reference/simproc-instruction-set.md) and
-  [The SimProc harness](reference/the-harness-api.md) open in other tabs.
+- Finish [Lab 01](../labs/lab-01-the-adder-you-already-trust-overview.md) (`make check` says
+  `VERDICT: PASS`) and [cocotb on a counter](../labs/cocotb-intro-overview.md).
+- Read [Two simulators](../guide/two-simulators-two-jobs.md) and
+  [SimProc in one page](../guide/simproc-in-one-page.md).
+- Keep [The SimProc instruction set](../reference/simproc-instruction-set.md) and
+  [The SimProc harness](../reference/the-harness-api.md) open in other tabs.
 
 In this lab, "the golden core" is the correct SimProc, and the thirteen broken ones are named
 `B01` to `B13`. Work in a terminal on the noVNC desktop. `mod dd104` takes you to the course folder,
-as in [Lab 01, Part 1](labs/lab-01-the-adder-you-already-trust-overview.md#part-1-load-the-course):
+as in [Lab 01, Part 1](../labs/lab-01-the-adder-you-already-trust-overview.md#part-1-load-the-course):
 
 ```bash
 mod dd104     # in a new terminal, load .designinit first (Lab 01, Part 1)
@@ -50,7 +50,7 @@ Which of fourteen processors does the shipped test catch, and what does it actua
 
    Icarus prints 28 of these on every compile, for the rest of the course. They are notes, not
    errors, and the exit code is 0. A real Icarus failure starts a line with `error:` and stops.
-   [Output that is not an error](reference/output-that-is-not-an-error.md) explains why the
+   [Output that is not an error](../reference/output-that-is-not-an-error.md) explains why the
    simulation is still correct, and lists everything else like this.
 
 3. You should see:
@@ -91,7 +91,7 @@ Which of fourteen processors does the shipped test catch, and what does it actua
    repository, unchanged, with a comment block explaining the pin decode.
 
 5. Write down, in one sentence, the strongest true claim it supports. (This is the first
-   check-yourself question on [What a passing test proves](guide/it-works-is-not-a-result.md).)
+   check-yourself question on [What a passing test proves](../guide/it-works-is-not-a-result.md).)
 
    <details>
    <summary>Answer</summary>
@@ -199,7 +199,7 @@ file is how you are meant to start your own testbenches.
    ```
 
 2. Match each failure to drive, observe or decide, using the table in
-   [What a testbench is](guide/what-a-testbench-is.md#four-ways-to-catch-one-bug). Why does `t05`
+   [What a testbench is](../guide/what-a-testbench-is.md#four-ways-to-catch-one-bug). Why does `t05`
    time out instead of reporting a wrong value?
 
    <details>
@@ -246,7 +246,7 @@ Can you predict a program's exact cycle count from the instruction costs?
 
 2. Derive the 109 by hand, using the program listing that `make model` prints above those three
    lines and the cycle-count table in
-   [SimProc in one page](guide/simproc-in-one-page.md#cycle-counts): seven setup instructions, a
+   [SimProc in one page](../guide/simproc-in-one-page.md#cycle-counts): seven setup instructions, a
    three-instruction loop run five times, and six to finish. `t05_a_loop_and_its_cycle_count` in
    `test_example.py` asserts the same number on the simulated hardware.
 
@@ -431,7 +431,7 @@ Can you write a test that passes on the golden core and fails on the core whose 
 
    `N = 1`, `Z = 0`. $140 = 0b10001100$, so bit 7 is set. The machine has no opinion about whether
    that byte means 140 or −116; `N` is bit 7 of the result. See
-   [Flags as architectural state](guide/flags-are-state.md).
+   [Flags as architectural state](../guide/flags-are-state.md).
 
    </details>
 
@@ -466,7 +466,7 @@ How many of the thirteen does your testbench catch so far?
 
    It takes about 22 seconds and prints, for each core you missed, one line about what it hides
    behind. Keep the output. It is your scoreboard for the rest of the course; by
-   [Lab 06](labs/lab-06-capstone-overview.md) the goal is `13 of 13 caught`.
+   [Lab 06](../labs/lab-06-capstone-overview.md) the goal is `13 of 13 caught`.
 
 2. On the shipped file the count is `1 of 13 caught`, and the one it catches is:
 
@@ -533,8 +533,8 @@ Verilator builds have already filled the cache: both builds here are fast, and t
 cold build, run these commands first thing after a restart. Then the first Verilator build takes
 about 16 s end to end, against about 6 s for Icarus, because it builds a C++ program first, and
 the line reads `Hits: 0 / 6`; the second takes a few seconds, and the hits go up by six, to
-`Hits: 6 / 12 (50.00%)`. [Two simulators](guide/two-simulators-two-jobs.md#the-build-cost)
+`Hits: 6 / 12 (50.00%)`. [Two simulators](../guide/two-simulators-two-jobs.md#the-build-cost)
 explains the numbers.
 
-Next on the Course path: read [Flags as architectural state](guide/flags-are-state.md), then do
-[Lab 03: Three blocks before the processor](labs/lab-03-three-blocks-before-the-processor-overview.md).
+Next on the Course path: read [Flags as architectural state](../guide/flags-are-state.md), then do
+[Lab 03: Three blocks before the processor](../labs/lab-03-three-blocks-before-the-processor-overview.md).

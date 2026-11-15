@@ -11,10 +11,10 @@ Package: [`labs/lab-06-capstone/`](https://github.com/uoftasic/dd104/tree/main/l
 
 ## Before you start
 
-- Finish [Lab 05](labs/lab-05-every-answer-is-right-overview.md): you have protocol tests as well
+- Finish [Lab 05](../labs/lab-05-every-answer-is-right-overview.md): you have protocol tests as well
   as architectural ones.
-- Read [Writing the bug report](guide/writing-the-bug-report.md), and reread
-  [Directed and random tests](guide/directed-random-and-the-gap.md).
+- Read [Writing the bug report](../guide/writing-the-bug-report.md), and reread
+  [Directed and random tests](../guide/directed-random-and-the-gap.md).
 - Have your Lab 04 and Lab 05 test files at hand to bring forward.
 
 The three bugs in this lab's pool, and why each survives:
@@ -262,7 +262,7 @@ Can you find which of the three your dealt core has?
    make verdict
    ```
 
-   The grade is the same three rows as [Lab 04](labs/lab-04-your-first-bug-hunt-overview.md); row
+   The grade is the same three rows as [Lab 04](../labs/lab-04-your-first-bug-hunt-overview.md); row
    2 is still the deliverable. `make probe` is here too, showing every `print()` and `dut._log`
    line live, and so are `make hunt VERBOSE=1` and `make verdict VERBOSE=1`.
 
@@ -362,7 +362,7 @@ Can you take a bug you already know through the whole report loop?
    ```
 
    You should see `VERDICT: PASS` with row 2 unchanged, and the whole assertion message from
-   [Writing the bug report](guide/writing-the-bug-report.md),
+   [Writing the bug report](../guide/writing-the-bug-report.md),
    including `note      (100 - 200) mod 256 = 156`.
 
 5. Go back to the capstone package:

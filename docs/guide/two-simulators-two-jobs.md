@@ -8,7 +8,7 @@ the end of this page you should be able to say which one to reach for.
 
 People often say "Verilator is the fast one". The measurements below say something more useful.
 They were all taken in `labs/common`, the shared harness directory, and you'll repeat the
-important ones in [Lab 02, Part 5](labs/lab-02-the-only-test-this-chip-has-overview.md#part-5-two-simulators).
+important ones in [Lab 02, Part 5](../labs/lab-02-the-only-test-this-chip-has-overview.md#part-5-two-simulators).
 
 ## The same six tests, twice
 
@@ -122,7 +122,7 @@ the same module:
 `dp_ram` has 64 entries and the address bus is 8 bits, so addresses 64–255 are off the end of
 the array. Verilator found that by reading the file, before simulating anything. Icarus compiles
 the same file and says nothing about it; it prints twenty-eight `sorry:` notes about something
-else and exits 0 (see [Output that is not an error](reference/output-that-is-not-an-error.md)).
+else and exits 0 (see [Output that is not an error](../reference/output-that-is-not-an-error.md)).
 
 Now see what each tool does with that defect at run time.
 [`labs/common/test_two_simulators.py`](https://github.com/uoftasic/dd104/blob/main/labs/common/test_two_simulators.py)
@@ -218,4 +218,4 @@ telling you about the design.
    suggest?
 3. Why can Verilator never show you an `X` on a pin?
 
-Next: [SimProc in one page](guide/simproc-in-one-page.md).
+Next: [SimProc in one page](../guide/simproc-in-one-page.md).

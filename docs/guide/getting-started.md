@@ -2,7 +2,7 @@
 
 This page covers what DD104 needs from your machine, which tool versions it is pinned to, how
 to read the labs' output, and how to get help. You'll do the actual setup in
-[Lab 01, Part 1](labs/lab-01-the-adder-you-already-trust-overview.md#part-1-load-the-course).
+[Lab 01, Part 1](../labs/lab-01-the-adder-you-already-trust-overview.md#part-1-load-the-course).
 
 ## Requirements
 
@@ -51,7 +51,7 @@ you might expect:
 
 When a tutorial disagrees with this course, the course is describing the cocotb installed in
 your container. The full measured list is
-[cocotb 2.x and older tutorials](guide/cocotb-2x-vs-every-tutorial.md).
+[cocotb 2.x and older tutorials](../guide/cocotb-2x-vs-every-tutorial.md).
 
 ## Reading a lab's output
 
@@ -114,4 +114,4 @@ practise that on bugs you haven't been told about.
 
 If you are stuck, ask in Discord for a better question to ask the design, not for the answer.
 
-Next: [What a passing test proves](guide/it-works-is-not-a-result.md).
+Next: [What a passing test proves](../guide/it-works-is-not-a-result.md).

@@ -31,9 +31,9 @@ right byte, the program counter is right, and `N` is right. One bit is sometimes
 ## The exhaustive sweep
 
 The ALU is 34 lines and its whole input space is 393,216 vectors, which Icarus walks in about
-twenty seconds. [Lab 03](labs/lab-03-three-blocks-before-the-processor-overview.md) is that walk.
+twenty seconds. [Lab 03](../labs/lab-03-three-blocks-before-the-processor-overview.md) is that walk.
 With a sweep that checks values and flags in separate buckets, `B03` produces this (you'll get
-there in [Lab 03, Part 6](labs/lab-03-three-blocks-before-the-processor-overview.md#part-6-add-the-flags)):
+there in [Lab 03, Part 6](../labs/lab-03-three-blocks-before-the-processor-overview.md#part-6-add-the-flags)):
 
 ```
       ok  the golden ALU                     3 tests, all passed             19.4s
@@ -245,4 +245,4 @@ harness docstring warns about this too; it is the most common way a flag test en
 2. A suite reads every register after every instruction. Why can it still miss `B09`?
 3. You set up `r1` with `set_reg` between a `SUB` and a `BZ`. What is the `BZ` now testing?
 
-Next: [Lab 03: Three blocks before the processor](labs/lab-03-three-blocks-before-the-processor-overview.md).
+Next: [Lab 03: Three blocks before the processor](../labs/lab-03-three-blocks-before-the-processor-overview.md).

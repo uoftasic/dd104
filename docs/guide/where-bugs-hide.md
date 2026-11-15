@@ -8,7 +8,7 @@ would not naturally write. This page gives the evidence for that, and then a tax
 into a way of working.
 
 > This page does not tell you where any bug is. DD104 ships thirteen broken cores, and
-> [Lab 04](labs/lab-04-your-first-bug-hunt-overview.md) deals you one without saying which. Every
+> [Lab 04](../labs/lab-04-your-first-bug-hunt-overview.md) deals you one without saying which. Every
 > catalogue name below, and what each one hides behind, is already printed by `make bugs`. No
 > line numbers or RTL appear here. Finding a bug in a design you cannot diff against a known-good
 > copy is the skill, and a diff would skip it.
@@ -16,7 +16,7 @@ into a way of working.
 ## The 99.2 % case
 
 `B01_sub_operands_swapped` makes the ALU compute `B - A` instead of `A - B`. Drive every legal
-vector through the ALU, as [Lab 03](labs/lab-03-three-blocks-before-the-processor-overview.md)
+vector through the ALU, as [Lab 03](../labs/lab-03-three-blocks-before-the-processor-overview.md)
 does in about twenty seconds, and it is wrong on
 
 ```
@@ -152,7 +152,7 @@ Every value is correct. Something that is not a value is wrong.
 
 `B03` is the one to think about. A value-only testbench does not usually miss it; it cannot see it,
 ever, however many vectors you add. More stimulus is not what is missing; a different kind of check
-is. That is [Flags as architectural state](guide/flags-are-state.md).
+is. That is [Flags as architectural state](../guide/flags-are-state.md).
 
 `B08` does the opposite of what you expect a bug to do. If your scoreboard triggers on `done` and
 one instruction stops pulsing it, the scoreboard does not report an error: it was never woken up.
@@ -182,7 +182,7 @@ tests.
 ## The evidence
 
 All thirteen broken cores pass the only test the chip has: you saw `13 of 13` in
-[Lab 02, Part 1](labs/lab-02-the-only-test-this-chip-has-overview.md#part-1-the-shipped-test).
+[Lab 02, Part 1](../labs/lab-02-the-only-test-this-chip-has-overview.md#part-1-the-shipped-test).
 
 A real testbench against a real bug is not obviously enough either. `test_example.py` has six
 worked tests: arithmetic on distinct operands, flags, a loop with a hand-checked cycle count, and
@@ -200,7 +200,7 @@ a full golden-model comparison over 29 instructions. Against `B10`:
 
 Six good tests and twenty-nine instructions checked register by register against a reference
 model, and it is `MISSED`, because none of those instructions happened to OR in a bit that was
-already set. You'll run this in [Lab 06, Part 2](labs/lab-06-capstone-overview.md#part-2-b10-the-wrong-operator).
+already set. You'll run this in [Lab 06, Part 2](../labs/lab-06-capstone-overview.md#part-2-b10-the-wrong-operator).
 
 The test that catches it is three lines, and what makes it work is the stimulus:
 
@@ -224,13 +224,13 @@ line usually looks like a correct line from four clauses further down.
 Three reasons the "read it carefully" instinct fails on this class of bug:
 
 1. You don't have the good version to diff against. That is normal in industry, and it is what
-   [Lab 04](labs/lab-04-your-first-bug-hunt-overview.md) is built around. With a diff, all thirteen
+   [Lab 04](../labs/lab-04-your-first-bug-hunt-overview.md) is built around. With a diff, all thirteen
    take four seconds and teach nothing.
 2. A one-line bug is written in the file's own style. One of the thirteen adds a line, in the
    right style and the right place, that looks like it belongs. Injected bugs don't have to be
    typos.
 3. Reading scales with the file; testing scales with the machine. The file is 1,178 lines. The
-   machine is [554 bits of state and eleven instructions](guide/simproc-in-one-page.md). On your
+   machine is [554 bits of state and eleven instructions](../guide/simproc-in-one-page.md). On your
    next project one of those numbers will grow and the other won't.
 
 ## The question list
@@ -268,4 +268,4 @@ missed it.
 2. A suite tests every branch with displacement `+1`. Which bug in the catalogue can it never see?
 3. For `NAND`, how many of the 65,536 operand pairs survive a NAND-is-NOR bug, and which ones?
 
-Next: [Directed and random tests](guide/directed-random-and-the-gap.md).
+Next: [Directed and random tests](../guide/directed-random-and-the-gap.md).
