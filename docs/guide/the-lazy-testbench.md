@@ -2,12 +2,13 @@
 
 This page answers: *how careful do I actually have to be? My tests look reasonable.*
 
-They probably do, and that is the problem. The cheapest place to see it is a circuit you already
-understand completely.
+They probably do look reasonable, and that's the problem, because a test can look reasonable and
+still miss a bug. The cheapest place to see this happen is in a circuit you already understand
+completely.
 
-You wrote a 4-bit ripple-carry adder in DD102 and measured it in DD103. It is nine lines and you
-know exactly what it does. It is also the last design under test in this course you will be able
-to say that about. It ships as
+You wrote a 4-bit ripple-carry adder in DD102 and measured it in DD103. It's nine lines long and
+you know exactly what it does, which makes it the last design under test in this course that
+you'll be able to say that about. It ships as
 [`labs/lab-01-the-adder-you-already-trust/src/ripple4.sv`](https://github.com/uoftasic/dd104/blob/main/labs/lab-01-the-adder-you-already-trust/src/ripple4.sv):
 
 ```systemverilog
@@ -36,18 +37,19 @@ The Lab 01 package also ships `broken/ripple4.sv`, which is that file with one l
     assign c[0] = 1'b0;              // <-- was: assign c[0] = cin;
 ```
 
-The carry-in never reaches the bottom slice. From Lab 04 on you will be asked not to read the
-broken designs, but you may read this one: it says so at the top, and Lab 01 is not a bug hunt. The question here is not where the bug is but what kind of
-testbench notices it.
+With that change, the carry-in never reaches the bottom slice. From Lab 04 on we'll ask you not
+to read the broken designs, but you're allowed to read this one (the file says so at the top),
+because Lab 01 isn't a bug hunt. You already know where the bug is; the question here is what kind
+of testbench notices it.
 
-It is a real bug of a real kind. A port tied off during bring-up and never reconnected is one of
-the most common defects in industrial RTL, and it survives review because the line looks
+It's a real kind of bug, too. A port that was tied off during bring-up and never reconnected is
+one of the most common defects in industrial RTL, and it survives review because the line looks
 deliberate.
 
 ## The shipped testbench
 
-`test_adder.py` ships with two tests, and the first was written by someone thinking about
-addition:
+The testbench, `test_adder.py`, ships with two tests. Whoever wrote the first one,
+`t01_the_obvious_six`, was thinking about addition:
 
 ```python
     cases = [
@@ -61,11 +63,11 @@ addition:
     ]
 ```
 
-Zero, one, a middling pair, a carry that walks between slices, the top of the range, and the
-wrap. That is a defensible list, and it is what most people produce when asked for "a few good
-test cases".
+The list covers zero, one, a middling pair, a carry that walks between slices, the top of the
+range and the wrap. That's a defensible choice, and it's what most people come up with when asked
+for "a few good test cases".
 
-The second test is the upgrade you would reach for next:
+The second test is the improvement you'd probably reach for next:
 
 ```python
 @cocotb.test()
@@ -73,26 +75,28 @@ async def t02_every_a_and_every_b(dut):
     """Every value of a against every value of b.  256 vectors."""
 ```
 
-Every value of `a` against every value of `b`: the complete cross product, sixteen by sixteen.
-Asked whether that testbench was thorough, you would say yes, and you would probably call it
-exhaustive. That would be wrong in a way worth remembering.
+It runs every value of `a` against every value of `b`, which is the complete cross product,
+sixteen by sixteen. If someone asked you whether that testbench was thorough, you'd say yes, and
+you'd probably call it exhaustive. That answer would be wrong, and the reason it's wrong is worth
+remembering.
 
-(Excerpts only. The complete file is
+(These are excerpts only. The complete file is
 [`labs/lab-01-the-adder-you-already-trust/test_adder.py`](https://github.com/uoftasic/dd104/blob/main/labs/lab-01-the-adder-you-already-trust/test_adder.py),
-and it ships working.)
+and it ships in working order.)
 
 ## What the two tests report
 
-Against the good adder both tests pass, and the log says how much they covered:
+Run against the good adder, both tests pass, and the log reports how much of the input space they
+covered:
 
 ```
    262.00ns INFO     cocotb.ripple4                     checked 256 of the 512 possible input vectors
 ```
 
-Against `broken/`, they pass too. `make check` runs the testbench on both adders and passes only
-if the testbench passes the good one (`ok`) and fails the broken one (`caught`); a testbench that
-passes both gets `MISSED` and `VERDICT: FAIL`. This is what it prints, which you'll see for
-yourself in [Lab 01, Part 2](../labs/lab-01-the-adder-you-already-trust-overview.md#part-2-run-the-shipped-testbench):
+Run against the adder in `broken/`, they pass as well. `make check` runs the testbench on both
+adders, and it passes only if the testbench passes the good one (`ok`) and fails the broken one
+(`caught`). A testbench that passes both gets `MISSED` and `VERDICT: FAIL`. This is what it prints
+for the shipped testbench, which you'll see for yourself in [Lab 01, Part 2](../labs/lab-01-the-adder-you-already-trust-overview.md#part-2-run-the-shipped-testbench):
 
 ```
 ========================================================================
@@ -111,29 +115,32 @@ yourself in [Lab 01, Part 2](../labs/lab-01-the-adder-you-already-trust-overview
 ========================================================================
 ```
 
-`MISSED` means every vector driven was green on an adder that is broken. The verdict counts 262
-vectors driven: 6 from `t01` and 256 from `t02`, with the six repeated inside the 256.
+`MISSED` means that every vector the testbench drove came out green on an adder that's broken.
+The verdict counts 262 vectors driven, 6 from `t01` and 256 from `t02`, but the six from `t01` are
+repeated inside the 256.
 
 ## What "exhaustive" covers
 
 Look again at the line the run printed: `checked 256 of the 512 possible input vectors`. The
-testbench says it itself. Four bits of `a`, four bits of `b` and one bit of `cin` make
-$4 + 4 + 1 = 9$ bits of input, and $2^9 = 512$. The cross product of `a` and `b` is complete, and
-it is half the design.
+testbench is telling you itself that it covered only half the inputs. Four bits of `a`, four bits
+of `b` and one bit of `cin` make $4 + 4 + 1 = 9$ bits of input, and $2^9 = 512$. The cross product
+of `a` and `b` is complete over eight of those nine bits, which is why it reaches only 256 of the
+512 vectors.
 
-Careful people do this too. It happens whenever you list the inputs you were thinking about.
-The author of `t02` was thinking "an adder takes two numbers", which is what an adder is in every
-context except testing it. `cin` is not a number. It is plumbing: the port you use when you chain
-adders, invisible unless you are chaining.
+Careful people make this mistake too, because it happens whenever you list the inputs you happen
+to be thinking about. The author of `t02` was thinking "an adder takes two numbers", which is what
+an adder is in every context except testing it. `cin` is plumbing rather than one of the numbers:
+it's the port you use when you chain adders, and you don't notice it unless you're chaining them.
 
-> If you loop over your inputs, you have been thorough over the input list you wrote down. That
-> list came from the same mental model as the design, with the same blind spots. "Exhaustive" is
-> not a property of a testbench. It is a claim about a space, and the claim is only as good as
-> the space.
+> Looping over your inputs makes you thorough only over the input list you wrote down, and that
+> list came from the same mental model as the design, so it has the same blind spots. When you call
+> a testbench "exhaustive", you're making a claim about an input space rather than about the
+> testbench, and the claim is only as good as the space you chose.
 
-Add `cin` to the sweep and collect the failures instead of stopping at the first, and the count
-appears. (The reference solution also renames `t02` to `t02_exhaustive`.) Now `t02` fails on the
-broken adder, so the testbench can tell the two apart and the verdict is PASS:
+If you add `cin` to the sweep and collect the failures instead of stopping at the first one, the
+test reports how many vectors are wrong. (The reference solution also renames `t02` to
+`t02_exhaustive`.) Now `t02` fails on the broken adder, so the testbench can tell the two adders
+apart, and the verdict is PASS:
 
 ```
   caught  broken/  carry-in dropped      2 tests, 1 FAILED                1.9s
@@ -149,28 +156,28 @@ broken adder, so the testbench can tell the two apart and the verdict is PASS:
    a year, on a rewrite, done by somebody who has never met you.
 ```
 
-Making that change is [Lab 01](../labs/lab-01-the-adder-you-already-trust-overview.md), and it is
-four lines.
+Making that change is what you do in
+[Lab 01](../labs/lab-01-the-adder-you-already-trust-overview.md), and it takes four lines.
 
 ## Reading the count
 
-The fixed test does not stop at the first disagreement. It walks all 512 vectors, counts every
-wrong one and reports the total, and the total is exactly half.
+The fixed test doesn't stop at the first disagreement. It walks all 512 vectors, counts every
+wrong one and reports the total, which here is exactly half.
 
-Half is not a plausible number for a random mistake. A scrambled carry chain or a bad XOR would
-give you some awkward fraction. Exactly 256 out of 512 says the failures track a signal that is
-high exactly half the time, and in a space of $16 \times 16 \times 2$ only one input has that
-shape: `cin`.
+Exactly half is an unlikely count for a random mistake; a scrambled carry chain or a bad XOR would
+give you some awkward fraction instead. A count of exactly 256 out of 512 tells you that the
+failures track a signal that's high exactly half the time, and in a space of
+$16 \times 16 \times 2$ the only input with that shape is `cin`.
 
-The reference solution's failure message lists the first few wrong vectors and then says so too,
-because it was written to:
+The reference solution's failure message lists the first few wrong vectors and then states the
+pattern outright, because it was written to:
 
 ```
 Every wrong vector above has cin=1 and every one is short by exactly 1.
 ```
 
-None wrong with `cin = 0`, every one wrong with `cin = 1`, each short by one. That is a
-diagnosis, and you have it before reading a line of RTL.
+No vector is wrong with `cin = 0`, every vector is wrong with `cin = 1`, and each wrong one is
+short by one. That's enough to diagnose the bug, and you have it before you've read a line of RTL.
 
 ### Shapes worth recognising
 
@@ -182,31 +189,31 @@ diagnosis, and you have it before reading a line of RTL.
 | All but a handful | The operation is fundamentally wrong; the survivors are cases where right and wrong happen to agree |
 | An odd, un-round number | Probably a real functional bug rather than a wiring mistake; start reading |
 
-You will meet the fourth row soon. One of the SimProc bugs swaps the operands of `SUB`, and
-against all 65,536 `(A, B)` pairs it gets 65,024 wrong. The 512 survivors are not random: `A - B`
-and `B - A` agree exactly when `A == B` (256 pairs) or when the difference is 128 (256 more). And
-`SUB rX, rX`, the usual way to clear a register, is always among those 512. The most common use
-of the instruction is the one use that hides the bug.
+You'll meet the fourth row soon. One of the SimProc bugs swaps the operands of `SUB`, and of all
+65,536 `(A, B)` pairs it gets 65,024 wrong. The 512 pairs that survive aren't random: `A - B` and
+`B - A` agree exactly when `A == B` (256 pairs) or when the difference is 128 (256 more).
+`SUB rX, rX`, the usual way to clear a register, is always among those 512, so the most common use
+of the instruction is one of the few that hide the bug.
 
 ## When you can't walk everything
 
-Nine input bits is 512 vectors: 512 ns of simulated time and about a hundredth of a
-second of real time. When you are in that situation, take it.
+Nine input bits give 512 vectors, which is 512 ns of simulated time and about a hundredth of a
+second of real time. When you're in that situation, take advantage of it.
 
-> If the input space is small enough to walk, walk it. Do not hand-pick cases for a
-> combinational block with fewer than about $2^{20}$ input combinations. You will not choose
-> better than a `for` loop that tries everything.
+> If the input space is small enough to walk, walk it. Don't hand-pick cases for a combinational
+> block with fewer than about $2^{20}$ input combinations, because you won't choose better than a
+> `for` loop that tries everything.
 
-SimProc's ALU is still small enough: 6 operations × 256 × 256 = 393,216 vectors. That is
-[Lab 03](../labs/lab-03-three-blocks-before-the-processor-overview.md), where three bugs fall out by
-brute force.
+SimProc's ALU is still small enough to walk, at 6 operations × 256 × 256 = 393,216 vectors. You'll
+do that in [Lab 03](../labs/lab-03-three-blocks-before-the-processor-overview.md), where brute
+force turns up three bugs.
 
-The processor around it is not. Four registers, 64 bytes of memory, a program counter, two flags
-and a UART make a state space far too big to walk, and it has sequences, so enumerating states
-would not be enough either. From [Lab 04](../labs/lab-04-your-first-bug-hunt-overview.md) on, you
+The processor around the ALU isn't. Its four registers, 64 bytes of memory, program counter, two
+flags and UART make a state space far too big to walk, and because its behaviour depends on
+sequences, enumerating states wouldn't be enough even if you could. From [Lab 04](../labs/lab-04-your-first-bug-hunt-overview.md) on, you
 need the two things that replace exhaustive testing:
 
-- a reference model to compare against instruction by instruction:
+- a reference model to compare the design against, instruction by instruction:
   [The golden model](../guide/the-golden-model.md);
 - a way to ask what your stimulus actually reached, which is not the same as counting how many
   tests you wrote: [Coverage as a question](../guide/coverage-is-a-question.md), next.
@@ -214,11 +221,12 @@ need the two things that replace exhaustive testing:
 ## Two habits
 
 > Sweep the input space instead of sampling it, and count the space first. Add up the input bits,
-> raise two to that power, and make your testbench print how many of them it checked. `256 of
-> the 512 possible input vectors` is a sentence that catches this bug on its own.
+> raise two to that power, and make your testbench print how many of them it checked. A line
+> like `256 of the 512 possible input vectors` is enough on its own to catch this bug.
 
-> Read the count before you read the values. Exactly half, exactly one, exactly $2^k$: the shape
-> of a failure names the signal it tracks, and it does it faster than a waveform will.
+> Read the count before you read the values. A count of exactly half, exactly one or exactly
+> $2^k$ points at the signal the failure tracks, and it gets you there faster than a waveform
+> will.
 
 ## Check yourself
 
