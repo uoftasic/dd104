@@ -19,9 +19,9 @@ Package: [`labs/lab-01-the-adder-you-already-trust/`](https://github.com/uoftasi
 - You need [IC101](https://uoftasic.com/ic101/) done (the noVNC desktop opens and you can get a
   terminal) and [DD102](https://uoftasic.com/dd102/) done (you have written a `ripple4.sv`; the lab
   ships its own copy in `src/`).
-- `broken/ripple4.sv` is not hidden, and its header says what is wrong with it. This lab is not a
-  bug hunt; that starts in [Lab 04](../labs/lab-04-your-first-bug-hunt-overview.md). You may read the
-  changed line.
+- `broken/ripple4.sv` isn't hidden, and its header says what's wrong with it, so you may read the
+  changed line. This lab is about the testbench rather than a bug hunt; the bug hunts start in
+  [Lab 04](../labs/lab-04-your-first-bug-hunt-overview.md).
 
 ## Part 1: Load the course
 
@@ -43,9 +43,10 @@ If you haven't set up the workbench yet, do
 
    You should see the `ASIC-EDU: PDK=sky130A ...` banner, then
    `OK  module ready: /foss/designs/modules/dd104`, then `cwd: /foss/designs/modules/dd104`.
-   DD104 uses no PDK; in this course `.designinit` does one thing for you, which is to define `mod`.
+   DD104 doesn't use a PDK, so in this course the only thing `.designinit` does for you is define
+   `mod`.
 
-3. Check the versions that every exact number in this course depends on:
+3. Check the tool versions, because every exact number in this course depends on them:
 
    ```bash
    iverilog -V | head -1
@@ -71,8 +72,8 @@ If you haven't set up the workbench yet, do
 
 | If you see | Do this |
 |---|---|
-| `bash: /foss/designs/common/.designinit: No such file or directory` | The workspace isn't mounted: relaunch `start_vnc` from your `workspace` clone. Meanwhile every lab also runs from a plain `git clone` of `github.com/uoftasic/dd104` inside the workbench image, because `make` needs neither `.designinit` nor `mod`; the `docker run` line is in [DD104's README](https://github.com/uoftasic/dd104). |
-| `bash: mod: command not found` | You didn't load `.designinit` in this terminal (the first line of step 2). Every new tab starts clean. |
+| `bash: /foss/designs/common/.designinit: No such file or directory` | The workspace isn't mounted, so relaunch `start_vnc` from your `workspace` clone. In the meantime you can run every lab from a plain `git clone` of `github.com/uoftasic/dd104` inside the workbench image, because `make` needs neither `.designinit` nor `mod`; the `docker run` line for that is in [DD104's README](https://github.com/uoftasic/dd104). |
+| `bash: mod: command not found` | You haven't loaded `.designinit` in this terminal (the first line of step 2). Every new tab starts without it, so you have to load it again in each one. |
 | `mod: no such module: dd104` | You ran `mod dd104` before `mod add dd104`. |
 | `fatal: could not read Username for 'https://github.com'` | git couldn't read the repo anonymously and is asking you to log in. Check that you typed `dd104`; if you did, ask in [Discord](https://discord.gg/hrJnP5UsGz). Don't type your password. |
 
@@ -112,8 +113,8 @@ Does the shipped testbench catch the broken adder?
    ```
 
    and, in the log above it, `checked 256 of the 512 possible input vectors`. The simulated times
-   (`6.00`, `256.00`, `262.00`) and the vector count are exact. The `REAL TIME` and `RATIO`
-   columns are wall clock and will differ.
+   (`6.00`, `256.00`, `262.00`) and the vector count are exact, so yours should match. The
+   `REAL TIME` and `RATIO` columns measure wall-clock time, so yours will differ.
 
 4. Read the `make check` half. You should see:
 
@@ -134,10 +135,12 @@ Does the shipped testbench catch the broken adder?
    ========================================================================
    ```
 
-   The `262` counts `t01`'s six vectors as well as `t02`'s 256; the six are repeated inside
-   the 256. The output is followed by `make: *** [Makefile:49: check] Error 1`. That error line is the
-   verdict exiting non-zero on purpose ([Getting started](../guide/getting-started.md#reading-a-labs-output)
-   explains why). It disappears when the verdict passes.
+   The `262` counts `t01`'s six vectors as well as `t02`'s 256, even though the six are among
+   the 256 and so get driven twice. After the block, `make` prints
+   `make: *** [Makefile:49: check] Error 1`. That line comes from the check exiting with a non-zero
+   status on purpose when the verdict fails
+   ([Getting started](../guide/getting-started.md#reading-a-labs-output) explains why), and it goes
+   away once the verdict passes.
 
 5. Compare with your first prediction. `t02` is called "every a and every b". Why does it check
    only 256 of the 512 vectors?
@@ -145,9 +148,10 @@ Does the shipped testbench catch the broken adder?
    <details>
    <summary>Answer</summary>
 
-   `t02` drives every value of `a` and every value of `b`, so it is exhaustive over two of the
-   three inputs. The module has $4 + 4 + 1 = 9$ bits of input, and $2^9 = 512$, not 256. `cin`
-   stays at 0.
+   `t02` drives every value of `a` and every value of `b`, so it's exhaustive over two of the
+   three inputs, but `cin` stays at 0 the whole time. The module has $4 + 4 + 1 = 9$ bits of
+   input, so it has $2^9 = 512$ input vectors, not 256, and `t02` drives only the half with
+   `cin = 0`.
 
    </details>
 
@@ -168,10 +172,11 @@ Can you make the testbench catch the broken adder and report how many vectors ar
                ...
    ```
 
-3. Stop asserting on the first bad vector. Collect the bad ones in a list, run all 512, and
-   assert once at the end with `len(bad)` and the total in the message (the reference solution
-   says `256 of 512 vectors are wrong`). Part 4 is about why. Do both changes
-   before you run: `make check` will not pass with only the first one.
+3. Stop asserting on the first bad vector. Instead, collect the bad ones in a list, run all 512,
+   and assert once at the end, with `len(bad)` and the total in the message (the reference
+   solution says `256 of 512 vectors are wrong`). Part 4 explains why the count is worth having.
+   Make both changes before you run anything, because `make check` won't pass with only the
+   first one.
 
 4. Run `make sim`. You should see `checked 512 of the 512 possible input vectors` in the log and
    `518.00` ns total simulated time (6 for `t01` plus 512 for `t02`).
@@ -188,13 +193,14 @@ Can you make the testbench catch the broken adder and report how many vectors ar
    ```
 
    The test name in that block is whatever you called your test; the reference solution in
-   `solutions/` renames `t02` to `t02_exhaustive`. The `AssertionError` line is cut off on purpose:
-   `make check` truncates long messages to fit its table. Compare `256` with your second
-   prediction from Part 2.
+   `solutions/` renames `t02` to `t02_exhaustive`. The `AssertionError` line is cut off on
+   purpose, because `make check` truncates long messages to fit its table. Compare `256` with your
+   second prediction from Part 2.
 
 If the verdict is still FAIL, read its message. `check.py` measures how many vectors each run
-drove and tells you which half of the TODO is missing. Doing only the sweep makes `broken/` fail,
-but the run stops at the first wrong vector, so the failure is one anecdote instead of a count:
+drove, and from that it tells you which half of the TODO is missing. If you do only the sweep,
+`broken/` fails, but the run stops at the first wrong vector, so the failure tells you about that
+one vector instead of giving you a count:
 
 ```
  VERDICT: FAIL -- the second half of the TODO is not done.
@@ -207,9 +213,10 @@ but the run stops at the first wrong vector, so the failure is one anecdote inst
 With the loop order from step 2, the 263 is `t01`'s six vectors plus the 257 that `t02` drives up
 to and including the first one with `cin = 1`.
 
-There is one more verdict `check.py` can print. A misspelled variable in the code that builds
-your failure message only runs once something is wrong, so the test passes the good adder and
-crashes on the broken one, which a checker that only counts failures would score as a catch:
+`check.py` can print one more verdict. The code that builds your failure message runs only once
+something is wrong, so a misspelled variable in it goes unnoticed on the good adder and crashes
+the test on the broken one. A checker that only counted failures would score that crash as a
+catch, so `check.py` reports it as a test that blew up:
 
 ```
   BROKEN  broken/  carry-in dropped      2 tests, 1 BLEW UP           1.3s
@@ -219,9 +226,11 @@ crashes on the broken one, which a checker that only counts failures would score
  VERDICT: FAIL -- 1 of your tests did not run to the end.
 ```
 
-Python stopped before the comparison, so the run says nothing about either adder. Fix the name
-and rerun. [`labs/common/verdict.py`](https://github.com/uoftasic/dd104/blob/main/labs/common/verdict.py)
-is where DD104 tells a test that failed an assertion from a test that crashed.
+Python stopped before it reached the comparison, so the run tells you nothing about either adder;
+fix the name and run it again. The code that tells a test that failed an assertion from a test
+that crashed is in
+[`labs/common/verdict.py`](https://github.com/uoftasic/dd104/blob/main/labs/common/verdict.py),
+if you want to see how DD104 does it.
 
 Check: `make check` ends on `VERDICT: PASS`, and your failure message on `broken/` reports 256
 wrong vectors out of 512.
@@ -236,10 +245,11 @@ What does `256 of 512` tell you about the bug before you open the RTL?
    <details>
    <summary>Answer</summary>
 
-   `cin`, the only one-bit input. A failure count of exactly half means the fault tracks a signal
-   that is high in half the vectors. Each bit of `a` and `b` is high in half the vectors too, but
-   the wrong vectors the reference solution's message lists (`0+0+1`, `0+1+1`, …) all have
-   `cin = 1`. You have narrowed the bug to one wire without opening the RTL.
+   It's `cin`, the only one-bit input. A failure count of exactly half means the fault tracks a
+   signal that is high in half the vectors. Each bit of `a` and `b` is also high in half the
+   vectors, so the count alone doesn't pick out `cin`, but the wrong vectors the reference
+   solution's message lists (`0+0+1`, `0+1+1`, …) all have `cin = 1`. You have narrowed the bug
+   to one wire without opening the RTL.
 
    </details>
 
@@ -249,19 +259,21 @@ What does `256 of 512` tell you about the bug before you open the RTL?
    <details>
    <summary>Answer</summary>
 
-   Asserting on the first bad vector stops the run at the first wrong one (index 256, the first
-   vector with `cin = 1`) and reports one wrong answer. Collecting reports `256 of 512`. Only the
-   second is a diagnosis.
+   A test that asserts on the first bad vector stops the run there (at index 256, the first
+   vector with `cin = 1`) and reports that one wrong answer. A test that collects the failures
+   reports `256 of 512`, and only that count tells you where to look for the bug, as step 1
+   showed.
 
    </details>
 
-The count is data on every design, not just adders. You'll meet these in Lab 03:
+A failure count tells you something on any design, not just on adders. Here are the ones you'll
+meet in Lab 03 and what each says:
 
 | Count | What it says |
 |---|---|
-| Exactly half | Tracks a signal that is high half the time |
-| 65,024 of the 65,536 `SUB` vectors | 512 vectors survive the bug, and they share a pattern |
-| 0 values wrong, 25,726 flags wrong | The arithmetic is fine; look at the flag logic |
+| Exactly half | The fault tracks a signal that is high half the time |
+| 65,024 of the 65,536 `SUB` vectors | 512 vectors come out right despite the bug, and they share a pattern |
+| 0 values wrong, 25,726 flags wrong | The arithmetic is right, so look at the flag logic |
 
 Check: you can name the signal the 256 failures track.
 
@@ -269,8 +281,8 @@ Check: you can name the signal the 256 failures track.
 
 Which parts of the adder did the six hand-picked cases never move?
 
-1. Before you run it, write down whether you expect the all-512 run to leave any toggle point
-   cold. It drives every input combination.
+1. Before you run it, write down whether you expect the all-512 run, which drives every input
+   combination, to leave any toggle point cold.
 
 2. Run the coverage add-on, a small package in the lab's `coverage/` folder:
 
@@ -280,8 +292,8 @@ Which parts of the adder did the six hand-picked cases never move?
    ```
 
    It takes about twelve seconds because it builds the design twice with Verilator. Both runs use
-   the correct adder in `../src/` and the add-on's own stimulus files, `cov_six.sv` (the six
-   hand-picked cases) and `cov_all.sv` (all 512), not your `test_adder.py`.
+   the correct adder in `../src/`, and neither uses your `test_adder.py`: the stimulus comes from
+   the add-on's own files, `cov_six.sv` (the six hand-picked cases) and `cov_all.sv` (all 512).
 
 3. In the six-case block, you should see `design toggle points : 48`, `never toggled : 5` and
    these five points:
@@ -300,21 +312,22 @@ Which parts of the adder did the six hand-picked cases never move?
    <summary>Answer</summary>
 
    `c[0]` is the internal carry wire that `cin` drives (`assign c[0] = cin;` in `ripple4.sv`), so
-   it is cold for the same reason. The tool has no idea what an adder is and never checked an
-   answer, and it named `cin` anyway. `b[2]:1->0` is real but incidental: none of the six cases
-   happens to lower that bit.
+   it's cold for the same reason. The tool knows nothing about adders and never checked an
+   answer, yet it still pointed at `cin`, the input the bug drops. The `b[2]:1->0` point is a real
+   gap but an incidental one, because none of the six cases happens to lower that bit.
 
    </details>
 
 4. In the all-512 block, you should see `never toggled : 1`, the point `a[3]:1->0`. Every input
-   combination ran. Why does one point stay cold?
+   combination ran, so why does one point stay cold?
 
    <details>
    <summary>Answer</summary>
 
    `cov_all.sv` has `a` in its outermost loop (and `cin` innermost), so the loops end with `a` at
-   15: `a[3]` rises and the test finishes before it can fall. That is an artefact of loop order,
-   not a gap in the stimulus. Compare with your prediction from step 1.
+   15: `a[3]` rises once, and the test finishes before it can fall again. The cold point comes
+   from the loop order rather than from a gap in the stimulus, which did drive every input
+   combination. Compare this with your prediction from step 1.
 
    </details>
 
@@ -324,8 +337,9 @@ Which parts of the adder did the six hand-picked cases never move?
    <details>
    <summary>Answer</summary>
 
-   Nothing. The design is continuous assignments, and line coverage has nothing in it to count. The
-   claim would be true and empty, and true of the six-case run and the exhaustive run alike.
+   It would tell you nothing. The design is made only of continuous assignments, so line coverage
+   has nothing in it to count. The claim would be true but empty, and it would be just as true of
+   the six-case run as of the exhaustive one.
 
    </details>
 
@@ -359,10 +373,10 @@ Questions:
    <details>
    <summary>Answer</summary>
 
-   Both choices are defensible. The reference keeps it because a test suite is read as often as it
-   is run: six named cases with a comment document what the module is for.
+   You can defend either choice. The reference keeps it because a test suite is read as often as
+   it's run, and six named cases with a comment document what the module is for.
    [`solutions/README.md`](https://github.com/uoftasic/dd104/tree/main/labs/lab-01-the-adder-you-already-trust/solutions)
-   gives the full case, and one more decision worth disagreeing with.
+   makes the full case, and describes one more decision that's worth disagreeing with.
 
    </details>
 
