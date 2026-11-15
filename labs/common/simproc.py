@@ -552,7 +552,11 @@ class SimProc:
         While RUN is asserted the answer should be zero.  A core that blips
         back into IDLE between instructions still computes every right answer,
         and is still wrong: on real silicon that is a wasted cycle and a glitch
-        a debugger can see."""
+        a debugger can see.
+
+        The exception is an unimplemented opcode (0xC, 0xD, 0xE).  Each one
+        spends a cycle in IDLE with halt high, by design, so a program that
+        runs into the 0x0C filler counts one halt cycle per filler byte."""
         out = {"halt": 0}
 
         async def watcher():

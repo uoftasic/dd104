@@ -378,11 +378,16 @@ two unimplemented opcodes, 6 clocks -> 0 done pulses: 0x0C retires nothing
 ### `await sp.count_halt_cycles(cycles)` → count
 
 Counts how many of the first `cycles` clocks of execution had `halt` high. While `RUN` is asserted
-the answer must be zero.
+and the program runs only implemented opcodes, the answer must be zero:
 
 ```
-count_halt_cycles(17) -> 0   (a running core must never be in IDLE)
+count_halt_cycles(17) -> 0   (implemented opcodes never pass through IDLE)
 ```
+
+Unimplemented opcodes are the exception here too. Each one spends a cycle in `IDLE` with `halt`
+high, so four filler bytes (`0x0C`) give 4 halt cycles in 16 clocks, as
+[the instruction set](../reference/simproc-instruction-set.md) reports. Keep them out of a program
+whose halt cycles you're counting, or expect one per unimplemented opcode.
 
 A core that blips back into IDLE between instructions can still compute every answer correctly,
 but it's breaking the handshake, and this counter is how you catch it.
@@ -573,9 +578,16 @@ model-based testing, but it is the reason a test suite needs more than one kind 
 
 Single-steps `n_instr` instructions and records the state after each one. `steps` is a list of
 `(index, address, instruction_word, snapshot)` tuples, and `problem` is either `None` or a string
-describing the first place the DUT disagreed with the model.
+describing the first place the DUT disagreed with the model. This example, from
+`a09_trace_against_the_model` in
+[`test_api_tour.py`](https://github.com/uoftasic/dd104/blob/main/labs/common/test_api_tour.py),
+traces a seven-instruction program on a fresh model:
 
 ```python
+prog = set_reg(0, 9) + [ADD(1, 0), SHL(1, 1), NAND(2, 2)]
+g = Golden(prog + [PARK])
+await sp.load(prog)
+await sp.set_pc(0)
 steps, problem = await trace(sp, len(prog), model=g)
 ```
 

@@ -151,7 +151,7 @@ async def a05_protocol_counters(dut):
     await sp.set_pc(0)
     high = await sp.count_halt_cycles(17)
     dut._log.info(f"count_halt_cycles(17) -> {high}   "
-                  f"(a running core must never be in IDLE)")
+                  f"(implemented opcodes never pass through IDLE)")
 
     await sp.load([UNIMP(), UNIMP()])
     await sp.set_pc(0)
