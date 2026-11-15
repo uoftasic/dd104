@@ -40,9 +40,10 @@ RULE = "=" * 72
 THIN = "-" * 72
 
 # The three catalogue bugs that live inside the ALU module itself.  Everything
-# else in the catalogue is in the control path, where a unit test of the ALU
-# cannot see it — which is the honest limit of unit testing and is worth
-# saying out loud rather than discovering.
+# else in the catalogue is in the control path, apart from B12 in the UART
+# receiver, and a unit test of the ALU cannot see any of it — which is the
+# honest limit of unit testing and is worth saying out loud rather than
+# discovering.
 ALU_BUGS = ["B01", "B02", "B03"]
 
 
@@ -212,8 +213,9 @@ def alu_sweep(tb, toplevel):
     else:
         print(" Every bug the catalogue puts inside the ALU, and every one of them")
         print(" caught by a check that fired, not by a testbench that crashed.")
-        print(" The other ten are in the control path around it, where a unit test")
-        print(" of the ALU cannot reach them -- that is Lab 04.")
+        print(" Of the other ten, nine are in the control path around it and one is")
+        print(" in the UART receiver, where a unit test of the ALU cannot reach")
+        print(" them -- that is Labs 04 to 06.")
     print(RULE)
     return not missed
 
