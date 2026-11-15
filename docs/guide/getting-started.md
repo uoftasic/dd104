@@ -88,7 +88,7 @@ at the time:
 | Lab 01 end to end: two tests, against two adders | ~5 s |
 | The example testbench against the SimProc core (Icarus) | ~6 s |
 | The same six tests under Verilator, including its build | ~17 s (~3 s once built) |
-| The shipped chip test against the good core and all 13 broken ones | ~19 s |
+| The shipped chip test against the good core and all 13 broken ones | ~30 s |
 | Verilator toggle coverage on the Lab 01 adder, both stimulus sets | ~12 s |
 
 Because runs are this cheap, you can rerun your tests every time you change a line, and the

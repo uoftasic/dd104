@@ -99,11 +99,11 @@ ones, which you'll do yourself in [Lab 02, Part 1](../labs/lab-02-the-only-test-
 
 ```
 ------------------------------------------------------------------------
-    PASS  the golden core                              2.8s
-    PASS  B01_sub_operands_swapped                     1.3s
-    PASS  B02_nand_is_nor                              1.4s
+    PASS  the golden core                              5.7s
+    PASS  B01_sub_operands_swapped                     2.1s
+    PASS  B02_nand_is_nor                              2.1s
     ...
-    PASS  B12_uart_rx_bit_period                       1.3s
+    PASS  B12_uart_rx_bit_period                       2.0s
 ------------------------------------------------------------------------
  13 of 13 deliberately broken processors pass the
  only test this chip has.
