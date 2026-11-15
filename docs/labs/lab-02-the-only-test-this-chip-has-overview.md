@@ -65,20 +65,20 @@ Which of fourteen processors does the shipped test catch, and what does it actua
     Decoded: uart_tx = 1 (idle), halt = 1 (IDLE), done = 0.
     It asserts that the processor is NOT RUNNING.
    ------------------------------------------------------------------------
-       PASS  the golden core                              5.4s
-       PASS  B01_sub_operands_swapped                     1.9s
-       PASS  B02_nand_is_nor                              1.9s
-       PASS  B03_zero_flag_low_nibble                     1.9s
-       PASS  B04_alu_writeback_reg_field                  1.9s
-       PASS  B06_shift_amount_one_bit                     1.9s
-       PASS  B07_load_address_from_ra                     1.9s
-       PASS  B05_branch_offset_zero_extended              1.9s
-       PASS  B09_branch_clobbers_flags                    1.9s
-       PASS  B08_store_drops_done                         1.9s
-       PASS  B13_store_falls_to_idle                      1.9s
-       PASS  B10_ori_adds_instead_of_ors                  1.9s
-       PASS  B11_ori_writes_r1_reads_r0                   1.9s
-       PASS  B12_uart_rx_bit_period                       1.9s
+       PASS  the golden core                              5.7s
+       PASS  B01_sub_operands_swapped                     2.1s
+       PASS  B02_nand_is_nor                              2.1s
+       PASS  B03_zero_flag_low_nibble                     2.0s
+       PASS  B04_alu_writeback_reg_field                  2.0s
+       PASS  B06_shift_amount_one_bit                     2.0s
+       PASS  B07_load_address_from_ra                     2.0s
+       PASS  B05_branch_offset_zero_extended              2.0s
+       PASS  B09_branch_clobbers_flags                    2.0s
+       PASS  B08_store_drops_done                         2.1s
+       PASS  B13_store_falls_to_idle                      2.1s
+       PASS  B10_ori_adds_instead_of_ors                  2.0s
+       PASS  B11_ori_writes_r1_reads_r0                   2.0s
+       PASS  B12_uart_rx_bit_period                       2.0s
    ------------------------------------------------------------------------
     13 of 13 deliberately broken processors pass the
     only test this chip has.

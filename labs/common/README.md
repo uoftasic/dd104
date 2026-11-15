@@ -34,7 +34,7 @@ It runs in the workbench container (`hpretl/iic-osic-tools:2026.08`: cocotb 2.0.
 | `make selftest` | does the grader grade? Classifier and source audit | 0.3 s |
 | `make selftest FULL=1` | the same, plus every checker in the course end to end | minutes |
 | `make verify` | confirm every catalogue anchor still matches `rtl/` | instant |
-| `make shuttle` | the shipped test, against the golden core and all thirteen | 18.5 s |
+| `make shuttle` | the shipped test, against the golden core and all thirteen | 32.2 s |
 | `make clean` | remove `build/`, `waves.vcd`, `__pycache__` | |
 
 The wall-clock figures were measured in the pinned container on a warm image, and they move by a

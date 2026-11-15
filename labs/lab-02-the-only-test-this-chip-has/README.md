@@ -22,7 +22,7 @@ All of these come from [`../common/lab.mk`](../common/lab.mk), which every SimPr
 
 | Target | What it does | Wall clock |
 |---|---|---|
-| `make shuttle` | the shipped test against the golden core and all thirteen broken ones | ~24 s |
+| `make shuttle` | the shipped test against the golden core and all thirteen broken ones | ~30 s |
 | `make` | `sim`, then `check` | ~8 s |
 | `make sim` | your testbench against the golden core | ~4 s |
 | `make check` | the verdict: PASS on golden, FAIL on `BUG` (default `B01`) | ~4 s |

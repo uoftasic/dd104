@@ -663,7 +663,7 @@ and start from a known state, and it's why the random-program test in `test_refe
 | `make bugs` | prints the bug catalogue: names, tiers, and what each one teaches | instant |
 | `make model` | runs `golden.py` on its own, with no simulator involved | instant |
 | `make verify` | confirm every catalogue anchor still matches `rtl/` | instant |
-| `make shuttle` | the test the chip shipped with, against everything | ~16 s |
+| `make shuttle` | the test the chip shipped with, against everything | ~30 s |
 
 ```bash
 make sim   TB=test_mine          # your module instead of test_example
