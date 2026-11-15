@@ -112,7 +112,9 @@ async def t01_where_the_receiver_spends_its_time(dut):
 
     assert recv_c == 9 * cpb, (
         f"RECEIVE lasted {recv_c} clocks, expected 9 x {cpb} = {9 * cpb} -- "
-        f"eight data bits and the parity bit.")
+        f"eight data bits, then one more bit period that ends in the middle "
+        f"of the stop bit. The RTL keeps that ninth period as the slot for a "
+        f"parity bit, but this UART is built with PARITY_BITS(0).")
 
     assert done_c == cpb, (
         f"DONE lasted {done_c} clocks, expected one whole bit period ({cpb}).\n"
