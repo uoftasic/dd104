@@ -170,10 +170,19 @@ With `-Wall`, the design on its own gives 19 warnings:
 
 6 + 4 + 4 + 2 + 1 + 1 + 1 = 19.
 
-If you add the course's `rtl/tb.v`, the same command reports 27. The extra eight are 5 `UNDRIVEN`
-and 3 `UNUSEDSIGNAL`, all inside `tb.v`, which is a testbench wrapper with pins it deliberately
-doesn't drive. 19 + 8 = 27, and checking that the counts add up like this is how you know you
-haven't found something new by accident.
+If you add the course's `rtl/tb.v` and make `tb` the top module, as the twelve-warning command in
+section 2 does, `-Wall` reports 27:
+
+```bash
+verilator --lint-only -Wall --timescale 1ns/1ps --top-module tb \
+  rtl/tt_um_ieeeuoftasic_simproc.sv rtl/simproc_system.sv rtl/tb.v
+```
+
+The extra eight are 5 `UNDRIVEN` and 3 `UNUSEDSIGNAL`, all inside `tb.v`, which is a testbench
+wrapper with pins it deliberately doesn't drive. 19 + 8 = 27, and checking that the counts add up
+like this is how you know you haven't found something new by accident. Adding `tb.v` to the first
+command and keeping `--top-module tt_um_ieeeuoftasic_simproc` still gives 19, because `tb.v` sits
+above that top module rather than under it.
 
 > Rule for `-Wall` output: sort it by warning kind and look at the width and case warnings first,
 > because `WIDTHTRUNC` and `CASEINCOMPLETE` describe the design doing something you didn't write.
