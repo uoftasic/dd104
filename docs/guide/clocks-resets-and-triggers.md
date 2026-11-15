@@ -1,15 +1,16 @@
 # Clocks, resets and triggers
 
-This page answers: *my test hangs, or reads the wrong value, or finishes instantly. What is
-`await` actually waiting for?*
+This page is for when your test hangs, or reads the wrong value, or finishes instantly, and you
+want to know *what `await` is actually waiting for*.
 
-A cocotb test alternates between two states: running Python, and waiting for the simulator.
-Simulated time only moves while you are waiting. Every bug on this page comes from being wrong
-about which of the two you are doing.
+A cocotb test is always in one of two states: it is either running your Python or waiting for
+the simulator, and simulated time moves only while it is waiting. Every bug on this page comes
+from being wrong about which of the two your test is doing at a given moment.
 
 All the output below was measured on `hpretl/iic-osic-tools:2026.08` (cocotb 2.0.1, Icarus
-Verilog 14.0) by [`labs/cocotb-intro/test_02_triggers.py`](https://github.com/uoftasic/dd104/blob/main/labs/cocotb-intro/test_02_triggers.py):
-six tests, 1832.51 ns of simulation, well under a second of real time. You'll run it in
+Verilog 14.0) by [`labs/cocotb-intro/test_02_triggers.py`](https://github.com/uoftasic/dd104/blob/main/labs/cocotb-intro/test_02_triggers.py).
+It has six tests, which between them simulate 1832.51 ns and take well under a second of real
+time. You'll run it in
 [cocotb on a counter, Part 2](../labs/cocotb-intro-overview.md#part-2-triggers).
 
 ## `Clock`, and the edge at t = 0
@@ -22,11 +23,12 @@ That line does three separate things:
 
 | | |
 |---|---|
-| `Clock(dut.clk, 10, unit="ns")` | An object that describes a clock. It drives nothing. |
-| `.start()` | A coroutine that toggles the signal forever. It still drives nothing, because a coroutine does not run until something runs it. |
+| `Clock(dut.clk, 10, unit="ns")` | Creates an object that describes a clock, but doesn't drive anything. |
+| `.start()` | Gives you a coroutine that toggles the signal forever. That still drives nothing, because a coroutine doesn't run until something runs it. |
 | `cocotb.start_soon(...)` | Schedules that coroutine as a background task and returns immediately. |
 
-The test checks that `start_soon` returns immediately:
+The test checks that `start_soon` really does return immediately, with no simulated time
+passing:
 
 ```python
 t_before = get_sim_time("ns")
@@ -34,11 +36,11 @@ cocotb.start_soon(Clock(dut.clk, 10, unit="ns").start())
 assert get_sim_time("ns") == t_before
 ```
 
-> `unit=` matters. The default is `unit="step"`, and one step here is one picosecond. So
-> `Clock(dut.clk, 10)` is a 10 picosecond clock. It runs without errors, and every timing number
-> in your test is off by a factor of a thousand.
+> Always give `unit=`. The default is `unit="step"`, and one step here is one picosecond, so
+> `Clock(dut.clk, 10)` is a 10 picosecond clock. It runs without any errors, and every timing
+> number in your test comes out off by a factor of a thousand.
 
-Now count ten clock edges from `t = 0`:
+Now count ten clock edges starting from `t = 0`, and then ten more:
 
 ```
     90.00ns INFO  cocotb.counter  10 edges counted from t=0 took 90 ns (nine periods -- the edge at t=0 was free)
@@ -46,15 +48,15 @@ Now count ten clock edges from `t = 0`:
 ```
 
 `Clock.start()` drives the signal high at t = 0 (`start_high=True` is the default). That first
-`0`→`1` transition is a rising edge and takes no time, so ten edges from `t = 0` span nine
-periods. Ten more, starting on an edge, span ten.
+`0`→`1` transition is a rising edge and takes no time, so ten edges counted from `t = 0` span
+only nine periods. The next ten start on an edge, so they span ten periods, as you'd expect.
 
-You don't need to work around this. Reset first: after a reset you are at a known phase and the
-arithmetic stops surprising you.
+You don't need to work around this. Reset the design first, and after the reset you are at a
+known phase of the clock, so the arithmetic stops surprising you.
 
 ## Reading at the clock edge
 
-This is the race that costs everyone an hour, measured:
+The race that costs everyone an hour sooner or later looks like this in the test:
 
 ```python
 await RisingEdge(dut.clk)
@@ -70,13 +72,15 @@ one_ns_later = str(dut.q.value)
 ```
 
 The flip-flop changes because of the edge, and your test wakes up because of the same edge. Your
-test does not get to decide which happens first, and on Icarus 14.0 you see the old value.
+test doesn't get to choose which of the two happens first, and on Icarus 14.0 you see the old
+value, from before the flip-flop changed.
 
-From the outside, this failure does not raise and does not hang. It gives you values that are
-all correct and one clock late, which looks exactly like a design that is one clock late, so you
-go and read the RTL. That is why it takes an hour.
+Seen from the outside, this failure doesn't raise an exception and doesn't hang. It gives you
+values that are all correct but one clock late, which is exactly what a design that really is one
+clock late would give you, so you go and read the RTL looking for the bug, which is where the
+hour goes.
 
-Three fixes, from crudest to best:
+There are three fixes, listed here from crudest to best:
 
 ```python
 await RisingEdge(dut.clk); await Timer(1, unit="ns")   # crude, obvious, fine
@@ -84,12 +88,12 @@ await RisingEdge(dut.clk); await ReadOnly()            # the scheduler's own set
 await FallingEdge(dut.clk)                             # sample mid-cycle, like real hardware
 ```
 
-The third is what real hardware does, launching data on one edge and sampling it far from that
-edge, and it needs no extra `await`. The labs use it.
+The third does what real hardware does, launching data on one edge and sampling it far from that
+edge, and it needs no extra `await`. It's the one the labs use.
 
 If a testbench ever reports values that are all correct but one cycle out of step, add
-`await Timer(1, unit="ns")` after the edge before changing anything else. If the numbers snap
-into place, the bug was in the testbench.
+`await Timer(1, unit="ns")` after the edge before you change anything else. If the numbers then
+snap into place, the bug was in the testbench rather than in the design.
 
 ## `Timer`: absolute time, no clock needed
 
@@ -99,18 +103,19 @@ into place, the bug was in the testbench.
   1226.50ns INFO  cocotb.counter  Timer(1, unit='us') advanced 1000.0 ns
 ```
 
-That test does not start a clock; `Timer` doesn't need one. Use it for settle time, for modelling
-a real-world delay, and for the reset experiment below.
+That test doesn't start a clock, because `Timer` counts absolute simulated time and doesn't need
+one. Use it for settle time, for modelling a real-world delay, and for the reset experiment
+below.
 
-Two errors worth meeting here first:
+Two errors are worth meeting here, before you run into them in your own tests:
 
 ```
   1226.50ns INFO  cocotb.counter  Timer(0, unit='ns') -> ValueError: Timer argument time must be positive
   1226.50ns INFO  cocotb.counter  Timer(1, unit='s')  -> ValueError: Invalid unit (s) provided
 ```
 
-The legal units are `"step"`, `"fs"`, `"ps"`, `"ns"`, `"us"`, `"ms"` and `"sec"`. Seconds are
-spelled `sec`, not `s`.
+The legal units are `"step"`, `"fs"`, `"ps"`, `"ns"`, `"us"`, `"ms"` and `"sec"`. Note that
+seconds are spelled `sec`, not `s`, which is what the second error is about.
 
 ## `ClockCycles`
 
@@ -120,16 +125,17 @@ spelled `sec`, not `s`.
   1361.50ns INFO  cocotb.counter  ClockCycles(clk, 3, edge_type=FallingEdge): 25 ns
 ```
 
-Five edges are five periods only if you started on an edge. From 1 ns past one, the first of the
-five is only 9 ns away, so the total is 49.
+Five edges take five periods only if you start on an edge. If you start 1 ns past one, the first
+of the five is only 9 ns away, so the total is 49 ns.
 
 `edge_type=FallingEdge` counts falling edges instead. (`ClockCycles(clk, n, rising=False)` also
-works; it is the older spelling.)
+works; it's the older spelling.)
 
 ## Reset
 
-`rst_n` is active low and synchronous: it does nothing until a rising clock edge arrives. SimProc
-uses the same convention, and you can test it in four lines instead of taking it on trust:
+`rst_n` is active low and synchronous, which means that pulling it low does nothing until a
+rising clock edge arrives. SimProc, the course's 8-bit processor, uses the same convention. You don't have to take it on trust,
+because you can test it in four lines:
 
 ```python
 dut.rst_n.value = 0            # asserted, but no clock edge yet
@@ -145,8 +151,8 @@ await Timer(3, unit="ns")      # a Timer moves time WITHOUT a clock edge
 first line had printed `0x00`, this would be an asynchronous reset, which is a different circuit
 with different rules about when reset may be released.
 
-Reset style is hard to change late in a project and does not show up in a block diagram. Two
-lines of testbench settle it, once per design.
+Reset style is hard to change late in a project, and you can't see it in a block diagram, so it's
+worth spending these two lines of testbench to settle it, once for each design.
 
 This is the reset routine the labs use:
 
@@ -161,8 +167,9 @@ async def reset(dut, cycles=2):
     await Timer(1, unit="ns")
 ```
 
-It drives every input, not just the interesting ones. An input you never drive stays `X`, the `X`
-propagates, and you end up debugging a signal that has no value rather than a wrong one.
+It drives every input, not just the interesting ones, because an input you never drive stays
+`X`. The `X` propagates through the design, and you end up debugging a signal that has no value
+at all rather than one with a wrong value.
 
 ## Waiting for something that never happens
 
@@ -170,9 +177,9 @@ propagates, and you end up debugging a signal that has no value rather than a wr
 await RisingEdge(dut.tc)
 ```
 
-If `tc` never rises, this waits forever. A hung test is the worst failure there is: no message,
-no line number, no traceback, and in CI a job that uses up its whole time budget before anyone
-learns anything.
+If `tc` never rises, this waits forever. A hung test is the worst failure there is, because it
+gives you no message, no line number and no traceback, and in CI it becomes a job that uses up
+its whole time budget before anyone learns anything.
 
 Either of these fixes it in one line:
 
@@ -187,8 +194,9 @@ winner = await First(RisingEdge(dut.tc), Timer(200, unit="ns"))   # tells you wh
   1832.51ns INFO  cocotb.counter  tc went high at t = 1833 ns with q = 0xFF
 ```
 
-Use `with_timeout` when the event not arriving is a failure, and `First` when either outcome is
-legitimate and you want to branch on it. There is also a whole-test version:
+Use `with_timeout` when the event not arriving means the test has failed, and `First` when
+either outcome is legitimate and you want to branch on which one happened. There is also a
+version that puts a timeout on a whole test:
 
 ```python
 @cocotb.test(timeout_time=50, timeout_unit="us")
@@ -204,19 +212,19 @@ includes every SimProc test, since they all wait for `done`.
 | Trigger | Wakes when |
 |---|---|
 | `Timer(n, unit=...)` | `n` units of simulated time have passed |
-| `RisingEdge(sig)` / `FallingEdge(sig)` | That edge on a 1-bit signal |
-| `Edge(sig)` / `ValueChange(sig)` | Any change |
-| `ClockCycles(clk, n)` | `n` edges of `clk` |
-| `First(a, b, ...)` | The first of several; returns the one that won |
-| `Combine(a, b, ...)` | All of them |
-| `with_timeout(trig, n, unit)` | `trig`, or `SimTimeoutError` |
+| `RisingEdge(sig)` / `FallingEdge(sig)` | That edge arrives on a 1-bit signal |
+| `Edge(sig)` / `ValueChange(sig)` | The signal changes at all |
+| `ClockCycles(clk, n)` | `n` edges of `clk` have passed |
+| `First(a, b, ...)` | The first of several triggers fires; it returns the one that won |
+| `Combine(a, b, ...)` | All of the triggers have fired |
+| `with_timeout(trig, n, unit)` | `trig` fires, or raises `SimTimeoutError` if `n` units pass first |
 | `ReadOnly()` | The settled phase of the current time step: values final, writes forbidden |
 | `ReadWrite()` | The phase where writes are allowed |
 | `NextTimeStep()` | The next time step, however far away |
 | `Event()` | Another coroutine calls `.set()`, for tests that talk to each other |
 
 Import them from `cocotb.triggers`. (`Join`, for waiting on a task you started, moved to
-`cocotb.task` in 2.x. Importing it from `cocotb.triggers` still works and warns.)
+`cocotb.task` in 2.x. Importing it from `cocotb.triggers` still works, but gives a warning.)
 
 ## Check yourself
 
