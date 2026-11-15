@@ -30,6 +30,7 @@ def note(d, box, lines, halign="center"):
 
 
 d = drawing()
+d.config(margin=0.3)     # a little white around the edge, so no text touches it
 
 # The main row: IDLE, then the three cycles every instruction goes through.
 idle = state(d, 1.0, 0, "IDLE", w=1.6)
