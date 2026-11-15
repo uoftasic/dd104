@@ -39,11 +39,12 @@ and arrived late" from something nobody notices into a red row with a number att
 
 This is what `t02` says when it fails:
 
-> The shortfall is 1. There is exactly one instruction in this program that appears exactly
-> 1 time(s), and that is where to look.
+> The shortfall is 1. Look at the instructions that appear exactly 1 time(s) in this program:
+> one of them retired without pulsing `done`.
 
 `8, expected 9` and "some pulses are missing" are very different amounts of help. The first tells
-you the shortfall is one instruction, and the program has exactly one `STORE`. When a failure
+you the shortfall is one instruction, and only two instructions in the program appear once, one
+`SHL` and one `STORE`. When a failure
 message does that arithmetic for the reader, it can save them an hour of looking.
 
 `t03` does the same: *"1 blip in a program with one STORE in it is a useful ratio — count the

@@ -186,14 +186,13 @@ Can you make the pulse count fail loudly, with a message that points at the culp
    until you've written the other two, your output will show fewer tests. The reference message
    continues:
 
-   > The shortfall is 1. There is exactly one instruction in this program that appears exactly
-   > 1 time(s), and that is where to look.
+   > The shortfall is 1. Look at the instructions that appear exactly 1 time(s) in this program:
+   > one of them retired without pulsing `done`.
 
 A message like `8, expected 9` is far more help than "some pulses are missing", because it tells
 you the shortfall is one instruction, so you know to look at the instructions that appear only once
-in the program: the one `SHL` and the one `STORE`. (The reference message says there is exactly one
-such instruction, but `PROGRAM` has two.) A failure message that does the arithmetic for the reader
-costs one line to write and can save you an hour.
+in the program: the one `SHL` and the one `STORE`. A failure message that does the arithmetic for
+the reader costs one line to write and can save you an hour.
 
 Check: `make check` reports `caught` on `B08`.
 
