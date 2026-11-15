@@ -219,8 +219,11 @@ part of the specification rather than an accident of the RTL. DD104 specifies `r
 Which register you pick is a matter of taste, but the two lines that implement the decision must
 change together. If you apply it to only one of them, you get "OR the immediate into one register,
 write the answer to a different one", which is an instruction nobody specified. That is one of the
-two hardest bugs in the catalogue, because after a reset both candidate registers hold zero and the
-first `ORI` of any program looks correct.
+three tier-5 bugs, the hardest in the catalogue to think of. It isn't hard to catch, though. After
+a reset both candidate registers hold zero, so the first `ORI` of a program puts the right value
+into the machine, but in the wrong register, and any test that checks `r0` afterwards finds zero
+there. Lab 02's one-`ORI` test catches it, and so do seven of the eleven reference tests in
+[Lab 06](../labs/lab-06-capstone-overview.md#part-3-b11-the-wrong-destination-register).
 
 ## When the model and the design disagree
 

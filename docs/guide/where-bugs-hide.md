@@ -101,12 +101,15 @@ element of almost everything.
 |---|---|
 | Catalogue | `B10`, `B11` |
 | Measured | `ORI 5 ; ORI 3` gives 8 on a core whose `ORI` adds; it should give 7. `ORI 8 ; ORI 3` gives 11 on both |
-| Why it survives | The first `ORI` after reset is `0 \| imm`, which is correct under both bugs. Building a constant from disjoint bit groups, the natural way to assemble a value from a 5-bit immediate, never overlaps, so it never diverges |
+| Why it survives | The first `ORI` after reset is `0 \| imm`, which is the right value under both bugs. Building a constant from disjoint bit groups, the natural way to assemble a value from a 5-bit immediate, never overlaps, so it never diverges |
 
-`B11` is the harder of the two to catch. It writes the right value to the wrong register, and
-after a reset the right and wrong registers hold the same thing, so the first `ORI` of any program
-leaves a machine state that is correct under a different name. The two machines only start to
-diverge at the second `ORI`.
+`B11` is just as hard to think of, but it is the easier of the two to catch. It writes the right
+value to the wrong register: after a reset `r0` and `r1` both hold zero, so the first `ORI`
+computes `0 | imm` correctly and puts it in `r1`, and the machine holds the right number under the
+wrong name. A test that checks `r0` after a single `ORI` finds zero there and fails, which is how
+Lab 02's `t03` catches it, and seven of the eleven reference tests fail on `B11` against two on
+`B10`. Only a test that looks for the value anywhere in the registers misses it, until the second
+`ORI` reads an `r0` that the first one never wrote.
 
 > The habit: never test an operation only from a reset state, and never test it only once. Once
 > you do two of anything (two `ORI`s, two branches off one compare, two writes to the same

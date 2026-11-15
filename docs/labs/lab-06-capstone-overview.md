@@ -3,8 +3,9 @@
 In this lab you bring your tests from Labs 04 and 05 together into one suite and use it to find
 the three tier-5 bugs, which are the hardest in the catalogue to think of. You finish with a suite
 that catches all thirteen bugs and a written bug report for one of the three. None of the three is
-subtle in the RTL; what makes them hard to catch is the stimulus, because each one needs a test
-input that ordinary tests don't happen to produce.
+subtle in the RTL. `B10` and `B12` are hard to catch because each one needs a test input that
+ordinary tests don't happen to produce, and `B11` is easy to catch on this design, for a reason
+Part 3 explains.
 
 This lab takes about 3 hours 30 minutes.
 

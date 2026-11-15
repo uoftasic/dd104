@@ -91,7 +91,7 @@ BUGS = {
                      "                    alu_op          = ALU_ADD;")]),
 
     "B11_ori_writes_r1_reads_r0": dict(
-        tier=5, hides_behind="reset — the FIRST ORI of any program is correct",
+        tier=5, hides_behind="reset — the first ORI's value is right; only its register is wrong",
         edits=[(689, "                    rf_reg_w_in     = 2'b0;",
                      "                    rf_reg_w_in     = 2'b1;")]),
 
