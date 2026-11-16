@@ -18,7 +18,7 @@ Only these three are fillable:
 |-------|---------|
 | `dd104` | `dd103` |
 | `DD104 — Pre-Silicon Verification` | `DD103 — RTL on FPGAs & ASICs` |
-| `Verilator and cocotb: find the bugs hiding in a real 8-bit core.` | `RTL synthesis intro with Yosys` |
+| `Write cocotb tests that catch all thirteen broken versions of SimProc, an 8-bit processor written by students on the team.` | `RTL synthesis intro with Yosys` |
 
 ## Conventions
 

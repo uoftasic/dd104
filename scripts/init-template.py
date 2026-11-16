@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Replace course placeholders after creating a repo from the UofT ASIC template.
 
-Fills dd104, DD104 — Pre-Silicon Verification, and Verilator and cocotb: find the bugs hiding in a real 8-bit core. only.
+Fills dd104, DD104 — Pre-Silicon Verification, and Write cocotb tests that catch all thirteen broken versions of SimProc, an 8-bit processor written by students on the team. only.
 Does not scaffold or remove docs pages — keep the published site barebones.
 """
 

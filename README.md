@@ -1,6 +1,6 @@
 # DD104 — Pre-Silicon Verification
 
-Verilator and cocotb: find the bugs hiding in a real 8-bit core.
+Write cocotb tests that catch all thirteen broken versions of SimProc, an 8-bit processor written by students on the team.
 
 Part of the UofT ASIC Team education materials (`uoftasic`).
 Course site: <https://uoftasic.com/dd104/> · Education hub: <https://edu.uoftasic.com/>
