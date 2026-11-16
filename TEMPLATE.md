@@ -13,7 +13,7 @@ Create a course or lab-notes repo from this template under `uoftasic`, fill in t
 |-------|---------|---------|
 | `dd104` | Repo slug / course id | `dd103`, `ic101`, `serdes-lab` |
 | `DD104 — Pre-Silicon Verification` | Display name | `DD103 — RTL on FPGAs & ASICs` |
-| `Verilator and cocotb: find the bugs hiding in a real 8-bit core.` | One-line blurb | `RTL synthesis intro with Yosys` |
+| `Write cocotb tests that catch all thirteen broken versions of SimProc, an 8-bit processor written by students on the team.` | One-line blurb | `RTL synthesis intro with Yosys` |
 
 ## Init script
 
