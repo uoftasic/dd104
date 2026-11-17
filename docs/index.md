@@ -1,7 +1,7 @@
 # DD104 — Pre-Silicon Verification
 
-In this course you find the bugs hidden in a real 8-bit processor, using cocotb, Icarus Verilog
-and Verilator, before they cost a mask set.
+In this course you write cocotb tests that find bugs planted in SimProc, an 8-bit processor, and
+you run them on Icarus Verilog and Verilator.
 
 DD104 is part of the UofT ASIC Team education materials, published at <https://uoftasic.com/dd104/>.
 The labs run in the workbench: the IIC-OSIC-TOOLS container you start from the `workspace` clone
@@ -11,16 +11,15 @@ walks you through it.
 
 ## Who this course is for
 
-You have finished the digital track up to DD103: you can write SystemVerilog, simulate it, and
-take it through a flow to layout. None of those steps checked whether the design computes what
-you meant it to, and that question is what this course is about.
+You have finished the digital track up to DD103, so you can write SystemVerilog, simulate it, and
+take it through a flow to layout.
 
-SimProc is an 8-bit processor written by students on this team and wrapped for a real chip
-(a TinyTapeout shuttle): an ALU, four registers, 64 bytes of memory and a UART, about 1,200
-lines of SystemVerilog. It shipped with one test, and that test still passes on a processor whose
-`SUB` has its operands swapped and computes `B - A`. DD104 ships thirteen broken versions of
-SimProc, each made by a one-line edit, and all thirteen pass that test. By the end of the course
-you will have written a test suite that catches all thirteen, and a bug report for one of them.
+SimProc has an ALU, four registers, 64 bytes of memory and a UART, in about 1,200 lines of
+SystemVerilog. Students on this team wrote it and wrapped it for a chip on a TinyTapeout shuttle.
+It shipped with one test. DD104 ships thirteen broken versions of SimProc, each made by a one-line
+edit, and all thirteen pass that test, including one whose `SUB` has its operands swapped and
+computes `B - A`. By the end of the course you will have written a test suite that catches all
+thirteen, and a bug report for one of them.
 
 | | |
 |---|---|
@@ -31,8 +30,8 @@ you will have written a test suite that catches all thirteen, and a bug report f
 | Total time | About 19 hours, self-paced. The Course path rows below add up to 18 h 55 min. |
 
 Check your cocotb version before you search the web for help: `cocotb-config --version` should
-print `2.0.1`. That matters because most cocotb tutorials online were written for 1.x, and some
-of the things they use are errors in 2.x, among them `cocotb.fork` (use `cocotb.start_soon`),
+print `2.0.1`. Most cocotb tutorials online were written for 1.x, and some of the things they
+use are errors in 2.x, among them `cocotb.fork` (use `cocotb.start_soon`),
 `@cocotb.coroutine` (use a plain `async def`) and `dut.sig <= 1` (use `dut.sig.value = 1`).
 Most of the rest, such as `units=`, `MODULE=` and `.value.integer`, still runs and only prints a
 deprecation warning. [cocotb 2.x and older tutorials](guide/cocotb-2x-vs-every-tutorial.md) has
