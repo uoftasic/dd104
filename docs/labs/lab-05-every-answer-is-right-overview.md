@@ -31,7 +31,7 @@ processor is running watches `halt`. The cycle count is part of the contract as 
 design that produces every right answer one cycle late has still missed its timing budget.
 
 ```bash
-mod dd104     # in a new terminal, load .designinit first (Lab 01, Part 1)
+mod dd104     # if mod isn't found, load .designinit (Lab 01, Part 1)
 cd labs/lab-05-every-answer-is-right
 ```
 

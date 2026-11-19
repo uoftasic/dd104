@@ -36,7 +36,7 @@ are finished you know that any failure in the processor lies somewhere outside t
 verification is this kind of work: shrinking the region a bug could be hiding in.
 
 ```bash
-mod dd104     # in a new terminal, load .designinit first (Lab 01, Part 1)
+mod dd104     # if mod isn't found, load .designinit (Lab 01, Part 1)
 cd labs/lab-03-three-blocks-before-the-processor
 ```
 

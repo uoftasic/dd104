@@ -39,7 +39,7 @@ the whole lab. The skill you're here to practise is finding a bug in a design yo
 against a known-good copy, and every design you'll ever be paid to verify is like that.
 
 ```bash
-mod dd104     # in a new terminal, load .designinit first (Lab 01, Part 1)
+mod dd104     # if mod isn't found, load .designinit (Lab 01, Part 1)
 cd labs/lab-04-your-first-bug-hunt
 ```
 
